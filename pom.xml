@@ -13,9 +13,9 @@
 
     <groupId>com.xuanluan.mc</groupId>
     <artifactId>service-sdk</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <description>
-        thêm BaseRestClient để gọi api của bên ngoài
+        Chỉnh sửa chức năng convertValue trong BaseLoadFile class
     </description>
     <packaging>jar</packaging>
 

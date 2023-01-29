@@ -69,7 +69,7 @@ public abstract class BaseRestClient {
                             servicePath + path,
                             method,
                             entity,
-                            typeRef);
+                            new ParameterizedTypeReference<T>() {});
 
             return response.getBody();
         } catch (HttpClientErrorException | HttpServerErrorException e) {

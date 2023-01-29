@@ -11,8 +11,8 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WrapperResponse {
+public class WrapperResponse<T> {
     private HttpStatus status;
     private String message;
-    private Object data;
+    private T data;
 }
