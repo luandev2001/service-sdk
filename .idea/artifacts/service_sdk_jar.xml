@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="service-sdk:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/service_sdk_jar</output-path>
+    <root id="archive" name="service-sdk.jar">
+      <element id="module-output" name="service-sdk" />
+    </root>
+  </artifact>
+</component>
