@@ -8,11 +8,14 @@ import com.xuanluan.mc.utils.BaseStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.ResolvableType;
 import org.springframework.http.*;
 import org.springframework.util.Assert;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.lang.reflect.Type;
 
 /**
  * @author Xuan Luan
@@ -61,17 +64,29 @@ public abstract class BaseRestClient {
         return objectMapper;
     }
 
-    private <T> T processRestClient(String path, HttpMethod method, HttpEntity<Object> entity, Class<T> tClass) {
+    private <T> Object processRestClient(String path, HttpMethod method, HttpEntity<Object> entity, Class<T> tClass, boolean isWrapper) {
         try {
-            ParameterizedTypeReference<T> typeRef = ParameterizedTypeReference.forType(tClass);
-            ResponseEntity<T> response =
-                    getRestTemplate().exchange(
-                            servicePath + path,
-                            method,
-                            entity,
-                            new ParameterizedTypeReference<T>() {});
+            if (isWrapper) {
+                ResponseEntity<WrapperResponse<T>> response =
+                        getRestTemplate().exchange(
+                                servicePath + path,
+                                method,
+                                entity,
+                                ParameterizedTypeReference.forType(ResolvableType.forClassWithGenerics(WrapperResponse.class, tClass).getType())
+                        );
 
-            return response.getBody();
+                return response.getBody();
+            } else {
+                ResponseEntity<T> response =
+                        getRestTemplate().exchange(
+                                servicePath + path,
+                                method,
+                                entity,
+                                ParameterizedTypeReference.forType(tClass)
+                        );
+
+                return response.getBody();
+            }
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             try {
                 WrapperResponse result = getObjectMapper().readValue(e.getResponseBodyAsString(), WrapperResponse.class);
@@ -81,6 +96,14 @@ public abstract class BaseRestClient {
                 throw new ServiceException(e.getStatusCode(), jsonE.getOriginalMessage(), "Đã xảy ra lỗi :" + jsonE.getMessage());
             }
         }
+    }
+
+    private <T> T processRestClient(String path, HttpMethod method, HttpEntity<Object> entity, Class<T> tClass) {
+        return (T) processRestClient(path, method, entity, tClass, false);
+    }
+
+    private <T> WrapperResponse<T> processWrapperRestClient(String path, HttpMethod method, HttpEntity<Object> entity, Class<T> tClass) {
+        return (WrapperResponse<T>) processRestClient(path, method, entity, tClass, true);
     }
 
     protected <T> T get(String path, Class<T> tClass) {
@@ -121,5 +144,46 @@ public abstract class BaseRestClient {
     protected <T> T delete(String path, Object request, String token, Class<T> tClass) {
         HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders(token));
         return processRestClient(path, HttpMethod.DELETE, entity, tClass);
+    }
+
+    //******************* WrapperResponse *******************
+    protected <T> WrapperResponse<T> getWrapper(String path, Class<T> tClass) {
+        HttpEntity<Object> entity = new HttpEntity<>(getHeaders());
+        return processWrapperRestClient(path, HttpMethod.GET, entity, tClass);
+    }
+
+    protected <T> WrapperResponse<T> getWrapper(String path, String token, Class<T> tClass) {
+        HttpEntity<Object> entity = new HttpEntity<>(getHeaders(token));
+        return processWrapperRestClient(path, HttpMethod.GET, entity, tClass);
+    }
+
+    protected <T> WrapperResponse<T> postWrapper(String path, Object request, Class<T> tClass) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders());
+        return processWrapperRestClient(path, HttpMethod.POST, entity, tClass);
+    }
+
+    protected <T> WrapperResponse<T> postWrapper(String path, Object request, String token, Class<T> tClass) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders(token));
+        return processWrapperRestClient(path, HttpMethod.POST, entity, tClass);
+    }
+
+    protected <T> WrapperResponse<T> putWrapper(String path, Object request, Class<T> tClass) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders());
+        return processWrapperRestClient(path, HttpMethod.PUT, entity, tClass);
+    }
+
+    protected <T> WrapperResponse<T> putWrapper(String path, Object request, String token, Class<T> tClass) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders(token));
+        return processWrapperRestClient(path, HttpMethod.PUT, entity, tClass);
+    }
+
+    protected <T> WrapperResponse<T> deleteWrapper(String path, Object request, Class<T> tClass) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders());
+        return processWrapperRestClient(path, HttpMethod.DELETE, entity, tClass);
+    }
+
+    protected <T> WrapperResponse<T> deleteWrapper(String path, Object request, String token, Class<T> tClass) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders(token));
+        return processWrapperRestClient(path, HttpMethod.DELETE, entity, tClass);
     }
 }
