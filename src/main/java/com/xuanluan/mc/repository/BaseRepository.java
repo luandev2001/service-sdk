@@ -97,7 +97,7 @@ public abstract class BaseRepository<T> {
         Assert.notNull(filter, "Filter must be not null");
 
         List<Predicate> predicates = new ArrayList<>();
-        if (BaseStringUtils.hasTextAfterTrim(clientId)) {
+        if (BaseStringUtils.hasTextAfterTrim(clientId) && !"all".equals(clientId)) {
             predicates.add(builder.equal(root.get("clientId"), clientId));
         }
         if (BaseStringUtils.hasTextAfterTrim(filter.getId())) {
@@ -146,7 +146,7 @@ public abstract class BaseRepository<T> {
     protected List<Predicate> getFilterSearch(String clientId, String orgId, HashMap<String, String> searchFilters, BaseFilter filter) {
         List<Predicate> filters = filterSearch(clientId, searchFilters, filter);
         Assert.isTrue(BaseStringUtils.hasTextAfterTrim(orgId), "orgId must be not null");
-        filters.add(builder.equal(root.get("orgId"), orgId));
+        if (!"all".equals(orgId)) filters.add(builder.equal(root.get("orgId"), orgId));
         return filters;
     }
 

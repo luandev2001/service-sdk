@@ -13,9 +13,9 @@
 
     <groupId>com.xuanluan.mc</groupId>
     <artifactId>service-sdk</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <description>
-        Chỉnh sửa chức năng convertValue trong BaseLoadFile class
+        - Nếu orgId, clientId = "all" => không filter cho 2 trường này
     </description>
     <packaging>jar</packaging>
 
