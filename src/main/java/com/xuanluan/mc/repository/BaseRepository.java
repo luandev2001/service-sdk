@@ -99,6 +99,7 @@ public abstract class BaseRepository<T> {
         List<Predicate> predicates = new ArrayList<>();
         if (BaseStringUtils.hasTextAfterTrim(clientId) && !"all".equals(clientId)) {
             predicates.add(builder.equal(root.get("clientId"), clientId));
+            predicates.add(filterNotEqualAnyField("clientId", "all"));
         }
         if (BaseStringUtils.hasTextAfterTrim(filter.getId())) {
             predicates.add(builder.equal(root.get("id"), clientId));
@@ -147,6 +148,7 @@ public abstract class BaseRepository<T> {
         List<Predicate> filters = filterSearch(clientId, searchFilters, filter);
         Assert.isTrue(BaseStringUtils.hasTextAfterTrim(orgId), "orgId must be not null");
         if (!"all".equals(orgId)) filters.add(builder.equal(root.get("orgId"), orgId));
+        filters.add(filterNotEqualAnyField("orgId", "all"));
         return filters;
     }
 

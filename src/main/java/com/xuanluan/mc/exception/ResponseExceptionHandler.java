@@ -1,6 +1,8 @@
 package com.xuanluan.mc.exception;
 
 import com.xuanluan.mc.domain.model.WrapperResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +17,8 @@ import java.util.Map;
  * @createdAt 8/29/2022
  */
 public class ResponseExceptionHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(ResponseExceptionHandler.class);
 
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ExceptionHandler(ServiceException.class)
@@ -52,6 +56,7 @@ public class ResponseExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public WrapperResponse handleException(Exception e) {
+        logger.error(e.getMessage(), e);
 
         return WrapperResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -59,18 +64,4 @@ public class ResponseExceptionHandler {
                 .message(e.getMessage())
                 .build();
     }
-
-//    private enum ErrorCode {
-//        SERVICE_PROCESS_ERROR(8888, "Service Process Error", "Lỗi Xử Lý Từ Các Service");
-//
-//        public final int status;
-//        public final String label;
-//        public final String desc;
-//
-//        ErrorCode(int status, String label, String desc) {
-//            this.status = status;
-//            this.label = label;
-//            this.desc = desc;
-//        }
-//    }
 }

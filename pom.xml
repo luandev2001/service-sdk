@@ -16,6 +16,8 @@
     <version>1.2.2</version>
     <description>
         - Nếu orgId, clientId = "all" => không filter cho 2 trường này
+        - Không hiển thị thông tin orgId, clientId = "all" khi search
+        - Thêm get log error cho Exception
     </description>
     <packaging>jar</packaging>
 
