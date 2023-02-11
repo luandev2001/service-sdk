@@ -48,13 +48,7 @@ public class BaseService {
 
     //check text, request text = <string>.<number>
     private static void validateText(String[] item) throws ServiceException {
-        if (item.length != 2) {
-            throwExceptionText();
-        }
-        if (NumberUtils.isNumeric(item[0])) {
-            throwExceptionText();
-        }
-        if (!NumberUtils.isNumeric(item[1])) {
+        if (item.length != 2 || NumberUtils.isNumeric(item[0]) || !NumberUtils.isNumeric(item[1])) {
             throwExceptionText();
         }
     }
