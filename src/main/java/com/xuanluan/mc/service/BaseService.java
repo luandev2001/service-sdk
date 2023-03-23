@@ -58,8 +58,6 @@ public class BaseService {
      * suffix= "number" from 1 to 9999
      * item= string+"."+number
      *
-     * @param oldValue
-     * @return
      */
     public static String generateAlphabetDotNoCode(String oldValue) throws ServiceException {
         char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
@@ -75,12 +73,8 @@ public class BaseService {
 
         long suffix = NumberUtils.convertTextToNumber(item[1]);
 
-        if (suffix < 0 || suffix > 9999) {
-            throw new ServiceException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid data, 0<data<9999",
-                    "Dữ liệu không hợp lệ, 0<data<9999"
-            );
+        if (suffix <= 0 || suffix > 9999) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST, "Invalid data, 0<data<9999", "Dữ liệu không hợp lệ, 0<data<9999");
         } else if (suffix < 9999) {
             ++suffix;
             return item[0] + "." + suffix;

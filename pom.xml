@@ -13,11 +13,9 @@
 
     <groupId>com.xuanluan.mc</groupId>
     <artifactId>service-sdk</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
     <description>
-        - Nếu orgId, clientId = "all" => không filter cho 2 trường này
-        - Không hiển thị thông tin orgId, clientId = "all" khi search
-        - Thêm get log error cho Exception
+        - Thêm ExceptionUtils
     </description>
     <packaging>jar</packaging>
 

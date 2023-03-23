@@ -23,7 +23,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Service
 public class DataSequenceServiceImpl {
-    Logger logger = LoggerFactory.getLogger(DataSequenceServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(DataSequenceServiceImpl.class);
     private final DataSequenceRepository sequenceRepository;
 
     public DataSequence getDataSequence(String clientId, String orgId, String className, SequenceType type) {

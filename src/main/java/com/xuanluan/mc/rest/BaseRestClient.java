@@ -15,8 +15,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.Type;
-
 /**
  * @author Xuan Luan
  * @createdAt 1/4/2023
@@ -24,8 +22,8 @@ import java.lang.reflect.Type;
 public abstract class BaseRestClient {
     private final Logger logger = LoggerFactory.getLogger(BaseRestClient.class);
 
-    private final String servicePath;
-    private final String clientId;
+    protected final String servicePath;
+    protected final String clientId;
     private RestTemplate restTemplate;
     private ObjectMapper objectMapper;
 
