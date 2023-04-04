@@ -4,6 +4,9 @@ import com.xuanluan.mc.exception.ServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Collection;
 
 /**
  * @author Xuan Luan
@@ -38,17 +41,33 @@ public class ExceptionUtils {
     }
 
     public static void invalidInput(String fieldName, @Nullable Object input) throws ServiceException {
-        Assert.notNull(fieldName, "Tên trường không được để trống!");
-        if (input instanceof String && !BaseStringUtils.hasTextAfterTrim((String) input)) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, (fieldName + " must not be blank").trim(), (fieldName + " phải chứa ít nhất 1 ký tự").trim());
+        if (input instanceof String) {
+            notBlank(fieldName, (String) input);
+        } else if (input instanceof Collection<?>) {
+            notEmpty(fieldName, (Collection<?>) input);
+        } else {
+            notNull(fieldName, input);
         }
-        notNull(fieldName, input);
     }
 
     public static void notNull(String fieldName, @Nullable Object input) {
         Assert.notNull(fieldName, "Tên trường không được để trống!");
         if (input == null) {
             throw new ServiceException(HttpStatus.BAD_REQUEST, (fieldName + " must not be null").trim(), (fieldName + " không được để trống").trim());
+        }
+    }
+
+    public static void notBlank(String fieldName, @Nullable String input) {
+        notNull(fieldName, input);
+        if (!BaseStringUtils.hasTextAfterTrim(input)) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST, (fieldName + " must not be blank").trim(), (fieldName + " phải chứa ít nhất 1 ký tự").trim());
+        }
+    }
+
+    public static void notEmpty(String fieldName, @Nullable Collection<?> collection) {
+        notNull(fieldName, collection);
+        if (CollectionUtils.isEmpty(collection)) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST, (fieldName + " must not be empty").trim(), (fieldName + " không được để rỗng").trim());
         }
     }
 

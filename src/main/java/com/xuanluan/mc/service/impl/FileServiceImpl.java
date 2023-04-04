@@ -4,6 +4,7 @@ import com.xuanluan.mc.domain.model.request.FileImageRequest;
 import com.xuanluan.mc.domain.model.request.FileRequest;
 import com.xuanluan.mc.exception.ServiceException;
 import com.xuanluan.mc.utils.BaseStringUtils;
+import com.xuanluan.mc.utils.ExceptionUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +47,8 @@ public class FileServiceImpl {
         if (BaseStringUtils.checkSuffixImage(request.getUrl())) {
             return request.getUrl();
         } else {
-            assert request.getType() != null;
-            assert request.getBase64() != null;
+            ExceptionUtils.notNull("type", request.getType());
+            ExceptionUtils.notNull("base64", request.getBase64());
             return "data:" + request.getType() + ";base64, " + request.getBase64();
         }
     }

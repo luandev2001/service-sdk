@@ -1,22 +1,31 @@
 package com.xuanluan.mc.domain.model.filter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
+@Setter
 public class BaseFilter {
-    @JsonFormat(
-            shape = JsonFormat.Shape.NUMBER
-    )
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+    @Getter
     private Date createdAtFrom;
-    @JsonFormat(
-            shape = JsonFormat.Shape.NUMBER
-    )
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+    @Getter
     private Date createdAtTo;
+    @Getter
     private String createdBy;
+    @Getter
+    private String updatedBy;
     private int maxResult = 20;
     private int offset = 0;
+    @Getter
     private String id;
+    @Getter
     private String search;
+    @Getter
+    private Boolean isActive;
 
     public int getMaxResult() {
         if (this.maxResult <= 0) {
@@ -30,55 +39,6 @@ public class BaseFilter {
         if (this.offset < 0) {
             this.offset = 0;
         }
-
         return this.offset;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Date getCreatedAtFrom() {
-        return createdAtFrom;
-    }
-
-    public void setCreatedAtFrom(Date createdAtFrom) {
-        this.createdAtFrom = createdAtFrom;
-    }
-
-    public Date getCreatedAtTo() {
-        return createdAtTo;
-    }
-
-    public void setCreatedAtTo(Date createdAtTo) {
-        this.createdAtTo = createdAtTo;
-    }
-
-    public void setMaxResult(int maxResult) {
-        this.maxResult = maxResult;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getSearch() {
-        return search;
-    }
-
-    public void setSearch(String search) {
-        this.search = search;
     }
 }

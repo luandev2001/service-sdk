@@ -61,16 +61,11 @@ public class BaseService {
      */
     public static String generateAlphabetDotNoCode(String oldValue) throws ServiceException {
         char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-
         //not have text => item= "a.1"
-        if (!BaseStringUtils.hasTextAfterTrim(oldValue)) {
-            return alphabet[0] + "." + 1;
-        }
-
+        if (!BaseStringUtils.hasTextAfterTrim(oldValue)) return alphabet[0] + "." + 1;
         String[] item = oldValue.split("\\.");
         //check item has valid
         validateText(item);
-
         long suffix = NumberUtils.convertTextToNumber(item[1]);
 
         if (suffix <= 0 || suffix > 9999) {

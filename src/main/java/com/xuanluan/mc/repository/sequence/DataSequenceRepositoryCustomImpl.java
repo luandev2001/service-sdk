@@ -21,9 +21,9 @@ public class DataSequenceRepositoryCustomImpl extends BaseRepository<DataSequenc
     @Override
     public DataSequence findByClassName(String clientId, String orgId, String className, int type) {
         List<Predicate> filters = getFilters(clientId);
-        filters.add(filterEqualAnyField("orgId", orgId));
-        filters.add(filterEqualAnyField("className", className));
-        filters.add(filterEqualAnyField("type", type));
+        appendFilter("orgId", orgId, filters);
+        appendFilter("className", className, filters);
+        appendFilter("type", type, filters);
         return getSingleResult(filters);
     }
 }

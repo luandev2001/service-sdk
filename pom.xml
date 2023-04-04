@@ -13,9 +13,9 @@
 
     <groupId>com.xuanluan.mc</groupId>
     <artifactId>service-sdk</artifactId>
-    <version>1.2.3</version>
+    <version>1.2.6</version>
     <description>
-        - Thêm ExceptionUtils
+        -
     </description>
     <packaging>jar</packaging>
 
@@ -63,7 +63,26 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
+        </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>a0d3ztpf4ksnf-artifactory-primary-0-releases</name>
+            <url>https://luan.jfrog.io/artifactory/xluan-libs-release</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>a0d3ztpf4ksnf-artifactory-primary-0-snapshots</name>
+            <url>https://luan.jfrog.io/artifactory/xluan-libs-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <pluginManagement>
@@ -72,6 +91,32 @@
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
                     <version>3.4.0.905</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jfrog.buildinfo</groupId>
+                    <artifactId>artifactory-maven-plugin</artifactId>
+                    <version>3.4.0</version>
+                    <inherited>false</inherited>
+                    <executions>
+                        <execution>
+                            <id>build-info</id>
+                            <goals>
+                                <goal>publish</goal>
+                            </goals>
+                            <configuration>
+                                <deployProperties>
+                                    <gradle>awesome</gradle>
+                                    <review.team>qa</review.team>
+                                </deployProperties>
+                                <publisher>
+                                    <contextUrl>https://luan.jfrog.io/artifactory</contextUrl>
+                                    <username>${env.XLUAN_ARTIFACTS_USERNAME}</username>
+                                    <password>${env.XLUAN_ARTIFACTS_PASSWORD}</password>
+                                </publisher>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
