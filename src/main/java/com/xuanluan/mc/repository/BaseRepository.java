@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 public abstract class BaseRepository<T> {
     @PersistenceContext(type = PersistenceContextType.EXTENDED)
     protected final EntityManager entityManager;
-    protected final CriteriaBuilder builder;
-    protected final CriteriaQuery<T> query;
-    protected final Root<T> root;
     protected final Class<T> tClass;
+    protected CriteriaBuilder builder;
+    protected CriteriaQuery<T> query;
+    protected Root<T> root;
 
     protected BaseRepository(EntityManager entityManager, Class<T> tClass) {
         this.tClass = tClass;
