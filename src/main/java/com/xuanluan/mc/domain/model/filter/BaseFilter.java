@@ -14,12 +14,8 @@ public class BaseFilter {
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     @Getter
     private Date createdAtTo;
-    @Getter
-    private String createdBy;
-    @Getter
-    private String updatedBy;
-    private int maxResult = 20;
-    private int offset = 0;
+    private int maxResult;
+    private int index;
     @Getter
     private String id;
     @Getter
@@ -28,17 +24,12 @@ public class BaseFilter {
     private Boolean isActive;
 
     public int getMaxResult() {
-        if (this.maxResult <= 0) {
-            this.maxResult = 20;
-        }
-
+        if (this.maxResult <= 0) this.maxResult = 20;
         return this.maxResult;
     }
 
-    public int getOffset() {
-        if (this.offset < 0) {
-            this.offset = 0;
-        }
-        return this.offset;
+    public int getIndex() {
+        if (this.index < 1) this.index = 1;
+        return this.index;
     }
 }
