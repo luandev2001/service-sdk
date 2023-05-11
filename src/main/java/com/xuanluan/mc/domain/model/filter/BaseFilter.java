@@ -29,7 +29,7 @@ public class BaseFilter {
     }
 
     public int getIndex() {
-        if (this.index < 1) this.index = 1;
+        if (this.index < 0) this.index = 0;
         return this.index;
     }
 }

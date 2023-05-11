@@ -4,15 +4,14 @@ import com.xuanluan.mc.domain.model.filter.BaseFilter;
 import com.xuanluan.mc.domain.model.filter.ResultList;
 import com.xuanluan.mc.utils.BaseStringUtils;
 import com.xuanluan.mc.utils.DateUtils;
+import com.xuanluan.mc.utils.ExceptionUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.QueryUtils;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Xuan Luan
@@ -66,19 +65,19 @@ public abstract class BaseRepository<T> {
     }
 
     protected List<Predicate> getFilters(String clientId) {
-        Assert.isTrue(BaseStringUtils.hasTextAfterTrim(clientId), "clientId must be not null");
+        ExceptionUtils.notBlank("clientId", clientId);
         return appendFilter("clientId", clientId, new ArrayList<>());
     }
 
     protected List<Predicate> getFilters(String clientId, String orgId) {
-        Assert.isTrue(BaseStringUtils.hasTextAfterTrim(orgId), "orgId must be not null");
+        ExceptionUtils.notBlank("orgId", orgId);
         return appendFilter("orgId", orgId, this.getFilters(clientId));
     }
 
     private List<Predicate> filterSearch(String clientId, HashMap<String, String> searchFilters, BaseFilter filter) {
-        Assert.notNull(filter, "Filter must be not null");
+        ExceptionUtils.notNull("Filter", filter);
         List<Predicate> filters = new ArrayList<>();
-        if (!"all".equals(clientId)) {
+        if (clientId != null && !"all".equals(clientId)) {
             appendFilter("clientId", clientId, filters);
             filters.add(this.filterNotEqualAnyField("clientId", "all"));
         }
@@ -111,7 +110,7 @@ public abstract class BaseRepository<T> {
     }
 
     protected List<Predicate> getFilterSearch(String clientId, String orgId, HashMap<String, String> searchFilters, BaseFilter filter) {
-        List<Predicate> filters = this.filterSearch(clientId, searchFilters, filter);
+        List<Predicate> filters = this.getFilterSearch(clientId, searchFilters, filter);
         if (!"all".equals(orgId)) {
             appendFilter("orgId", orgId, filters);
             filters.add(this.filterNotEqualAnyField("orgId", "all"));
@@ -137,20 +136,13 @@ public abstract class BaseRepository<T> {
         resultList.setTotal(totalRecord);
         resultList.setIndex(index);
         if (totalRecord > 0L) {
-            List<T> elements = this.getListResult(filters, maxResult, 0, Sort.by(Sort.Direction.DESC, "updatedAt", "createdAt"));
-            if (index > 0) {
-                int skip = (maxResult * index);
-                elements = elements.stream().skip(skip).limit(maxResult).collect(Collectors.toList());
-            }
+            int offset = index * maxResult;
+            List<T> elements = this.getListResult(filters, maxResult, offset, Sort.by(Sort.Direction.DESC, "updatedAt", "createdAt"));
             resultList.setResultList(elements);
         }
         return resultList;
     }
 
-    public static void main(String[] args) {
-        List<String> strings=List.of("1","2","3","4","5");
-        System.out.println(strings.stream().skip(0).limit(2).collect(Collectors.toList()));
-    }
     private long getCount(List<Predicate> filters) {
         CriteriaQuery<Long> queryL = builder.createQuery(Long.class);
         Root<T> rootL = queryL.from(query.getResultType());

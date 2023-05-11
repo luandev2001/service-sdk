@@ -13,18 +13,9 @@ import java.util.Collection;
  * @createdAt 3/19/2023
  */
 public class ExceptionUtils {
-    /**
-     * not found data of name field
-     *
-     * @param name  nameField
-     * @param value valueField
-     */
     public static void notFoundData(@Nullable String name, @Nullable String value, @Nullable Object result, @Nullable String messVN, @Nullable String messEN) {
         if (result == null) {
-            throw new ServiceException(
-                    HttpStatus.NOT_FOUND,
-                    "Không tìm thấy dữ liệu" + messVN + name + value,
-                    "Not found data" + messEN + name + value);
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Không tìm thấy dữ liệu" + messVN + name + value, "Not found data" + messEN + name + value);
         }
     }
 
@@ -78,4 +69,13 @@ public class ExceptionUtils {
         }
     }
 
+    public static void isTrue(boolean expression, HttpStatus status, String messVN, String messEN) {
+        if (!expression) {
+            throw new ServiceException(status, messEN, messVN);
+        }
+    }
+
+    public static void isTrue(boolean expression, String messVN, String messEN) {
+        isTrue(expression, HttpStatus.BAD_REQUEST, messVN, messEN);
+    }
 }
