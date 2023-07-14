@@ -1,14 +1,14 @@
 package com.xuanluan.mc.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.xuanluan.mc.service.BaseService;
+import com.xuanluan.mc.utils.BaseStringUtils;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
 @MappedSuperclass
-public abstract class BaseEntity {
+public class BaseEntity {
 
     @Id
     private String id;
@@ -21,7 +21,7 @@ public abstract class BaseEntity {
     private boolean isActive;
 
     protected BaseEntity() {
-        id = BaseService.generateId();
+        id = BaseStringUtils.generateId();
         isActive = true;
         createdAt = new Date();
     }

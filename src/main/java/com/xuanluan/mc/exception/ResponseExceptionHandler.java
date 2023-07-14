@@ -22,8 +22,7 @@ public class ResponseExceptionHandler {
 
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ExceptionHandler(ServiceException.class)
-    public WrapperResponse handleServiceException(ServiceException e) {
-
+    public WrapperResponse<Object> handleServiceException(ServiceException e) {
         return WrapperResponse.builder()
                 .status(e.getStatus())
                 .data(e.getData())
@@ -33,19 +32,17 @@ public class ResponseExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public WrapperResponse handleInputDataException(MethodArgumentNotValidException e) {
+    public WrapperResponse<Object> handleInputDataException(MethodArgumentNotValidException e) {
         return processFieldErrors(e);
     }
 
-    private WrapperResponse processFieldErrors(MethodArgumentNotValidException exception) {
-
+    private WrapperResponse<Object> processFieldErrors(MethodArgumentNotValidException exception) {
         Map<String, String> errorDetail = new HashMap<>();
         exception.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String messageError = error.getDefaultMessage();
             errorDetail.put(fieldName, messageError);
         });
-
         return WrapperResponse.builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message("Invalid input data!")
@@ -55,9 +52,8 @@ public class ResponseExceptionHandler {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public WrapperResponse handleException(Exception e) {
+    public WrapperResponse<Object> handleException(Exception e) {
         logger.error(e.getMessage(), e);
-
         return WrapperResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .data("Đã xảy ra lỗi: " + e.getMessage())

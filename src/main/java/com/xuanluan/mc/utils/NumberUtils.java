@@ -9,7 +9,6 @@ public class NumberUtils {
         if (!BaseStringUtils.hasTextAfterTrim(string)) {
             return false;
         }
-
         try {
             Integer.parseInt(string);
             return true;
@@ -20,9 +19,6 @@ public class NumberUtils {
 
     /**
      * note: should check text avoid to error
-     *
-     * @param text
-     * @return
      */
     public static long convertTextToNumber(String text){
         return Long.parseLong(text);

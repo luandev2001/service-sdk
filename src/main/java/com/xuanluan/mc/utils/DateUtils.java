@@ -12,10 +12,10 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         if (null != date) {
             calendar.setTime(date);
-            calendar.set(11, 0);
-            calendar.set(12, 0);
-            calendar.set(14, 0);
-            calendar.set(13, 0);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.set(Calendar.SECOND, 0);
             return calendar.getTime();
         } else {
             return null;
@@ -26,9 +26,9 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         if (null != date) {
             calendar.setTime(date);
-            calendar.set(11, 23);
-            calendar.set(12, 59);
-            calendar.set(13, 59);
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
             return calendar.getTime();
         } else {
             return null;
