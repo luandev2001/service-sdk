@@ -19,9 +19,9 @@ public class PropertyReaderUtils {
 
     public static String getPropertyName(String name, String defaultValue) {
         String content = getProfileProperties().getProperty(name);
-        if (null == content || content.length() == 0) {
+        if (null == content || content.isEmpty()) {
             content = System.getProperty(name);
-            if (null == content || content.length() == 0) {
+            if (null == content || content.isEmpty()) {
                 content = defaultValue;
             }
         }
@@ -30,7 +30,7 @@ public class PropertyReaderUtils {
 
     public static String getPropertyName(String name) {
         String content = getProfileProperties().getProperty(name);
-        if (null == content || content.length() == 0) {
+        if (null == content || content.isEmpty()) {
             content = System.getProperty(name);
         }
         return content;
@@ -49,11 +49,7 @@ public class PropertyReaderUtils {
                 assert inputStream != null;
                 inputStream.close();
             } catch (IOException ioException) {
-                throw new ServiceException(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        ioException.getMessage(),
-                        "Đã xảy ra lỗi: " + ioException.getMessage()
-                );
+                throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, ioException.getMessage(), "Đã xảy ra lỗi: " + ioException.getMessage());
             }
         }
 

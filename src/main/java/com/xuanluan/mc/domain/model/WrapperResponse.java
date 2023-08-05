@@ -15,4 +15,5 @@ public class WrapperResponse<T> {
     private HttpStatus status;
     private String message;
     private T data;
+    private int number;
 }

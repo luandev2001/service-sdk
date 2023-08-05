@@ -36,10 +36,10 @@ public class BaseLoadFile {
             try {
                 inputStream.close();
             } catch (IOException ioException) {
-                ioException.printStackTrace();
+                logger.error(e.getMessage());
             }
+            return null;
         }
-        return null;
     }
 
     protected <T> List<T> convertInputStreamToList(String fileName, Class<T> tClass) {
@@ -57,9 +57,9 @@ public class BaseLoadFile {
             try {
                 inputStream.close();
             } catch (IOException ioException) {
-                ioException.printStackTrace();
+                logger.error(e.getMessage());
             }
+            return null;
         }
-        return null;
     }
 }

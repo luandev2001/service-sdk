@@ -12,7 +12,7 @@ import java.util.UUID;
  */
 public class BaseStringUtils {
     public static boolean hasTextAfterTrim(String text) {
-        return text != null && text.trim().length() > 0;
+        return text != null && !text.trim().isEmpty();
     }
 
     public static boolean checkSuffixImage(String url) {
@@ -39,9 +39,9 @@ public class BaseStringUtils {
         }
         long suffix = NumberUtils.convertTextToNumber(item[1]);
 
-        if (suffix <= 0 || suffix > 9999) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, "Invalid data, 0<data<9999", "Dữ liệu không hợp lệ, 0<data<9999");
-        } else if (suffix < 9999) {
+        if (suffix <= 0 || suffix > 99999999) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST, "Invalid data, 0<data<99999999", "Dữ liệu không hợp lệ, 0<data<9999");
+        } else if (suffix < 99999999) {
             ++suffix;
             return item[0] + "." + suffix;
         } else {

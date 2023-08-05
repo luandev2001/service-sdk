@@ -34,11 +34,7 @@ public class FileServiceImpl {
                     .build();
         } catch (Exception e) {
             logger.error("Error upload file: " + e.getMessage(), e.getCause());
-            throw new ServiceException(
-                    HttpStatus.BAD_REQUEST,
-                    "Error upload file",
-                    "Có lỗi trong quá trình tải file lên"
-            );
+            throw new ServiceException(HttpStatus.BAD_REQUEST, "Error upload file", "Có lỗi trong quá trình tải file lên");
         }
     }
 
