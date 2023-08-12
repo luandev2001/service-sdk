@@ -1,4 +1,4 @@
-package com.xuanluan.mc.builder;
+package com.xuanluan.mc.service.builder;
 
 import com.xuanluan.mc.domain.entity.BaseEntity;
 import com.xuanluan.mc.domain.entity.FileStorage;

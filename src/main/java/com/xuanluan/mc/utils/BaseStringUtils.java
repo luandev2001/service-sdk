@@ -58,7 +58,7 @@ public class BaseStringUtils {
                         return new String(charactersPrefix) + "." + 1;
                     }
                 }
-                return null;
+                throw new ServiceException(HttpStatus.BAD_REQUEST, "Invalid generate data", "Khởi tạo dữ liệu không thành công");
             }
         }
     }

@@ -5,13 +5,9 @@ public enum ActiveStatus {
     delete("xóa"),
     inactive("tạm ẩn");
 
-    private final String label;
+    public final String label;
 
     ActiveStatus(String label) {
         this.label = label;
-    }
-
-    public String getLabel() {
-        return label;
     }
 }

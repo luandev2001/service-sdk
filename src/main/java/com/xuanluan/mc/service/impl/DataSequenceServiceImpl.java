@@ -71,10 +71,10 @@ public class DataSequenceServiceImpl {
             sequence.setClassName(tClass.getName());
             sequence.setOrgId(orgId);
             sequence.setType(type.value);
-            sequence.setCreatedBy("Hệ thống");
+            sequence.setCreatedBy("system");
         } else {
             sequence.setUpdatedAt(new Date());
-            sequence.setUpdatedBy("Hệ thống");
+            sequence.setUpdatedBy("system");
         }
         return sequence;
     }

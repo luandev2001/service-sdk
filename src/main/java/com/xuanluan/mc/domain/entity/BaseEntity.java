@@ -13,7 +13,6 @@ import java.util.Date;
 @Setter
 @MappedSuperclass
 public class BaseEntity {
-
     @Id
     private String id;
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)

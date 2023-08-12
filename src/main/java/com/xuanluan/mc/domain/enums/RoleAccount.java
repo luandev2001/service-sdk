@@ -10,19 +10,11 @@ public enum RoleAccount {
     EMPLOYEE("EMP", "Nhân viên"),
     CUSTOMER("CUS", "Khách hàng");
 
-    private final String abbreviation;
-    private final String label;
+    public final String abbreviation;
+    public final String label;
 
     RoleAccount(String abbreviation, String label) {
         this.abbreviation = abbreviation;
         this.label = label;
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public String getLabel() {
-        return label;
     }
 }

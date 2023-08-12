@@ -7,6 +7,7 @@ import com.xuanluan.mc.utils.DateUtils;
 import com.xuanluan.mc.utils.ExceptionUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.QueryUtils;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
@@ -74,7 +75,7 @@ public abstract class BaseRepository<T> {
         return appendFilter("orgId", orgId, this.getFilters(clientId));
     }
 
-    private List<Predicate> filterSearch(String clientId, HashMap<String, String> searchFilters, BaseFilter filter) {
+    private List<Predicate> filterSearch(String clientId, Set<String> searchFilters, BaseFilter filter) {
         ExceptionUtils.notNull("Filter", filter);
         List<Predicate> filters = new ArrayList<>();
         if (clientId != null && !"all".equals(clientId)) {
@@ -92,12 +93,8 @@ public abstract class BaseRepository<T> {
 
         if (BaseStringUtils.hasTextAfterTrim(filter.getSearch()) && searchFilters != null) {
             Predicate predicate = null;
-            Map.Entry<String, String> var1;
-            for (Iterator<Map.Entry<String, String>> var6 = searchFilters.entrySet().iterator(); var6.hasNext(); predicate = this.builder.or(predicate, this.filterLikeAnyField(var1.getKey(), var1.getValue()))) {
-                var1 = var6.next();
-                if (predicate == null) {
-                    predicate = this.filterLikeAnyField(var1.getKey(), var1.getValue());
-                }
+            for (String key : searchFilters) {
+                predicate = predicate != null ? builder.or(predicate, this.filterLikeAnyField(key, filter.getSearch())) : this.filterLikeAnyField(key, filter.getSearch());
             }
             if (predicate != null) filters.add(predicate);
         }
@@ -105,11 +102,11 @@ public abstract class BaseRepository<T> {
         return filters;
     }
 
-    protected List<Predicate> getFilterSearch(String clientId, HashMap<String, String> searchFilters, BaseFilter filter) {
+    protected List<Predicate> getFilterSearch(String clientId, Set<String> searchFilters, BaseFilter filter) {
         return this.filterSearch(clientId, searchFilters, filter);
     }
 
-    protected List<Predicate> getFilterSearch(String clientId, String orgId, HashMap<String, String> searchFilters, BaseFilter filter) {
+    protected List<Predicate> getFilterSearch(String clientId, String orgId, Set<String> searchFilters, BaseFilter filter) {
         List<Predicate> filters = this.getFilterSearch(clientId, searchFilters, filter);
         if (!"all".equals(orgId)) {
             appendFilter("orgId", orgId, filters);
@@ -118,15 +115,18 @@ public abstract class BaseRepository<T> {
         return filters;
     }
 
-    protected List<Predicate> appendFilter(String nameField, Object valueField, List<Predicate> filter) {
+    protected List<Predicate> appendFilter(String nameField, Object valueField, List<Predicate> predicates) {
         Predicate predicate = this.filterEqualAnyField(nameField, valueField);
-        if (predicate != null) filter.add(predicate);
-        return filter;
+        if (predicate != null) predicates.add(predicate);
+        return predicates;
     }
 
-    protected List<Predicate> appendFilter(Predicate predicate, List<Predicate> filter) {
-        if (predicate != null) filter.add(predicate);
-        return filter;
+    protected List<Predicate> appendFilter(Collection<String> values, Predicate predicate, List<Predicate> predicates) {
+        Assert.notNull(predicate, "predicate must be not null");
+        if (values != null && values.isEmpty()) {
+            predicates.add(predicate);
+        }
+        return predicates;
     }
 
     protected ResultList<T> getResultList(List<Predicate> filters, int index, int maxResult) {
