@@ -121,11 +121,13 @@ public abstract class BaseRepository<T> {
         return predicates;
     }
 
-    protected List<Predicate> appendFilter(Collection<String> values, Predicate predicate, List<Predicate> predicates) {
+    protected List<Predicate> appendFilter(Object value, Predicate predicate, List<Predicate> predicates) {
+        return appendFilter(List.of(value), predicate, predicates);
+    }
+
+    protected List<Predicate> appendFilter(Collection<Object> values, Predicate predicate, List<Predicate> predicates) {
         Assert.notNull(predicate, "predicate must be not null");
-        if (values != null && values.isEmpty()) {
-            predicates.add(predicate);
-        }
+        if (values != null && values.isEmpty()) predicates.add(predicate);
         return predicates;
     }
 

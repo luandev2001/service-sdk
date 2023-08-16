@@ -11,7 +11,6 @@ public class ConfigurationConverter {
         configuration.setValue(dto.getValue());
         configuration.setType(dto.getType());
         configuration.setName(dto.getName());
-        configuration.setOrgIds(dto.getOrgIds());
         return configuration;
     }
 }

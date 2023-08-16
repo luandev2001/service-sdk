@@ -20,13 +20,23 @@ public class ResponseExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(ResponseExceptionHandler.class);
 
-    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ServiceException.class)
     public WrapperResponse<Object> handleServiceException(ServiceException e) {
         return WrapperResponse.builder()
                 .status(e.getStatus())
-                .data(e.getData())
+                .message_vn((String) e.getData())
                 .message(e.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(MessageException.class)
+    public WrapperResponse<Object> handleMessageException(MessageException e) {
+        return WrapperResponse.builder()
+                .status(e.getStatus())
+                .message_vn(e.getVn())
+                .message(e.getEn())
                 .build();
     }
 

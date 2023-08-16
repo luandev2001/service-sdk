@@ -37,7 +37,7 @@ public class BaseStringUtils {
         if (item.length != 2 || NumberUtils.isNumeric(item[0]) || !NumberUtils.isNumeric(item[1])) {
             throw new ServiceException(HttpStatus.BAD_REQUEST, "Mã ký tự không hợp lệ, nguyên tắc 'chuỗi.số'");
         }
-        long suffix = NumberUtils.convertTextToNumber(item[1]);
+        long suffix = Long.parseLong(item[1]);
 
         if (suffix <= 0 || suffix > 99999999) {
             throw new ServiceException(HttpStatus.BAD_REQUEST, "Invalid data, 0<data<99999999", "Dữ liệu không hợp lệ, 0<data<9999");

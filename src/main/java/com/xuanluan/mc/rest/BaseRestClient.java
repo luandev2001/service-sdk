@@ -24,8 +24,8 @@ public abstract class BaseRestClient {
 
     protected final String servicePath;
     protected final String clientId;
-    private RestTemplate restTemplate;
-    private ObjectMapper objectMapper;
+    private static RestTemplate restTemplate;
+    private static ObjectMapper objectMapper;
 
     protected BaseRestClient(String servicePath, String clientId) {
         this.servicePath = servicePath;
@@ -48,14 +48,14 @@ public abstract class BaseRestClient {
         return headers;
     }
 
-    protected final RestTemplate getRestTemplate() {
+    public static RestTemplate getRestTemplate() {
         if (restTemplate == null) {
             restTemplate = new RestTemplate();
         }
         return restTemplate;
     }
 
-    protected final ObjectMapper getObjectMapper() {
+    public static ObjectMapper getObjectMapper() {
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();
         }

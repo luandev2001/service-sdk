@@ -16,11 +16,4 @@ public class NumberUtils {
             return false;
         }
     }
-
-    /**
-     * note: should check text avoid to error
-     */
-    public static long convertTextToNumber(String text){
-        return Long.parseLong(text);
-    }
 }

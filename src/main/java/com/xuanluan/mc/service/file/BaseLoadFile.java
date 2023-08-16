@@ -16,13 +16,13 @@ import java.util.List;
  * @createdAt 12/29/2022
  */
 public class BaseLoadFile {
-    private final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(BaseLoadFile.class);
 
-    protected InputStream loadDataFromFile(String fileName) {
+    protected static InputStream loadDataFromFile(String fileName) {
         return BaseLoadFile.class.getClassLoader().getResourceAsStream(fileName);
     }
 
-    protected <T> T convertInputStream(String fileName, Class<T> tClass) {
+    public static <T> T convertInputStream(String fileName, Class<T> tClass) {
         InputStream inputStream = loadDataFromFile(fileName);
         if (inputStream == null) {
             logger.error("Not found file config: " + fileName);
@@ -42,7 +42,7 @@ public class BaseLoadFile {
         }
     }
 
-    protected <T> List<T> convertInputStreamToList(String fileName, Class<T> tClass) {
+    public static <T> List<T> convertInputStreamToList(String fileName, Class<T> tClass) {
         InputStream inputStream = loadDataFromFile(fileName);
         if (inputStream == null) {
             logger.error("Not found file config: " + fileName);

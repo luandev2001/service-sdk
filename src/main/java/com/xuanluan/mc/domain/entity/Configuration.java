@@ -1,13 +1,11 @@
 package com.xuanluan.mc.domain.entity;
 
+import com.xuanluan.mc.service.converter.MapJpaConverter;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.util.Map;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -15,9 +13,7 @@ import java.util.Set;
 public class Configuration extends BaseEntity {
     @Column(nullable = false, updatable = false)
     private String clientId;
-    @ElementCollection
-    private Set<String> orgIds;
-    @ElementCollection
+    @Convert(converter = MapJpaConverter.class)
     private Map<String, Object> value;
     @Column(nullable = false, updatable = false)
     private String name;

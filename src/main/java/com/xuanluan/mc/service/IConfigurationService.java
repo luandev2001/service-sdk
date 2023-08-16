@@ -9,9 +9,9 @@ import java.util.List;
 public interface IConfigurationService {
     Configuration create(String clientId, ConfigurationDTO dto, String byUser);
 
-    List<Configuration> getList(String clientId);
+    List<Configuration> create(String clientId, List<ConfigurationDTO> dtos, String byUser);
 
-    List<Configuration> getList(String clientId, Collection<String> orgIds);
+    List<Configuration> getList(String clientId);
 
     Configuration get(String clientId, String name);
 

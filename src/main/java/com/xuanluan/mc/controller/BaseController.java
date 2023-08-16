@@ -18,6 +18,6 @@ public class BaseController {
     }
 
     protected <T> WrapperResponse<T> response(String mess, T data, HttpStatus status) {
-        return new WrapperResponse<>(status, mess, data, status.value());
+        return WrapperResponse.<T>builder().status(status).message(mess).data(data).build();
     }
 }
