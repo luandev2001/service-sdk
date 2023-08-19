@@ -1,9 +1,14 @@
 {
-  "error.not_null": "không được để trống",
-  "error.not_empty": "không được rỗng",
-  "error.not_blank": "phải chứa ít nhất 1 ký tự",
+  "error.not_null": "%s không được trống",
+  "error.not_empty": "%s không được rỗng",
+  "error.not_blank": "%s phải chứa ít nhất 1 ký tự",
   "error.not_correct": "Điều kiện không đúng",
   "error.by_user": "Nguời dùng không hợp lệ",
   "error.invalid_client": "Dịch vụ không hợp lệ",
-  "jpa.error.converter_from_string": "Đổi dữ liệu JPA, từ %s đến %s thất bại"
+  "jpa.error.converter_from_string": "Đổi dữ liệu JPA, từ %s đến %s thất bại",
+  "name": "Tên",
+  "client": "Dịch vụ",
+  "organization": "Tổ chức",
+  "type": "Loại",
+  "request": "Dữ liệu yêu cầu"
 }

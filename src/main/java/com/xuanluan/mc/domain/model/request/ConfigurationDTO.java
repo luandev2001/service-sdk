@@ -2,13 +2,15 @@ package com.xuanluan.mc.domain.model.request;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
 @Getter
+@Setter
 @Builder
 public class ConfigurationDTO {
-    private final String name;
-    private final Map<String, Object> value;
-    private final String type;
+    private String name;
+    private Map<String, Object> value;
+    private String type;
 }

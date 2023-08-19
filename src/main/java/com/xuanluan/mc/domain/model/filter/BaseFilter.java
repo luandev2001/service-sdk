@@ -6,21 +6,17 @@ import lombok.Setter;
 
 import java.util.Date;
 
+@Getter
 @Setter
 public class BaseFilter {
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
-    @Getter
     private Date createdAtFrom;
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
-    @Getter
     private Date createdAtTo;
     private int maxResult;
     private int index;
-    @Getter
     private String id;
-    @Getter
     private String search;
-    @Getter
     private Boolean isActive;
 
     public int getMaxResult() {

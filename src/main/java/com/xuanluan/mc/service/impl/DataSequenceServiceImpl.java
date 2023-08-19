@@ -3,15 +3,14 @@ package com.xuanluan.mc.service.impl;
 import com.xuanluan.mc.domain.entity.DataSequence;
 import com.xuanluan.mc.domain.enums.SequenceType;
 import com.xuanluan.mc.repository.sequence.DataSequenceRepository;
+import com.xuanluan.mc.utils.AssertUtils;
 import com.xuanluan.mc.utils.BaseStringUtils;
-import com.xuanluan.mc.utils.NumberUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -58,10 +57,10 @@ public class DataSequenceServiceImpl {
     }
 
     private <T> DataSequence getSequence(String clientId, String orgId, Class<T> tClass, SequenceType type) {
-        Assert.isTrue(BaseStringUtils.hasTextAfterTrim(clientId), "clientId must be not null");
-        Assert.isTrue(BaseStringUtils.hasTextAfterTrim(orgId), "orgId must be not null");
-        Assert.notNull(tClass, "class must be not null");
-        Assert.notNull(type, "type must be not null");
+        AssertUtils.notBlank(clientId, "clientId");
+        AssertUtils.notBlank(orgId, "orgId");
+        AssertUtils.notNull(tClass, "class");
+        AssertUtils.notNull(type, "type");
 
         String key = clientId + "_" + orgId + "_" + tClass.getName() + "_" + type.name();
         DataSequence currentSequence = sequenceMap.get(key);

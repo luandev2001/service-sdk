@@ -9,45 +9,41 @@ import java.util.Collection;
 
 public class AssertUtils {
 
-    public static void isTrue(boolean expression, String key, HttpStatus status) {
+    public static void isTrue(boolean expression, String key, HttpStatus status, Object... args) {
         if (!expression) {
-            throw MessageException.assign(key, status);
+            throw MessageException.assign(key, status, args);
         }
     }
 
-    public static void isTrue(boolean expression, String key) {
-        isTrue(expression, key, HttpStatus.BAD_REQUEST);
+    public static void isTrue(boolean expression, String key, Object... args) {
+        isTrue(expression, key, HttpStatus.BAD_REQUEST, args);
     }
 
-    public static void isTrue(Object value) {
-        notNull(value, "error.not_correct");
-    }
-
-    public static void notNull(@Nullable Object value, String key, HttpStatus status) {
+    public static void notNull(@Nullable Object value, String key, HttpStatus status, Object... args) {
         if (value == null) {
-            throw MessageException.assign(key, status);
+            throw MessageException.assign(key, status, args);
         }
     }
 
-    public static void notNull(@Nullable Object value, String key) {
-        notNull(value, key, HttpStatus.BAD_REQUEST);
+    public static void notNull(@Nullable Object value, String key, Object... args) {
+        notNull(value, key, HttpStatus.BAD_REQUEST, args);
     }
 
-    public static void notNull(Object value) {
-        notNull(value, "error.not_null");
+    public static void notNull(Object value, String arg) {
+        notNull(value, "error.not_null", arg);
     }
 
-    public static void notEmpty(@Nullable Collection<?> values, String key, HttpStatus status) {
+    public static void notEmpty(@Nullable Collection<?> values, String key, Object... args) {
         if (CollectionUtils.isEmpty(values)) {
-            throw MessageException.assign(key, status);
+            throw MessageException.assign(key, HttpStatus.BAD_REQUEST, args);
         }
     }
 
-    public static void notEmpty(@Nullable Collection<?> values, String key) {
-        notEmpty(values, key, HttpStatus.BAD_REQUEST);
+    public static void notEmpty(Collection<?> values, String arg) {
+        notEmpty(values, "error.not_empty", arg);
     }
 
-    public static void notEmpty(Collection<?> values) {
-        notEmpty(values, "error.not_empty");
+    public static void notBlank(@Nullable String value, String arg) {
+        isTrue(BaseStringUtils.hasTextAfterTrim(value), "error.not_blank", arg);
     }
 }

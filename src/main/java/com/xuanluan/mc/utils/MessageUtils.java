@@ -3,6 +3,7 @@ package com.xuanluan.mc.utils;
 import com.xuanluan.mc.exception.ServiceException;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
@@ -32,6 +33,7 @@ public class MessageUtils {
     }
 
     public static Message get(String key) {
+        Assert.isTrue(BaseStringUtils.hasTextAfterTrim(key), "key must not be blank");
         return Message.builder().
                 vn(get(key, MessageType.VIET_NAM))
                 .en(get(key, MessageType.ENGLISH))
@@ -71,6 +73,7 @@ public class MessageUtils {
     }
 
     @Getter
+    @Setter
     @Builder
     @ToString
     public static class Message {
