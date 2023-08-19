@@ -19,6 +19,10 @@ public class AssertUtils {
         isTrue(expression, key, HttpStatus.BAD_REQUEST, args);
     }
 
+    public static void isTrue(boolean expression, String arg) {
+        isTrue(expression, "error.not_correct", HttpStatus.BAD_REQUEST, arg);
+    }
+
     public static void notNull(@Nullable Object value, String key, HttpStatus status, Object... args) {
         if (value == null) {
             throw MessageException.assign(key, status, args);

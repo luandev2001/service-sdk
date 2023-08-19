@@ -6,7 +6,6 @@ import com.xuanluan.mc.sdk.repository.config.ConfigurationRepository;
 import com.xuanluan.mc.sdk.service.converter.ConfigurationConverter;
 import com.xuanluan.mc.sdk.utils.AssertUtils;
 import com.xuanluan.mc.sdk.service.IConfigurationService;
-import com.xuanluan.mc.sdk.utils.BaseStringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
@@ -26,7 +25,9 @@ public class ConfigurationServiceImpl implements IConfigurationService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Configuration create(String clientId, ConfigurationDTO dto, String byUser) {
-        return create(clientId, List.of(dto), byUser).get(0);
+        List<Configuration> configurations = create(clientId, List.of(dto), byUser);
+        AssertUtils.notEmpty(configurations, "error.create_failed", "Configuration");
+        return configurations.get(0);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -34,15 +35,18 @@ public class ConfigurationServiceImpl implements IConfigurationService {
     public List<Configuration> create(final String clientId, List<ConfigurationDTO> dtos, String byUser) {
         AssertUtils.notEmpty(dtos, "request");
         List<Configuration> configurations = dtos.stream()
-                .filter(dto -> configurationRepository.findByName(clientId, dto.getName()) != null)
                 .map(dto -> {
-                    Configuration configuration = ConfigurationConverter.toConfiguration(new Configuration(), dto);
-                    configuration.setClientId(clientId);
-                    configuration.setCreatedBy(byUser);
-
-                    AssertUtils.isTrue(BaseStringUtils.hasTextAfterTrim(configuration.getClientId()), "error.invalid_client");
-                    AssertUtils.isTrue(BaseStringUtils.hasTextAfterTrim(configuration.getName()), "error.not_blank");
-                    AssertUtils.isTrue(BaseStringUtils.hasTextAfterTrim(configuration.getType()), "error.not_blank");
+                    final String nameConvert = ConfigurationConverter.replaceName(dto.getName());
+                    Configuration configuration = configurationRepository.findByName(clientId, nameConvert);
+                    if (configuration == null) {
+                        configuration = ConfigurationConverter.toConfiguration(new Configuration(), dto);
+                        configuration.setClientId(clientId);
+                        configuration.setCreatedBy(byUser);
+                        AssertUtils.notBlank(configuration.getClientId(), "client");
+                        AssertUtils.isTrue(nameConvert.equals(configuration.getName()), "configuration.name not equal nameConvert");
+                        AssertUtils.notBlank(configuration.getName(), "name");
+                        AssertUtils.notBlank(configuration.getType(), "type");
+                    }
                     return configuration;
                 })
                 .collect(Collectors.toList());
@@ -55,24 +59,26 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         return configurationRepository.findAll(clientId);
     }
 
-    @Cacheable(key = "#clientId.#name")
+    @Cacheable(key = "clientId.concat('.'+name)")
     @Override
     public Configuration get(final String clientId, String name) {
         AssertUtils.notBlank(clientId, "client");
         AssertUtils.notBlank(name, "name");
-        Configuration configuration = configurationRepository.findByName(clientId, name);
+        Configuration configuration = configurationRepository.findByName(clientId, ConfigurationConverter.replaceName(name));
         AssertUtils.notFound(configuration, "Configuration", "clientId: " + clientId + ", name: " + name);
         return configuration;
     }
 
-    @CachePut(key = "#clientId.#dto.getName()")
+    @CachePut(key = "clientId.concat('.'+dto.getName())")
     @Override
     public Configuration update(final String clientId, ConfigurationDTO dto, String byUser) {
         AssertUtils.notNull(dto, "request");
         AssertUtils.notBlank(dto.getName(), "name");
-        Configuration configuration = configurationRepository.findByName(clientId, dto.getName());
+        final String nameConvert = dto.getName();
+        Configuration configuration = configurationRepository.findByName(clientId, nameConvert);
         AssertUtils.notFound(configuration, "Configuration", "clientId: " + clientId + ", name: " + dto.getName());
         configuration = ConfigurationConverter.toConfiguration(configuration, dto);
+        AssertUtils.isTrue(nameConvert.equals(configuration.getName()), "configuration.name not equal nameConvert");
         configuration.setUpdatedBy(byUser);
         return configurationRepository.save(configuration);
     }
