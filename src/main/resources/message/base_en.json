@@ -5,5 +5,6 @@
   "error.not_correct": "Condition is not correct",
   "error.by_user": "Invalid user",
   "error.invalid_client": "Invalid client",
+  "error.not_found": "Not found data %s. %s",
   "jpa.error.converter": "Convert data JPA, from %s to %s failed"
 }

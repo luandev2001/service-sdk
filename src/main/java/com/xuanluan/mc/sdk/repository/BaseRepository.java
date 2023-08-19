@@ -1,0 +1,188 @@
+package com.xuanluan.mc.sdk.repository;
+
+import com.xuanluan.mc.sdk.domain.model.filter.BaseFilter;
+import com.xuanluan.mc.sdk.domain.model.filter.ResultList;
+import com.xuanluan.mc.sdk.utils.BaseStringUtils;
+import com.xuanluan.mc.sdk.utils.DateUtils;
+import com.xuanluan.mc.sdk.utils.ExceptionUtils;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.query.QueryUtils;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
+import javax.persistence.*;
+import javax.persistence.criteria.*;
+import java.util.*;
+
+/**
+ * @author Xuan Luan
+ * @createdAt 9/13/2022
+ */
+public abstract class BaseRepository<T> {
+    @PersistenceContext(type = PersistenceContextType.EXTENDED)
+    protected final EntityManager entityManager;
+    protected final Class<T> tClass;
+    protected CriteriaBuilder builder;
+    protected CriteriaQuery<T> query;
+    protected Root<T> root;
+
+    protected BaseRepository(EntityManager entityManager, Class<T> tClass) {
+        this.tClass = tClass;
+        this.entityManager = entityManager;
+    }
+
+    protected void refresh() {
+        this.builder = entityManager.getCriteriaBuilder();
+        this.query = this.builder.createQuery(this.tClass);
+        this.root = this.query.from(this.tClass);
+        root.alias(tClass.getSimpleName());
+    }
+
+    private boolean checkInstanceofField(String nameField, Object valueField) {
+        boolean flag = false;
+        if (BaseStringUtils.hasTextAfterTrim(nameField)) {
+            if (valueField instanceof String) {
+                if (!BaseStringUtils.hasTextAfterTrim((String) valueField) || valueField.equals("null")) {
+                    return false;
+                }
+            } else if (!(valueField instanceof Long) && !(valueField instanceof Double) && !(valueField instanceof Integer) && !(valueField instanceof Boolean)) {
+                return false;
+            }
+            flag = true;
+        }
+        return flag;
+    }
+
+    protected Predicate filterEqualAnyField(String nameField, Object valueField) {
+        return this.checkInstanceofField(nameField, valueField) ? this.builder.equal(this.root.get(nameField), valueField) : null;
+    }
+
+    protected Predicate filterNotEqualAnyField(String nameField, Object valueField) {
+        return this.checkInstanceofField(nameField, valueField) ? this.builder.notEqual(this.root.get(nameField), valueField) : null;
+    }
+
+    protected Predicate filterLikeAnyField(String nameField, String searchKey) {
+        return BaseStringUtils.hasTextAfterTrim(nameField) && BaseStringUtils.hasTextAfterTrim(searchKey) ? this.builder.like(this.root.get(nameField), "%" + searchKey + "%") : null;
+    }
+
+    protected List<Predicate> getFilters(String clientId) {
+        ExceptionUtils.notBlank("clientId", clientId);
+        return appendFilter("clientId", clientId, new ArrayList<>());
+    }
+
+    protected List<Predicate> getFilters(String clientId, String orgId) {
+        ExceptionUtils.notBlank("orgId", orgId);
+        return appendFilter("orgId", orgId, this.getFilters(clientId));
+    }
+
+    private List<Predicate> filterSearch(String clientId, Set<String> searchFilters, BaseFilter filter) {
+        ExceptionUtils.notNull("Filter", filter);
+        List<Predicate> filters = new ArrayList<>();
+        if (clientId != null && !"all".equals(clientId)) {
+            appendFilter("clientId", clientId, filters);
+            filters.add(this.filterNotEqualAnyField("clientId", "all"));
+        }
+        appendFilter("id", filter.getId(), filters);
+        appendFilter("isActive", filter.getIsActive(), filters);
+        if (null != filter.getCreatedAtFrom()) {
+            filters.add(this.builder.greaterThan(this.root.get("createdAt"), DateUtils.getStartDay(filter.getCreatedAtFrom())));
+        }
+        if (null != filter.getCreatedAtTo()) {
+            filters.add(this.builder.lessThan(this.root.get("createdAt"), DateUtils.getEndDay(filter.getCreatedAtTo())));
+        }
+
+        if (BaseStringUtils.hasTextAfterTrim(filter.getSearch()) && searchFilters != null) {
+            Predicate predicate = null;
+            for (String key : searchFilters) {
+                predicate = predicate != null ? builder.or(predicate, this.filterLikeAnyField(key, filter.getSearch())) : this.filterLikeAnyField(key, filter.getSearch());
+            }
+            if (predicate != null) filters.add(predicate);
+        }
+
+        return filters;
+    }
+
+    protected List<Predicate> getFilterSearch(String clientId, Set<String> searchFilters, BaseFilter filter) {
+        return this.filterSearch(clientId, searchFilters, filter);
+    }
+
+    protected List<Predicate> getFilterSearch(String clientId, String orgId, Set<String> searchFilters, BaseFilter filter) {
+        List<Predicate> filters = this.getFilterSearch(clientId, searchFilters, filter);
+        if (!"all".equals(orgId)) {
+            appendFilter("orgId", orgId, filters);
+            filters.add(this.filterNotEqualAnyField("orgId", "all"));
+        }
+        return filters;
+    }
+
+    protected List<Predicate> appendFilter(String nameField, Object valueField, List<Predicate> predicates) {
+        Predicate predicate = this.filterEqualAnyField(nameField, valueField);
+        if (predicate != null) predicates.add(predicate);
+        return predicates;
+    }
+
+    protected List<Predicate> appendFilter(Object value, Predicate predicate, List<Predicate> predicates) {
+        return appendFilter(List.of(value), predicate, predicates);
+    }
+
+    protected List<Predicate> appendFilter(Collection<Object> values, Predicate predicate, List<Predicate> predicates) {
+        Assert.notNull(predicate, "predicate must be not null");
+        if (values != null && values.isEmpty()) predicates.add(predicate);
+        return predicates;
+    }
+
+    protected ResultList<T> getResultList(List<Predicate> filters, int index, int maxResult) {
+        long totalRecord = getCount(filters);
+        ResultList<T> resultList = new ResultList<>();
+        resultList.setMaxResult(maxResult);
+        resultList.setTotal(totalRecord);
+        resultList.setIndex(index);
+        if (totalRecord > 0L) {
+            int offset = index * maxResult;
+            List<T> elements = this.getListResult(filters, maxResult, offset, Sort.by(Sort.Direction.DESC, "updatedAt", "createdAt"));
+            resultList.setResultList(elements);
+        }
+        return resultList;
+    }
+
+    private long getCount(List<Predicate> filters) {
+        CriteriaQuery<Long> queryL = builder.createQuery(Long.class);
+        Root<T> rootL = queryL.from(query.getResultType());
+        rootL.alias(root.getAlias());
+        queryL.select(builder.count(rootL)).where(filters.toArray(new Predicate[]{}));
+        try {
+            return entityManager.createQuery(queryL).getSingleResult();
+        } catch (NoResultException e) {
+            return 0;
+        }
+    }
+
+    protected T getSingleResult(List<Predicate> filters) {
+        List<T> elementList = this.getListResult(filters, 1, 0, null);
+        return CollectionUtils.isEmpty(elementList) ? null : elementList.get(0);
+    }
+
+    protected T getSingleResult(List<Predicate> filters, Sort sort) {
+        List<T> elementList = this.getListResult(filters, 1, 0, sort);
+        return CollectionUtils.isEmpty(elementList) ? null : elementList.get(0);
+    }
+
+    protected List<T> getListResult(List<Predicate> filters) {
+        return this.getListResult(filters, 0, 0, null);
+    }
+
+    protected List<T> getListResult(List<Predicate> filters, int maxResult, int offset, Sort sort) {
+        this.query.where(filters.toArray(new Predicate[0]));
+        if (sort != null) {
+            this.query.orderBy(QueryUtils.toOrders(sort, this.root, this.builder));
+        }
+        return this.getListResult(this.query, maxResult, offset);
+    }
+
+    private List<T> getListResult(CriteriaQuery<T> criteriaQuery, int maxResult, int offset) {
+        TypedQuery<T> typedQuery = this.entityManager.createQuery(criteriaQuery);
+        if (maxResult > 0) typedQuery.setMaxResults(maxResult);
+        if (offset > 0) typedQuery.setFirstResult(offset);
+        return typedQuery.getResultList();
+    }
+}
