@@ -16,24 +16,21 @@ public class MessageUtils {
 
     protected void put(String key, Message data) {
         Assert.notNull(data, "data must be not null");
-        Message message = get(key);
-        if (!BaseStringUtils.hasTextAfterTrim(message.vn)) {
-            put(key, data.vn, MessageType.VIET_NAM);
-        }
-        if (!BaseStringUtils.hasTextAfterTrim(message.en)) {
-            put(key, data.en, MessageType.ENGLISH);
-        }
+        put(key, data.vn, MessageType.VIET_NAM);
+        put(key, data.en, MessageType.ENGLISH);
     }
 
     protected void put(String key, String message, MessageType type) {
         if (BaseStringUtils.hasTextAfterTrim(message)) {
+            key = key.toLowerCase();
             getType(type).putIfAbsent(key, message);
+            keys.add(key);
         }
-        keys.add(key);
     }
 
     public static Message get(String key) {
         Assert.isTrue(BaseStringUtils.hasTextAfterTrim(key), "key must not be blank");
+        key = key.toLowerCase();
         return Message.builder().
                 vn(get(key, MessageType.VIET_NAM))
                 .en(get(key, MessageType.ENGLISH))

@@ -1,5 +1,7 @@
 {
   "name": "Tên",
+  "value": "Giá trị",
+  "status": "Trạng thái",
   "client": "Dịch vụ",
   "organization": "Tổ chức",
   "type": "Loại",
@@ -13,5 +15,7 @@
   "error.not_found": "Không tìm thấy dữ liệu %s. %s",
   "error.create_failed": "Tạo %s không thành công",
   "error.update_failed": "Cập nhật %s không thành công",
+  "error.not_modify": "Không cho phép sửa dữ liệu của %",
+  "error.unauthorized": "Không có quyền truy cập",
   "jpa.error.converter_from_string": "Đổi dữ liệu JPA, từ %s đến %s thất bại"
 }

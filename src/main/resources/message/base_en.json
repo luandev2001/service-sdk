@@ -8,5 +8,7 @@
   "error.not_found": "Not found data %s. %s",
   "error.create_failed": "%s creation failed",
   "error.update_failed": "%s update failed",
+  "error.not_modify":"Not allowed to modify the value of %",
+  "error.unauthorized": "Not have access",
   "jpa.error.converter": "Convert data JPA, from %s to %s failed"
 }
