@@ -1,6 +1,7 @@
 package com.xuanluan.mc.sdk.controller;
 
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
+import com.xuanluan.mc.sdk.exception.MessageException;
 import com.xuanluan.mc.sdk.utils.MessageUtils;
 import org.springframework.http.HttpStatus;
 
@@ -27,7 +28,8 @@ public class BaseController {
 
     private <T> WrapperResponse<T> responseMethod(T data, String messageKey, String arg) {
         MessageUtils.Message message = MessageUtils.get(messageKey);
-        return response(data, String.format(message.getVn(), arg), String.format(message.getEn(), arg));
+        MessageException.MessageObject messageObject = MessageException.convert(arg);
+        return response(data, String.format(message.getVn(), messageObject.getVns()), String.format(message.getEn(), messageObject.getEns()));
     }
 
     protected <T> WrapperResponse<T> response(T data, String messageVN, String messageEN) {

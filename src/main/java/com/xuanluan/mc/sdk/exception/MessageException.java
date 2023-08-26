@@ -27,7 +27,7 @@ public class MessageException extends RuntimeException {
         return assign(key, HttpStatus.INTERNAL_SERVER_ERROR, args);
     }
 
-    private static MessageObject convert(Object... args) {
+    public static MessageObject convert(Object... args) {
         Object[] vns = null;
         Object[] ens = null;
         if (args != null && args.length > 0) {
@@ -51,7 +51,8 @@ public class MessageException extends RuntimeException {
         return messageObject;
     }
 
-    private static class MessageObject {
+    @Getter
+    public static class MessageObject {
         Object[] vns;
         Object[] ens;
     }
