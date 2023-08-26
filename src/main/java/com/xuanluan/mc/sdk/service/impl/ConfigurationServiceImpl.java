@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class ConfigurationServiceImpl implements IConfigurationService {
     private final ConfigurationRepository configurationRepository;
 
-    @CachePut(key = "#clientId.concat('.'+#dto.name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"-\").toLowerCase())")
+    @CachePut(key = "#clientId.concat('.'+#dto.name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"-\").toLowerCase()).concat('.'+#dto.type)")
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Configuration create(String clientId, ConfigurationDTO dto, String byUser) {
@@ -38,7 +38,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         List<Configuration> configurations = dtos.stream()
                 .map(dto -> {
                     final String nameConvert = ConfigurationConverter.replaceName(dto.getName());
-                    Configuration configuration = configurationRepository.findByName(clientId, nameConvert);
+                    Configuration configuration = configurationRepository.findByName(clientId, nameConvert, dto.getType());
                     if (configuration == null) {
                         configuration = ConfigurationConverter.toConfiguration(new Configuration(), dto);
                         configuration.setClientId(clientId);
@@ -57,26 +57,35 @@ public class ConfigurationServiceImpl implements IConfigurationService {
     @Cacheable
     @Override
     public List<Configuration> getList(String clientId) {
+        AssertUtils.notBlank(clientId, "client");
         return configurationRepository.findAll(clientId);
+    }
+
+    @Cacheable(key = "#clientId.concat('.type_'+#type)")
+    @Override
+    public List<Configuration> getList(String clientId, String type) {
+        return configurationRepository.findAll(clientId, type);
     }
 
     @Cacheable(key = "#clientId.concat('.'+#name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"-\").toLowerCase())")
     @Override
-    public Configuration get(final String clientId, String name) {
+    public Configuration get(final String clientId, String name, String type) {
         AssertUtils.notBlank(clientId, "client");
         AssertUtils.notBlank(name, "name");
-        Configuration configuration = configurationRepository.findByName(clientId, ConfigurationConverter.replaceName(name));
+        AssertUtils.notBlank(type, "type");
+        Configuration configuration = configurationRepository.findByName(clientId, ConfigurationConverter.replaceName(name), type);
         AssertUtils.notFound(configuration, "Configuration", "clientId: " + clientId + ", name: " + name);
         return configuration;
     }
 
-    @CachePut(key = "#clientId.concat('.'+#dto.name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"-\").toLowerCase())")
+    @CachePut(key = "#clientId.concat('.'+#dto.name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"-\").toLowerCase()).concat('.'+#dto.type)")
     @Override
     public Configuration update(final String clientId, ConfigurationDTO dto, String byUser) {
         AssertUtils.notNull(dto, "request");
         AssertUtils.notBlank(dto.getName(), "name");
+        AssertUtils.notBlank(dto.getType(), "type");
         final String nameConvert = ConfigurationConverter.replaceName(dto.getName());
-        Configuration configuration = configurationRepository.findByName(clientId, nameConvert);
+        Configuration configuration = configurationRepository.findByName(clientId, nameConvert, dto.getType());
         AssertUtils.notFound(configuration, "Configuration", "clientId: " + clientId + ", name: " + dto.getName());
         configuration = ConfigurationConverter.toConfiguration(configuration, dto);
         AssertUtils.isTrue(nameConvert.equals(configuration.getName()), "configuration.name not equal nameConvert");

@@ -15,8 +15,8 @@ public class Configuration extends BaseEntity {
     private String clientId;
     @Convert(converter = MapJpaConverter.class)
     private Map<String, Object> value;
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, length = 50)
     private String name;
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, length = 25)
     private String type;
 }

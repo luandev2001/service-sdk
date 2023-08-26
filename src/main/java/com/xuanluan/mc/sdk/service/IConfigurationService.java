@@ -12,7 +12,9 @@ public interface IConfigurationService {
 
     List<Configuration> getList(String clientId);
 
-    Configuration get(String clientId, String name);
+    List<Configuration> getList(String clientId, String type);
+
+    Configuration get(String clientId, String name, String type);
 
     Configuration update(String clientId, ConfigurationDTO dto, String byUser);
 }

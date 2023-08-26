@@ -23,9 +23,15 @@ public class ConfigurationRepositoryCustomImpl extends BaseRepository<Configurat
     }
 
     @Override
-    public Configuration findByName(String clientId, String name) {
+    public List<Configuration> findAll(String clientId, String type) {
         refresh();
-        return getSingleResult(appendFilter("name", name, getFilters(clientId)));
+        return getListResult(appendFilter("type", type, getFilters(clientId)));
+    }
+
+    @Override
+    public Configuration findByName(String clientId, String name, String type) {
+        refresh();
+        return getSingleResult(appendFilter("type", type, appendFilter("name", name, getFilters(clientId))));
     }
 
     @Override

@@ -9,7 +9,9 @@ import java.util.List;
 public interface ConfigurationRepositoryCustom {
     List<Configuration> findAll(String clientId);
 
-    Configuration findByName(String clientId, String name);
+    List<Configuration> findAll(String clientId, String type);
+
+    Configuration findByName(String clientId, String name, String type);
 
     ResultList<Configuration> search(String clientId, ConfigurationFilter filter);
 }
