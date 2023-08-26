@@ -1,7 +1,10 @@
 {
   "name": "Tên",
   "value": "Giá trị",
+  "description": "Mô tả",
   "status": "Trạng thái",
+  "phone": "Số điện thoại",
+  "file": "Tập tin",
   "client": "Dịch vụ",
   "organization": "Tổ chức",
   "type": "Loại",
@@ -17,5 +20,9 @@
   "error.update_failed": "Cập nhật %s không thành công",
   "error.not_modify": "Không cho phép sửa dữ liệu của %",
   "error.unauthorized": "Không có quyền truy cập",
-  "jpa.error.converter_from_string": "Đổi dữ liệu JPA, từ %s đến %s thất bại"
+  "jpa.error.converter_from_string": "Đổi dữ liệu JPA, từ %s đến %s thất bại",
+  "rest.create": "Tạo %s thành công",
+  "rest.update": "Cập nhật %s thành công",
+  "rest.delete": "Xóa %s thành công",
+  "rest.get": "Hiển thị %s thành công"
 }
