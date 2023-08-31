@@ -2,6 +2,7 @@ package com.xuanluan.mc.sdk.repository;
 
 import com.xuanluan.mc.sdk.domain.model.filter.BaseFilter;
 import com.xuanluan.mc.sdk.domain.model.filter.ResultList;
+import com.xuanluan.mc.sdk.utils.AssertUtils;
 import com.xuanluan.mc.sdk.utils.BaseStringUtils;
 import com.xuanluan.mc.sdk.utils.DateUtils;
 import com.xuanluan.mc.sdk.utils.ExceptionUtils;
@@ -66,7 +67,7 @@ public abstract class BaseRepository<T> {
     }
 
     protected List<Predicate> getFilters(String clientId) {
-        ExceptionUtils.notBlank("clientId", clientId);
+        AssertUtils.notBlank(clientId, "clientId");
         return appendFilter("clientId", clientId, new ArrayList<>());
     }
 
@@ -78,10 +79,7 @@ public abstract class BaseRepository<T> {
     private List<Predicate> filterSearch(String clientId, Set<String> searchFilters, BaseFilter filter) {
         ExceptionUtils.notNull("Filter", filter);
         List<Predicate> filters = new ArrayList<>();
-        if (clientId != null && !"all".equals(clientId)) {
-            appendFilter("clientId", clientId, filters);
-            filters.add(this.filterNotEqualAnyField("clientId", "all"));
-        }
+        appendFilter("clientId", clientId, filters);
         appendFilter("id", filter.getId(), filters);
         appendFilter("isActive", filter.getIsActive(), filters);
         if (null != filter.getCreatedAtFrom()) {
@@ -98,7 +96,6 @@ public abstract class BaseRepository<T> {
             }
             if (predicate != null) filters.add(predicate);
         }
-
         return filters;
     }
 

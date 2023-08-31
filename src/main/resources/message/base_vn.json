@@ -8,6 +8,7 @@
   "client": "Dịch vụ",
   "organization": "Tổ chức",
   "type": "Loại",
+  "language": "Ngôn ngữ",
   "request": "Dữ liệu yêu cầu",
   "error.not_null": "%s không được trống",
   "error.not_empty": "%s không được rỗng",

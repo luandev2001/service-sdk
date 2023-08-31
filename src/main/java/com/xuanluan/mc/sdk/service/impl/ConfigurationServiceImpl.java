@@ -67,7 +67,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         return configurationRepository.findAll(clientId, type);
     }
 
-    @Cacheable(key = "#clientId.concat('.'+#name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"-\").toLowerCase())")
+    @Cacheable(key = "#clientId.concat('.'+#name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"-\").toLowerCase()).concat('.'+#type)")
     @Override
     public Configuration get(final String clientId, String name, String type) {
         AssertUtils.notBlank(clientId, "client");
