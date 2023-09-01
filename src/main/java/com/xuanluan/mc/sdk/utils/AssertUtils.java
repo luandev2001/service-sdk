@@ -6,8 +6,12 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
+import java.util.Objects;
 
-public class AssertUtils {
+public final class AssertUtils {
+    private AssertUtils() {
+        throw new AssertionError("No java.util.Objects instances for you!");
+    }
 
     public static void isTrue(boolean expression, String key, HttpStatus status, Object... args) {
         if (!expression) {
@@ -17,6 +21,14 @@ public class AssertUtils {
 
     public static void isTrue(boolean expression, String key, Object... args) {
         isTrue(expression, key, HttpStatus.BAD_REQUEST, args);
+    }
+
+    public static void notMatch(@Nullable Object value1, @Nullable Object value2, String arg) {
+        isTrue(Objects.equals(value1, value2), "error.not_match", arg);
+    }
+
+    public static void alreadyExist(@Nullable Object value, String arg) {
+        isTrue(value == null, "error.already_exist", HttpStatus.CONFLICT, arg);
     }
 
     public static void isTrue(boolean expression, String arg) {
@@ -33,7 +45,7 @@ public class AssertUtils {
         notNull(value, key, HttpStatus.BAD_REQUEST, args);
     }
 
-    public static void notNull(Object value, String arg) {
+    public static void notNull(@Nullable Object value, String arg) {
         notNull(value, "error.not_null", arg);
     }
 

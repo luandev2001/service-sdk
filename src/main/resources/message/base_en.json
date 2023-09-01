@@ -1,4 +1,9 @@
 {
+  "rest.create": "%s created successfully",
+  "rest.update": "%s updated successfully",
+  "rest.delete": "%s deleted successfully",
+  "rest.get": "%s displayed successfully",
+  "jpa.error.converter": "Convert data JPA, from %s to %s failed",
   "error.not_null": "%s must be not null",
   "error.not_empty": "%s must be not empty",
   "error.not_blank": "%s must be not blank",
@@ -9,10 +14,8 @@
   "error.create_failed": "%s creation failed",
   "error.update_failed": "%s update failed",
   "error.not_modify": "Not allowed to modify the value of %",
+  "error.not_match": "%s not match",
   "error.unauthorized": "Not have access",
-  "jpa.error.converter": "Convert data JPA, from %s to %s failed",
-  "rest.create": "%s created successfully",
-  "rest.update": "%s updated successfully",
-  "rest.delete": "%s deleted successfully",
-  "rest.get": "%s displayed successfully"
+  "error.inactive": "%s is inactive",
+  "error.already_exist": "%s already exist"
 }
