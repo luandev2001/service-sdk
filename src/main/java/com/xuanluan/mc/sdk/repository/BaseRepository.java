@@ -105,10 +105,7 @@ public abstract class BaseRepository<T> {
 
     protected List<Predicate> getFilterSearch(String clientId, String orgId, Set<String> searchFilters, BaseFilter filter) {
         List<Predicate> filters = this.getFilterSearch(clientId, searchFilters, filter);
-        if (!"all".equals(orgId)) {
-            appendFilter("orgId", orgId, filters);
-            filters.add(this.filterNotEqualAnyField("orgId", "all"));
-        }
+        appendFilter("orgId", orgId, filters);
         return filters;
     }
 

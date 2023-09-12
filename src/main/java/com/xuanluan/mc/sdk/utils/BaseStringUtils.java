@@ -25,8 +25,8 @@ public class BaseStringUtils {
 
     /**
      * prefix= "string" is char from a to z (aaa -> aaz)
-     * suffix= "number" from 1 to 9999
-     * item= string+"."+number
+     * suffix= "number" from 1 to 99999999
+     * item= <string>.<number>
      */
     public static String generateAlphabetDotNoCode(String oldValue) {
         char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();

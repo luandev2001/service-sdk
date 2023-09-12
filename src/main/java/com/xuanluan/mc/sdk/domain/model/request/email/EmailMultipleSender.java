@@ -1,9 +1,7 @@
 package com.xuanluan.mc.sdk.domain.model.request.email;
 
 import com.xuanluan.mc.sdk.domain.validation.email.EmailCollection;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -15,6 +13,8 @@ import java.util.Set;
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class EmailMultipleSender {
     @NotEmpty(message = "Danh sách email người nhận không được để trống")

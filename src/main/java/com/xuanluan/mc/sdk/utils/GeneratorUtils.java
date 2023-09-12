@@ -11,9 +11,23 @@ import java.util.Random;
 public class GeneratorUtils {
 
     public static String getRandomCode4Digits() {
-//        [0,9999], format int -> string
-        return String.format("%4d", new Random().nextInt(9000) + 1000);
+        return generateCodeDigits(4);
+    }
 
+    public static String generateCodeDigits(int length) {
+        AssertUtils.isTrue(length > 0 && length < 10, "0 < length < 10");
+        char[] oneDigits = new char[length];
+        char[] nineDigits = new char[length];
+        oneDigits[0] = '1';
+        nineDigits[0] = '9';
+        for (int i = 1; i < length; i++) {
+            oneDigits[i] = '0';
+            nineDigits[i] = '0';
+        }
+        //      format int -> string
+        int min = Integer.parseInt(new String(oneDigits));
+        int max = Integer.parseInt(new String(nineDigits));
+        return "" + (new Random().nextInt(max) + min);
     }
 
     public static String generateRegexRandom() {

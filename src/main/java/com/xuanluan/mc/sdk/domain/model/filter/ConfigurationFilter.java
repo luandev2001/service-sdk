@@ -10,6 +10,5 @@ import java.util.Collection;
 @Setter
 @Builder
 public class ConfigurationFilter extends BaseFilter {
-    private Collection<String> orgIds;
     private Collection<String> types;
 }

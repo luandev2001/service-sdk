@@ -27,10 +27,6 @@ public final class AssertUtils {
         isTrue(Objects.equals(value1, value2), "error.not_match", arg);
     }
 
-    public static void alreadyExist(@Nullable Object value, String arg) {
-        isTrue(value == null, "error.already_exist", HttpStatus.CONFLICT, arg);
-    }
-
     public static void isTrue(boolean expression, String arg) {
         isTrue(expression, "error.not_correct", HttpStatus.BAD_REQUEST, arg);
     }
