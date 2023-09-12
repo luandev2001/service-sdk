@@ -38,7 +38,7 @@ public class ConfigurationRepositoryCustomImpl extends BaseRepository<Configurat
     public ResultList<Configuration> search(String clientId, ConfigurationFilter filter) {
         refresh();
         List<Predicate> predicates = getFilterSearch(clientId, Set.of("name"), filter);
-        appendFilter(filter.getTypes(), root.get("type").in(filter.getTypes()), predicates);
+        appendFilter(root.get("type").in(filter.getTypes()), filter.getTypes(), predicates);
         return getResultList(predicates, filter.getIndex(), filter.getMaxResult());
     }
 }

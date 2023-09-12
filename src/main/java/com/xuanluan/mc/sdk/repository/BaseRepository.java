@@ -67,18 +67,18 @@ public abstract class BaseRepository<T> {
     }
 
     protected List<Predicate> getFilters(String clientId) {
-        AssertUtils.notBlank(clientId, "clientId");
-        return appendFilter("clientId", clientId, new ArrayList<>());
+        AssertUtils.notBlank(clientId, "client");
+        return appendFilter("clientId", clientId, new LinkedList<>());
     }
 
     protected List<Predicate> getFilters(String clientId, String orgId) {
-        ExceptionUtils.notBlank("orgId", orgId);
+        AssertUtils.notBlank(orgId, "organization");
         return appendFilter("orgId", orgId, this.getFilters(clientId));
     }
 
     private List<Predicate> filterSearch(String clientId, Set<String> searchFilters, BaseFilter filter) {
-        ExceptionUtils.notNull("Filter", filter);
-        List<Predicate> filters = new ArrayList<>();
+        AssertUtils.notNull(filter, "filter");
+        List<Predicate> filters = new LinkedList<>();
         appendFilter("clientId", clientId, filters);
         appendFilter("id", filter.getId(), filters);
         appendFilter("isActive", filter.getIsActive(), filters);
@@ -115,13 +115,13 @@ public abstract class BaseRepository<T> {
         return predicates;
     }
 
-    protected List<Predicate> appendFilter(Object value, Predicate predicate, List<Predicate> predicates) {
-        return appendFilter(List.of(value), predicate, predicates);
+    protected List<Predicate> appendFilter(Predicate predicate, Object value, List<Predicate> predicates) {
+        return appendFilter(predicate, List.of(value), predicates);
     }
 
-    protected List<Predicate> appendFilter(Collection<Object> values, Predicate predicate, List<Predicate> predicates) {
+    protected List<Predicate> appendFilter(Predicate predicate, Collection<Object> values, List<Predicate> predicates) {
         Assert.notNull(predicate, "predicate must be not null");
-        if (values != null && values.isEmpty()) predicates.add(predicate);
+        if (values != null && !values.isEmpty()) predicates.add(predicate);
         return predicates;
     }
 
