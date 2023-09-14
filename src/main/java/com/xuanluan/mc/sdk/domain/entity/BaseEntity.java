@@ -5,6 +5,7 @@ import com.xuanluan.mc.sdk.utils.BaseStringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.util.Date;
@@ -15,11 +16,13 @@ import java.util.Date;
 public class BaseEntity {
     @Id
     private String id;
-    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+    @Column(nullable = false, updatable = false)
     private String createdBy;
-    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private String updatedBy;
+    @Column(nullable = false, updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date updatedAt;
     private boolean isActive;
 

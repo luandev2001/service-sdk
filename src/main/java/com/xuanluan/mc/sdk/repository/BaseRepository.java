@@ -5,7 +5,6 @@ import com.xuanluan.mc.sdk.domain.model.filter.ResultList;
 import com.xuanluan.mc.sdk.utils.AssertUtils;
 import com.xuanluan.mc.sdk.utils.BaseStringUtils;
 import com.xuanluan.mc.sdk.utils.DateUtils;
-import com.xuanluan.mc.sdk.utils.ExceptionUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.util.Assert;
@@ -78,25 +77,22 @@ public abstract class BaseRepository<T> {
 
     private List<Predicate> filterSearch(String clientId, Set<String> searchFilters, BaseFilter filter) {
         AssertUtils.notNull(filter, "filter");
-        List<Predicate> filters = new LinkedList<>();
-        appendFilter("clientId", clientId, filters);
-        appendFilter("id", filter.getId(), filters);
-        appendFilter("isActive", filter.getIsActive(), filters);
-        if (null != filter.getCreatedAtFrom()) {
-            filters.add(this.builder.greaterThan(this.root.get("createdAt"), DateUtils.getStartDay(filter.getCreatedAtFrom())));
-        }
-        if (null != filter.getCreatedAtTo()) {
-            filters.add(this.builder.lessThan(this.root.get("createdAt"), DateUtils.getEndDay(filter.getCreatedAtTo())));
-        }
-
+        List<Predicate> predicates = new LinkedList<>();
+        appendFilter("clientId", clientId, predicates);
+        appendFilter(root.get("id").in(filter.getIds()), filter.getIds(), predicates);
+        appendFilter("isActive", filter.getIsActive(), predicates);
+        appendFilter(builder.greaterThanOrEqualTo(root.get("createdAt"), filter.getCreatedAtFrom()), filter.getCreatedAtFrom(), predicates);
+        appendFilter(builder.lessThanOrEqualTo(root.get("createdAt"), filter.getCreatedAtTo()), filter.getCreatedAtTo(), predicates);
+        //find record of userId
+        appendFilter(builder.or(filterEqualAnyField("createdBy", filter.getUserId()), filterEqualAnyField("updatedBy", filter.getUserId())), filter.getUserId(), predicates);
         if (BaseStringUtils.hasTextAfterTrim(filter.getSearch()) && searchFilters != null) {
             Predicate predicate = null;
             for (String key : searchFilters) {
                 predicate = predicate != null ? builder.or(predicate, this.filterLikeAnyField(key, filter.getSearch())) : this.filterLikeAnyField(key, filter.getSearch());
             }
-            if (predicate != null) filters.add(predicate);
+            if (predicate != null) predicates.add(predicate);
         }
-        return filters;
+        return predicates;
     }
 
     protected List<Predicate> getFilterSearch(String clientId, Set<String> searchFilters, BaseFilter filter) {

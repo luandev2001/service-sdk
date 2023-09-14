@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,9 +16,10 @@ public class BaseFilter {
     private Date createdAtTo;
     private int maxResult;
     private int index;
-    private String id;
+    private Set<String> ids;
     private String search;
     private Boolean isActive;
+    private String userId;
 
     public int getMaxResult() {
         if (this.maxResult <= 0) this.maxResult = 20;
