@@ -19,7 +19,7 @@ public class BaseFilter {
     private Set<String> ids;
     private String search;
     private Boolean isActive;
-    private String userId;
+    private Set<String> userIds;
 
     public int getMaxResult() {
         if (this.maxResult <= 0) this.maxResult = 20;

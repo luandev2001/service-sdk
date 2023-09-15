@@ -4,7 +4,6 @@ import com.xuanluan.mc.sdk.domain.model.filter.BaseFilter;
 import com.xuanluan.mc.sdk.domain.model.filter.ResultList;
 import com.xuanluan.mc.sdk.utils.AssertUtils;
 import com.xuanluan.mc.sdk.utils.BaseStringUtils;
-import com.xuanluan.mc.sdk.utils.DateUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.util.Assert;
@@ -84,7 +83,7 @@ public abstract class BaseRepository<T> {
         appendFilter(builder.greaterThanOrEqualTo(root.get("createdAt"), filter.getCreatedAtFrom()), filter.getCreatedAtFrom(), predicates);
         appendFilter(builder.lessThanOrEqualTo(root.get("createdAt"), filter.getCreatedAtTo()), filter.getCreatedAtTo(), predicates);
         //find record of userId
-        appendFilter(builder.or(filterEqualAnyField("createdBy", filter.getUserId()), filterEqualAnyField("updatedBy", filter.getUserId())), filter.getUserId(), predicates);
+        appendFilter(builder.or(root.get("createdBy").in(filter.getUserIds()), root.get("updatedBy").in(filter.getUserIds())), filter.getUserIds(), predicates);
         if (BaseStringUtils.hasTextAfterTrim(filter.getSearch()) && searchFilters != null) {
             Predicate predicate = null;
             for (String key : searchFilters) {
