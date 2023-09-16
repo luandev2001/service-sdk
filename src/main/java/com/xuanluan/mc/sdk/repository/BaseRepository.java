@@ -131,6 +131,7 @@ public abstract class BaseRepository<T> {
             List<T> elements = this.getListResult(filters, maxResult, offset, Sort.by(Sort.Direction.DESC, "updatedAt", "createdAt"));
             resultList.setResultList(elements);
         }
+        resultList.setResultList(resultList.getResultList() != null ? resultList.getResultList() : new ArrayList<>());
         return resultList;
     }
 
