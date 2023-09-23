@@ -16,7 +16,7 @@ import java.util.Date;
 public class BaseEntity {
     @Id
     private String id;
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     private String createdBy;
     private String updatedBy;
     @Column(nullable = false, updatable = false)

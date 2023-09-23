@@ -16,4 +16,5 @@ public class FileEntityRequest<T extends BaseEntity> {
     private String entityId;
     private Class<T> entityClass;
     private FileRequest file;
+    private String byUser;
 }
