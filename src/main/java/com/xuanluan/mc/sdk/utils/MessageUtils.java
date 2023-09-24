@@ -29,7 +29,7 @@ public class MessageUtils {
     }
 
     public static Message get(String key) {
-        Assert.isTrue(BaseStringUtils.hasTextAfterTrim(key), "key must not be blank");
+        Assert.notNull(key, "key must not be null");
         key = key.toLowerCase();
         return Message.builder().
                 vn(get(key, MessageType.VIET_NAM))

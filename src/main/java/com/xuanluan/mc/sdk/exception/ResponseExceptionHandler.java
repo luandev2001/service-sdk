@@ -55,6 +55,7 @@ public class ResponseExceptionHandler {
         });
         return WrapperResponse.builder()
                 .status(HttpStatus.BAD_REQUEST)
+                .message_vn("Dữ liệu nhập vào không hợp lệ")
                 .message("Invalid input data!")
                 .data(errorDetail)
                 .build();
@@ -66,7 +67,7 @@ public class ResponseExceptionHandler {
         logger.error(e.getMessage(), e);
         return WrapperResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .data("Đã xảy ra lỗi: " + e.getMessage())
+                .message_vn("Đã xảy ra lỗi: " + e.getMessage())
                 .message(e.getMessage())
                 .build();
     }
