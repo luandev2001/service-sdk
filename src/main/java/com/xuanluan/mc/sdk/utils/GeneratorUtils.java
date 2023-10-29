@@ -40,7 +40,7 @@ public class GeneratorUtils {
     }
 
     public static String generateUsernameFromEmail(String email) {
-        ExceptionUtils.notBlank("email", email);
+        AssertUtils.notBlank(email, "email");
         String splitEmail = email.split("@gmail")[0];
         return splitEmail.replaceAll("[^0-9a-zA-Z]", "");
     }

@@ -8,7 +8,7 @@ import java.util.HashMap;
  */
 public class MapUtils {
     public static <T> HashMap<String, T> append(String key, T value, HashMap<String, T> oldMap) {
-        ExceptionUtils.notBlank("Key", key);
+        AssertUtils.notBlank(key, "key");
         if (value != null) {
             oldMap.put(key, value);
         }
