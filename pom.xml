@@ -13,10 +13,7 @@
 
     <groupId>com.xuanluan.mc</groupId>
     <artifactId>service-sdk</artifactId>
-    <version>1.2.11</version>
-    <description>
-        - add config
-    </description>
+    <version>1.2.12</version>
     <packaging>jar</packaging>
 
     <properties>

@@ -41,12 +41,6 @@ public abstract class BaseRestClient {
         return headers;
     }
 
-    protected HttpHeaders getHeaders(String token) {
-        HttpHeaders headers = getHeaders();
-        headers.set("X-CSRFToken", token);
-        return headers;
-    }
-
     public static RestTemplate getRestTemplate() {
         if (restTemplate == null) {
             restTemplate = new RestTemplate();
@@ -108,8 +102,8 @@ public abstract class BaseRestClient {
         return processRestClient(path, HttpMethod.GET, entity, tClass);
     }
 
-    protected <T> T get(String path, String token, Class<T> tClass) {
-        HttpEntity<Object> entity = new HttpEntity<>(getHeaders(token));
+    protected <T> T get(String path, Class<T> tClass, HttpHeaders headers) {
+        HttpEntity<Object> entity = new HttpEntity<>(headers);
         return processRestClient(path, HttpMethod.GET, entity, tClass);
     }
 
@@ -118,8 +112,8 @@ public abstract class BaseRestClient {
         return processRestClient(path, HttpMethod.POST, entity, tClass);
     }
 
-    protected <T> T post(String path, Object request, String token, Class<T> tClass) {
-        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders(token));
+    protected <T> T post(String path, Object request, Class<T> tClass, HttpHeaders headers) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, headers);
         return processRestClient(path, HttpMethod.POST, entity, tClass);
     }
 
@@ -128,8 +122,8 @@ public abstract class BaseRestClient {
         return processRestClient(path, HttpMethod.PUT, entity, tClass);
     }
 
-    protected <T> T put(String path, Object request, String token, Class<T> tClass) {
-        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders(token));
+    protected <T> T put(String path, Object request, Class<T> tClass, HttpHeaders headers) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, headers);
         return processRestClient(path, HttpMethod.PUT, entity, tClass);
     }
 
@@ -138,8 +132,8 @@ public abstract class BaseRestClient {
         return processRestClient(path, HttpMethod.DELETE, entity, tClass);
     }
 
-    protected <T> T delete(String path, Object request, String token, Class<T> tClass) {
-        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders(token));
+    protected <T> T delete(String path, Object request, Class<T> tClass, HttpHeaders headers) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, headers);
         return processRestClient(path, HttpMethod.DELETE, entity, tClass);
     }
 
@@ -149,8 +143,8 @@ public abstract class BaseRestClient {
         return processWrapperRestClient(path, HttpMethod.GET, entity, tClass);
     }
 
-    protected <T> WrapperResponse<T> getWrapper(String path, String token, Class<T> tClass) {
-        HttpEntity<Object> entity = new HttpEntity<>(getHeaders(token));
+    protected <T> WrapperResponse<T> getWrapper(String path, Class<T> tClass, HttpHeaders headers) {
+        HttpEntity<Object> entity = new HttpEntity<>(headers);
         return processWrapperRestClient(path, HttpMethod.GET, entity, tClass);
     }
 
@@ -159,8 +153,8 @@ public abstract class BaseRestClient {
         return processWrapperRestClient(path, HttpMethod.POST, entity, tClass);
     }
 
-    protected <T> WrapperResponse<T> postWrapper(String path, Object request, String token, Class<T> tClass) {
-        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders(token));
+    protected <T> WrapperResponse<T> postWrapper(String path, Object request, Class<T> tClass, HttpHeaders headers) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, headers);
         return processWrapperRestClient(path, HttpMethod.POST, entity, tClass);
     }
 
@@ -169,8 +163,8 @@ public abstract class BaseRestClient {
         return processWrapperRestClient(path, HttpMethod.PUT, entity, tClass);
     }
 
-    protected <T> WrapperResponse<T> putWrapper(String path, Object request, String token, Class<T> tClass) {
-        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders(token));
+    protected <T> WrapperResponse<T> putWrapper(String path, Object request, Class<T> tClass, HttpHeaders headers) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, headers);
         return processWrapperRestClient(path, HttpMethod.PUT, entity, tClass);
     }
 
@@ -179,8 +173,8 @@ public abstract class BaseRestClient {
         return processWrapperRestClient(path, HttpMethod.DELETE, entity, tClass);
     }
 
-    protected <T> WrapperResponse<T> deleteWrapper(String path, Object request, String token, Class<T> tClass) {
-        HttpEntity<Object> entity = new HttpEntity<>(request, getHeaders(token));
+    protected <T> WrapperResponse<T> deleteWrapper(String path, Object request, Class<T> tClass, HttpHeaders headers) {
+        HttpEntity<Object> entity = new HttpEntity<>(request, headers);
         return processWrapperRestClient(path, HttpMethod.DELETE, entity, tClass);
     }
 }
