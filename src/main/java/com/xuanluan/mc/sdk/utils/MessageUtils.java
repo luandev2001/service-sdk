@@ -31,9 +31,11 @@ public class MessageUtils {
     public static Message get(String key) {
         Assert.notNull(key, "key must not be null");
         key = key.toLowerCase();
-        return Message.builder().
-                vn(get(key, MessageType.VIET_NAM))
-                .en(get(key, MessageType.ENGLISH))
+        String vn = get(key, MessageType.VIET_NAM);
+        String en = get(key, MessageType.ENGLISH);
+        return Message.builder()
+                .vn(vn != null ? vn : key)
+                .en(en != null ? en : key)
                 .build();
     }
 

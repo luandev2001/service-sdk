@@ -34,15 +34,14 @@ public abstract class BaseRestClient {
         Assert.notNull(this.clientId, "clientId must be not null");
     }
 
-    private HttpHeaders getHeaders() {
+    protected HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("clientId", clientId);
-
         return headers;
     }
 
-    private HttpHeaders getHeaders(String token) {
+    protected HttpHeaders getHeaders(String token) {
         HttpHeaders headers = getHeaders();
         headers.set("X-CSRFToken", token);
         return headers;
