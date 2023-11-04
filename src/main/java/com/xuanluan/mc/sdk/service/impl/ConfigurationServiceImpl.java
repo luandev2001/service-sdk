@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @CacheConfig(cacheNames = {"configurations"})
@@ -54,19 +55,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         return !configurations.isEmpty() ? (List<Configuration>) configurationRepository.saveAll(configurations) : null;
     }
 
-    @Cacheable
-    @Override
-    public List<Configuration> getList(String clientId) {
-        AssertUtils.notBlank(clientId, "client");
-        return configurationRepository.findAll(clientId);
-    }
-
-    @Cacheable(key = "#clientId.concat('.type_'+#type)")
-    @Override
-    public List<Configuration> getList(String clientId, String type) {
-        return configurationRepository.findAll(clientId, type);
-    }
-
     @Cacheable(key = "#clientId.concat('.'+#name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"-\").toLowerCase()).concat('.'+#type)")
     @Override
     public Configuration get(final String clientId, String name, String type) {
@@ -78,6 +66,12 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         return configuration;
     }
 
+    @Cacheable(key = "'get_value/'+#clientId.concat('.'+#name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"-\").toLowerCase()).concat('.'+#type)")
+    @Override
+    public Map<String, Object> getValue(String clientId, String name, String type) {
+        return get(clientId, name, type).getValue();
+    }
+
     @CachePut(key = "#clientId.concat('.'+#dto.name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"-\").toLowerCase()).concat('.'+#dto.type)")
     @Override
     public Configuration update(final String clientId, ConfigurationDTO dto, String byUser) {
@@ -86,8 +80,9 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         AssertUtils.notBlank(dto.getType(), "type");
         final String nameConvert = ConfigurationConverter.replaceName(dto.getName());
         Configuration configuration = configurationRepository.findByName(clientId, nameConvert, dto.getType());
-        AssertUtils.notFound(configuration, "Configuration", "clientId: " + clientId + ", name: " + dto.getName());
-        configuration = ConfigurationConverter.toConfiguration(configuration, dto);
+        AssertUtils.notFound(configuration, "configuration", "clientId: " + clientId + ", name: " + dto.getName());
+        AssertUtils.isTrue(configuration.isEdit(), "error.not_modify", "configuration");
+        ConfigurationConverter.toConfiguration(configuration, dto);
         AssertUtils.isTrue(nameConvert.equals(configuration.getName()), "configuration.name not equal nameConvert");
         configuration.setUpdatedBy(byUser);
         return configurationRepository.save(configuration);

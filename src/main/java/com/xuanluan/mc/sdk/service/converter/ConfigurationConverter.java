@@ -7,10 +7,10 @@ import com.xuanluan.mc.sdk.utils.AssertUtils;
 public class ConfigurationConverter {
     public static Configuration toConfiguration(Configuration configuration, ConfigurationDTO dto) {
         AssertUtils.notNull(dto, "ConfigurationDTO");
-        if (configuration == null) configuration = new Configuration();
         configuration.setValue(dto.getValue());
         configuration.setType(dto.getType());
         configuration.setName(replaceName(dto.getName()));
+        configuration.setEdit(dto.isEdit());
         return configuration;
     }
 

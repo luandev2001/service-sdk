@@ -13,4 +13,5 @@ public class ConfigurationDTO {
     private String name;
     private Map<String, Object> value;
     private String type;
+    private boolean isEdit;
 }

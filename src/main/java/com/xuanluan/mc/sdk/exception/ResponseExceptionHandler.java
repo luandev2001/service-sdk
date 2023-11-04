@@ -67,8 +67,8 @@ public class ResponseExceptionHandler {
         logger.error(e.getMessage(), e);
         return WrapperResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .message_vn("Đã xảy ra lỗi: " + e.getMessage())
-                .message(e.getMessage())
+                .message_vn("Đã xảy ra lỗi hệ thống")
+                .message("Internal server error")
                 .build();
     }
 }

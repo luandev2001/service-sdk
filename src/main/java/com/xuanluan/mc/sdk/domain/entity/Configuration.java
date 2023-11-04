@@ -19,4 +19,6 @@ public class Configuration extends BaseEntity {
     private String name;
     @Column(nullable = false, updatable = false, length = 25)
     private String type;
+    @Column(updatable = false)
+    private boolean isEdit = true;
 }
