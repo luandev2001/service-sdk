@@ -3,14 +3,13 @@ package com.xuanluan.mc.sdk.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
-import com.xuanluan.mc.sdk.exception.ServiceException;
-import com.xuanluan.mc.sdk.utils.BaseStringUtils;
+import com.xuanluan.mc.sdk.exception.MessageException;
+import com.xuanluan.mc.sdk.utils.AssertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.*;
-import org.springframework.util.Assert;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -30,8 +29,8 @@ public abstract class BaseRestClient {
     protected BaseRestClient(String servicePath, String clientId) {
         this.servicePath = servicePath;
         this.clientId = clientId;
-        Assert.isTrue(BaseStringUtils.hasTextAfterTrim(this.servicePath), "servicePath must be not null");
-        Assert.notNull(this.clientId, "clientId must be not null");
+        AssertUtils.notBlank(this.servicePath, "service_path");
+        AssertUtils.notBlank(this.clientId, "client");
     }
 
     protected HttpHeaders getHeaders() {
@@ -81,10 +80,10 @@ public abstract class BaseRestClient {
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             try {
                 WrapperResponse result = getObjectMapper().readValue(e.getResponseBodyAsString(), WrapperResponse.class);
-                throw new ServiceException(result.getStatus(), result.getMessage(), result.getData());
+                throw new MessageException(result.getMessage_vn(), result.getMessage(), result.getStatus());
             } catch (JsonProcessingException jsonE) {
                 logger.error(jsonE.getMessage(), jsonE);
-                throw new ServiceException(e.getStatusCode(), jsonE.getOriginalMessage(), "Đã xảy ra lỗi :" + jsonE.getMessage());
+                throw new RuntimeException(jsonE);
             }
         }
     }

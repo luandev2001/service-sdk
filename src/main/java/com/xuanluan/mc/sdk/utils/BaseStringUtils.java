@@ -4,6 +4,7 @@ package com.xuanluan.mc.sdk.utils;
 import com.xuanluan.mc.sdk.exception.ServiceException;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -15,8 +16,12 @@ public class BaseStringUtils {
         return text != null && !text.trim().isEmpty();
     }
 
-    public static boolean checkSuffixImage(String url) {
-        return hasTextAfterTrim(url) && (url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith(".jpeg"));
+    public static boolean checkSuffixImage(String file) {
+        return checkSuffix(file, List.of("png", "jpg", "jpeg"));
+    }
+
+    public static boolean checkSuffix(String file, List<String> extensions) {
+        return hasTextAfterTrim(file) && extensions.stream().anyMatch(file::endsWith);
     }
 
     public static String generateId() {

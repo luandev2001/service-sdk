@@ -1,27 +1,23 @@
-package com.xuanluan.mc.sdk.service.impl;
+package com.xuanluan.mc.sdk.service.file;
 
-import com.xuanluan.mc.sdk.domain.model.request.FileImageRequest;
+import com.xuanluan.mc.sdk.domain.entity.FileStorage;
 import com.xuanluan.mc.sdk.domain.model.request.FileRequest;
 import com.xuanluan.mc.sdk.exception.ServiceException;
 import com.xuanluan.mc.sdk.utils.AssertUtils;
 import com.xuanluan.mc.sdk.utils.BaseStringUtils;
 import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
  * @author Xuan Luan
  * @createdAt 12/20/2022
  */
-@Service
-public class FileServiceImpl {
-    private final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
-
-    public FileRequest uploadFile(MultipartFile file) throws ServiceException {
+public class FileUtils {
+    public static FileRequest uploadFile(MultipartFile file) {
         Assert.notNull(file, "file must not be null!");
         try {
             return FileRequest
@@ -32,20 +28,14 @@ public class FileServiceImpl {
                     .size(file.getSize())
                     .data(new String(Base64.encodeBase64(file.getBytes())))
                     .build();
-        } catch (Exception e) {
-            logger.error("Error upload file: " + e.getMessage(), e.getCause());
+        } catch (IOException e) {
             throw new ServiceException(HttpStatus.BAD_REQUEST, "Error upload file", "Có lỗi trong quá trình tải file lên");
         }
     }
 
-    public String showImage(FileImageRequest request) {
-        Assert.notNull(request, "request must not be null!");
-        if (BaseStringUtils.checkSuffixImage(request.getUrl())) {
-            return request.getUrl();
-        } else {
-            AssertUtils.notNull(request.getType(), "type");
-            AssertUtils.notNull(request.getBase64(), "data");
-            return "data:" + request.getType() + ";base64, " + request.getBase64();
-        }
+    public static String getImage(FileStorage file) {
+        AssertUtils.notNull(file, "request");
+        AssertUtils.isTrue(BaseStringUtils.checkSuffixImage(file.getType()), "error.unsupported.file", "");
+        return "data:" + file.getType() + ";base64, " + new String(Base64.encodeBase64(file.getData()));
     }
 }

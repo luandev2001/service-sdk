@@ -2,13 +2,14 @@ package com.xuanluan.mc.sdk.service.file;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
+import com.xuanluan.mc.sdk.rest.BaseRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,44 +23,32 @@ public class BaseLoadFile {
         return BaseLoadFile.class.getClassLoader().getResourceAsStream(fileName);
     }
 
-    public static <T> T convertInputStream(String fileName, Class<T> tClass) {
+    private static <T> T convert(String fileName, Class<T> tClass, boolean isList) {
         InputStream inputStream = loadDataFromFile(fileName);
-        if (inputStream == null) {
-            logger.error("Not found file config: " + fileName);
-            return null;
-        }
         try {
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = BaseRestClient.getObjectMapper();
+            if (isList) {
+                CollectionType listType = mapper.getTypeFactory().constructCollectionType(List.class, tClass);
+                return mapper.readValue(new InputStreamReader(inputStream), listType);
+            }
             return mapper.readValue(new InputStreamReader(inputStream), tClass);
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            String message = e.getMessage();
             try {
                 inputStream.close();
             } catch (IOException ioException) {
-                logger.error(e.getMessage());
+                message = ioException.getMessage();
             }
+            logger.error(message);
             return null;
         }
     }
 
+    public static <T> T convertInputStream(String fileName, Class<T> tClass) {
+        return convert(fileName, tClass, false);
+    }
+
     public static <T> List<T> convertInputStreamToList(String fileName, Class<T> tClass) {
-        InputStream inputStream = loadDataFromFile(fileName);
-        if (inputStream == null) {
-            logger.error("Not found file config: " + fileName);
-            return null;
-        }
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            CollectionType listType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, tClass);
-            return mapper.readValue(new InputStreamReader(inputStream), listType);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            try {
-                inputStream.close();
-            } catch (IOException ioException) {
-                logger.error(e.getMessage());
-            }
-            return null;
-        }
+        return Collections.singletonList(convert(fileName, tClass, true));
     }
 }

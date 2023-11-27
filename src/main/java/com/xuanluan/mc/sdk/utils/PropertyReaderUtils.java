@@ -1,8 +1,5 @@
 package com.xuanluan.mc.sdk.utils;
 
-import com.xuanluan.mc.sdk.exception.ServiceException;
-import org.springframework.http.HttpStatus;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -36,7 +33,7 @@ public class PropertyReaderUtils {
         return content;
     }
 
-    private static Properties getProperties(String propertiesFile) {
+    public static Properties getProperties(String propertiesFile) {
         Properties properties = new Properties();
         InputStream inputStream = PropertyReaderUtils.class.getClassLoader().getResourceAsStream(propertiesFile);
         try {
@@ -44,21 +41,20 @@ public class PropertyReaderUtils {
         } catch (Exception e) {
             Logger logger = Logger.getLogger(PropertyReaderUtils.class.getSimpleName());
             logger.log(Level.INFO, "Error read properties " + propertiesFile + ": " + e.getMessage());
-
             try {
                 assert inputStream != null;
                 inputStream.close();
             } catch (IOException ioException) {
-                throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR, ioException.getMessage(), "Đã xảy ra lỗi: " + ioException.getMessage());
+                throw new RuntimeException(ioException);
             }
         }
 
         return properties;
     }
 
-    private static Properties getApplicationProperties() {
+    public static Properties getApplicationProperties() {
         if (null == applicationProperties) {
-            applicationProperties = getProperties("application.properties");
+            applicationProperties = getProperties("application.yml");
         }
         return applicationProperties;
     }

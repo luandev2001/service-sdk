@@ -29,5 +29,7 @@
   "error.not_match": "%s không trùng khớp",
   "error.unauthorized": "Không có quyền truy cập",
   "error.inactive": "%s không hoạt động",
-  "error.already_exist": "%s đã tồn tại"
+  "error.already_exist": "%s đã tồn tại",
+  "error.unconfirmed": "%s chưa được xác nhận. Vui lòng xác nhận để có thể sử dụng",
+  "error.unsupported.file": "Tập tin không được hỗ trợ"
 }
