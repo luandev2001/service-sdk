@@ -48,6 +48,6 @@ public class BaseLoadFile {
     }
 
     public static <T> List<T> convertInputStreamToList(String fileName, Class<T> tClass) {
-        return Collections.singletonList(convert(fileName, tClass, true));
+        return (List<T>) convert(fileName, tClass, true);
     }
 }
