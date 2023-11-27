@@ -1,15 +1,16 @@
 package com.xuanluan.mc.sdk.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Xuan Luan
  * @createdAt 1/5/2023
  */
+@Slf4j
 public class PropertyUtils {
     private static Properties properties;
     private final String env;
@@ -42,19 +43,18 @@ public class PropertyUtils {
     public static Properties getProperties(String propertiesFile) {
         Properties properties = new Properties();
         InputStream inputStream = PropertyUtils.class.getClassLoader().getResourceAsStream(propertiesFile);
-        AssertUtils.notNull(inputStream, "properties");
+        AssertUtils.notNull(inputStream, "input_stream");
         try {
             properties.load(inputStream);
         } catch (Exception e) {
-            Logger logger = Logger.getLogger(PropertyUtils.class.getSimpleName());
-            logger.log(Level.INFO, "Error read properties " + propertiesFile + ": " + e.getMessage());
+            log.error("Error read file " + propertiesFile + ": " + e.getMessage());
+        } finally {
             try {
                 inputStream.close();
-            } catch (IOException ioException) {
-                throw new RuntimeException(ioException);
+            } catch (IOException e) {
+                log.error("Error close resource: " + e.getMessage());
             }
         }
-
         return properties;
     }
 

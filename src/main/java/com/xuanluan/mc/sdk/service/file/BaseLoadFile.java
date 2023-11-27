@@ -3,8 +3,7 @@ package com.xuanluan.mc.sdk.service.file;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.xuanluan.mc.sdk.rest.BaseRestClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,8 +15,8 @@ import java.util.List;
  * @author Xuan Luan
  * @createdAt 12/29/2022
  */
+@Slf4j
 public class BaseLoadFile {
-    private static final Logger logger = LoggerFactory.getLogger(BaseLoadFile.class);
 
     protected static InputStream loadDataFromFile(String fileName) {
         return BaseLoadFile.class.getClassLoader().getResourceAsStream(fileName);
@@ -33,14 +32,14 @@ public class BaseLoadFile {
             }
             return mapper.readValue(new InputStreamReader(inputStream), tClass);
         } catch (IOException e) {
-            String message = e.getMessage();
+            log.error(e.getMessage());
+            return null;
+        } finally {
             try {
                 inputStream.close();
-            } catch (IOException ioException) {
-                message = ioException.getMessage();
+            } catch (IOException e) {
+                log.error(e.getMessage());
             }
-            logger.error(message);
-            return null;
         }
     }
 
