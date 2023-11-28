@@ -18,6 +18,7 @@
     <description>
         -rename PropertyReaderUtils -> PropertyUtils
         -clean code PropertyUtils
+        -rename BaseStringUtils -> StringUtils
     </description>
 
     <properties>

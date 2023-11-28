@@ -26,7 +26,7 @@ public class BaseController {
         return responseMethod(data, "rest.delete", arg);
     }
 
-    private <T> WrapperResponse<T> responseMethod(T data, String messageKey, String arg) {
+    protected  <T> WrapperResponse<T> responseMethod(T data, String messageKey, String arg) {
         MessageUtils.Message message = MessageUtils.get(messageKey);
         MessageException.MessageObject messageObject = MessageException.convert(arg);
         return response(data, String.format(message.getVn(), messageObject.getVns()), String.format(message.getEn(), messageObject.getEns()));

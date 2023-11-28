@@ -4,7 +4,7 @@ import com.xuanluan.mc.sdk.domain.entity.DataSequence;
 import com.xuanluan.mc.sdk.domain.enums.SequenceType;
 import com.xuanluan.mc.sdk.repository.sequence.DataSequenceRepository;
 import com.xuanluan.mc.sdk.utils.AssertUtils;
-import com.xuanluan.mc.sdk.utils.BaseStringUtils;
+import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class DataSequenceServiceImpl {
     @Transactional(rollbackFor = Exception.class)
     public <T> DataSequence generateDataSequence(String clientId, String orgId, Class<T> tClass, SequenceType type) {
         DataSequence sequence = getSequence(clientId, orgId, tClass, type);
-        if (!BaseStringUtils.hasTextAfterTrim(sequence.getSequenceValue())) {
+        if (!StringUtils.hasTextAfterTrim(sequence.getSequenceValue())) {
             sequence = generateDataSequenceNext(clientId, orgId, tClass, type);
         }
         logger.info("Cập nhật sequence, type= " + sequence.getType() + ", thành " + sequence.getSequenceValue());
@@ -93,7 +93,7 @@ public class DataSequenceServiceImpl {
 
     private void generateSequenceValue(DataSequence sequence) {
         if (SequenceType.ALPHABET_DOT_NO.value == sequence.getType()) {
-            sequence.setSequenceValue(BaseStringUtils.generateAlphabetDotNoCode(sequence.getSequenceValue()));
+            sequence.setSequenceValue(StringUtils.generateAlphabetDotNoCode(sequence.getSequenceValue()));
         } else {
             String oldSeq = sequence.getSequenceValue() != null ? sequence.getSequenceValue() : "0";
             long oldSeqNumber = Long.parseLong(oldSeq) + 1;

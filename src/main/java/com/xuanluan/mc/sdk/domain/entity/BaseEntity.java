@@ -1,7 +1,7 @@
 package com.xuanluan.mc.sdk.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.xuanluan.mc.sdk.utils.BaseStringUtils;
+import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +27,7 @@ public class BaseEntity {
     private boolean isActive;
 
     protected BaseEntity() {
-        id = BaseStringUtils.generateId();
+        id = StringUtils.generateId();
         isActive = true;
         createdAt = new Date();
     }

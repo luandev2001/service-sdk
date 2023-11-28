@@ -11,7 +11,7 @@ import java.util.UUID;
  * @author Xuan Luan
  * @createdAt 11/8/2022
  */
-public class BaseStringUtils {
+public class StringUtils {
     public static boolean hasTextAfterTrim(String text) {
         return text != null && !text.trim().isEmpty();
     }
@@ -36,7 +36,7 @@ public class BaseStringUtils {
     public static String generateAlphabetDotNoCode(String oldValue) {
         char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
         //not have text => item= "a.1"
-        if (!BaseStringUtils.hasTextAfterTrim(oldValue)) return alphabet[0] + "." + 1;
+        if (!StringUtils.hasTextAfterTrim(oldValue)) return alphabet[0] + "." + 1;
         String[] item = oldValue.split("\\.");
         //check item has valid
         if (item.length != 2 || NumberUtils.isNumeric(item[0]) || !NumberUtils.isNumeric(item[1])) {

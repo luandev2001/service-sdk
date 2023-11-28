@@ -33,7 +33,7 @@ public class PropertyUtils {
 
     public static String get(String name, String defaultValue) {
         String value = get(name);
-        return BaseStringUtils.hasTextAfterTrim(value) ? value : defaultValue;
+        return StringUtils.hasTextAfterTrim(value) ? value : defaultValue;
     }
 
     public static String get(String name) {

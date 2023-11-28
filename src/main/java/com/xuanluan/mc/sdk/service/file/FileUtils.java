@@ -4,7 +4,7 @@ import com.xuanluan.mc.sdk.domain.entity.FileStorage;
 import com.xuanluan.mc.sdk.domain.model.request.FileRequest;
 import com.xuanluan.mc.sdk.exception.ServiceException;
 import com.xuanluan.mc.sdk.utils.AssertUtils;
-import com.xuanluan.mc.sdk.utils.BaseStringUtils;
+import com.xuanluan.mc.sdk.utils.StringUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
@@ -35,7 +35,7 @@ public class FileUtils {
 
     public static String getImage(FileStorage file) {
         AssertUtils.notNull(file, "request");
-        AssertUtils.isTrue(BaseStringUtils.checkSuffixImage(file.getType()), "error.unsupported.file", "");
+        AssertUtils.isTrue(StringUtils.checkSuffixImage(file.getType()), "error.unsupported.file", "");
         return "data:" + file.getType() + ";base64, " + new String(Base64.encodeBase64(file.getData()));
     }
 }
