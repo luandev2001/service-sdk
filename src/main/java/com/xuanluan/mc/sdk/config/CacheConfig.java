@@ -1,7 +1,7 @@
 package com.xuanluan.mc.sdk.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.xuanluan.mc.sdk.service.constant.ConstantValue;
+import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
@@ -37,7 +37,7 @@ public class CacheConfig {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
-        modelMapper.getConfiguration().setPropertyCondition(ConstantValue.Mapper.skipEntityFields);
+        modelMapper.getConfiguration().setPropertyCondition(BaseConstant.Mapper.skipEntityFields);
         return modelMapper;
     }
 }
