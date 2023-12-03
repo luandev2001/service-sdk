@@ -1,17 +1,17 @@
 package com.xuanluan.mc.sdk.domain.model.request;
 
+import com.xuanluan.mc.sdk.domain.enums.DataType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Map;
-
 @Getter
 @Setter
 @Builder
-public class ConfigurationDTO {
+public class CreateConfiguration {
     private String name;
-    private Map<String, Object> value;
+    private Object value;
     private String type;
     private boolean isEdit;
+    private DataType dataType;
 }

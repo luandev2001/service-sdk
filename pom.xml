@@ -21,6 +21,7 @@
         -rename BaseStringUtils -> StringUtils
         -add dependency model mapper
         -add ConstantValue
+        -change data type Configuration value from Map -> Object
     </description>
 
     <properties>
