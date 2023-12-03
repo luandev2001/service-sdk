@@ -46,6 +46,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         List<Configuration> configurations = dtos.stream()
                 .map(dto -> {
                     final String nameConvert = ConfigurationConverter.replaceName(dto.getName());
+                    dto.setName(nameConvert);
                     validateDataType(dto.getDataType(), dto.getValue());
 
                     Configuration configuration = configurationRepository.findByName(clientId, nameConvert, dto.getType());
@@ -95,25 +96,31 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         AssertUtils.isTrue(configuration.isEdit(), "error.not_modify", "configuration");
         validateDataType(configuration.getDataType(), dto.getValue());
 
-        modelMapper.map(dto, configuration);
+        configuration.setValue(dto.getValue());
         configuration.setUpdatedBy(byUser);
         configuration.setUpdatedAt(new Date());
         return configurationRepository.save(configuration);
     }
 
     private void validateDataType(DataType dataType, Object value) {
+        AssertUtils.notNull(dataType, "data_type");
         if (value != null) {
             switch (dataType) {
                 case STRING:
                     AssertUtils.isTrue(value instanceof String, "error.data_type", dataType);
+                    break;
                 case MAP:
                     AssertUtils.isTrue(value instanceof Map, "error.data_type", dataType);
+                    break;
                 case SET:
                     AssertUtils.isTrue(value instanceof Set, "error.data_type", dataType);
+                    break;
                 case LIST:
                     AssertUtils.isTrue(value instanceof List, "error.data_type", dataType);
+                    break;
                 case NUMBER:
                     AssertUtils.isTrue(value instanceof Double, "error.data_type", dataType);
+                    break;
             }
         }
     }
