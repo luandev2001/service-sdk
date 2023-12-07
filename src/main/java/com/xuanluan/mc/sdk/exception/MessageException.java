@@ -20,7 +20,7 @@ public class MessageException extends RuntimeException {
     public static MessageException assign(String key, HttpStatus status, Object... args) {
         MessageUtils.Message message = MessageUtils.get(key);
         MessageObject messageObject = convert(args);
-        return new MessageException(String.format(message.getVn(), messageObject.vns), String.format(message.getEn(), messageObject.ens), status);
+        return new MessageException(String.format(message.getVn(), messageObject.vns).trim(), String.format(message.getEn(), messageObject.ens).trim(), status);
     }
 
     public static MessageException assign(String key, Object... args) {

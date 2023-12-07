@@ -26,10 +26,10 @@ public class BaseController {
         return responseMethod(data, "rest.delete", arg);
     }
 
-    protected  <T> WrapperResponse<T> responseMethod(T data, String messageKey, String arg) {
+    protected <T> WrapperResponse<T> responseMethod(T data, String messageKey, String arg) {
         MessageUtils.Message message = MessageUtils.get(messageKey);
         MessageException.MessageObject messageObject = MessageException.convert(arg);
-        return response(data, String.format(message.getVn(), messageObject.getVns()), String.format(message.getEn(), messageObject.getEns()));
+        return response(data, String.format(message.getVn(), messageObject.getVns()).trim(), String.format(message.getEn(), messageObject.getEns()).trim());
     }
 
     protected <T> WrapperResponse<T> response(T data, String messageVN, String messageEN) {

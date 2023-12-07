@@ -16,6 +16,7 @@
   "error.unauthorized": "Not have access",
   "error.inactive": "%s is inactive",
   "error.already_exist": "%s already exist",
+  "error.confirmed": "%s has been confirmed. Please check the information again",
   "error.unconfirmed": "%s has not been confirmed. Please confirm to be able to use",
   "error.unsupported.file": "Files are not supported",
   "error.data_type": "The requested data is %s. Please edit the data as required"
