@@ -6,7 +6,7 @@ package com.xuanluan.mc.sdk.utils;
  */
 public class NumberUtils {
     public static boolean isNumeric(String string) {
-        if (!StringUtils.hasTextAfterTrim(string)) {
+        if (!StringUtils.hasText(string)) {
             return false;
         }
         try {

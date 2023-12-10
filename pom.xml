@@ -13,16 +13,8 @@
 
     <groupId>com.xuanluan.mc</groupId>
     <artifactId>service-sdk</artifactId>
-    <version>1.2.13</version>
+    <version>1.3.0</version>
     <packaging>jar</packaging>
-    <description>
-        -rename PropertyReaderUtils -> PropertyUtils
-        -clean code PropertyUtils
-        -rename BaseStringUtils -> StringUtils
-        -add dependency model mapper
-        -add ConstantValue
-        -change data type Configuration value from Map -> Object
-    </description>
 
     <properties>
         <maven.compiler.target>11</maven.compiler.target>

@@ -12,7 +12,7 @@ import java.util.UUID;
  * @createdAt 11/8/2022
  */
 public class StringUtils {
-    public static boolean hasTextAfterTrim(String text) {
+    public static boolean hasText(String text) {
         return text != null && !text.trim().isEmpty();
     }
 
@@ -21,7 +21,7 @@ public class StringUtils {
     }
 
     public static boolean checkSuffix(String file, List<String> extensions) {
-        return hasTextAfterTrim(file) && extensions.stream().anyMatch(file::endsWith);
+        return hasText(file) && extensions.stream().anyMatch(file::endsWith);
     }
 
     public static String generateId() {
@@ -36,7 +36,7 @@ public class StringUtils {
     public static String generateAlphabetDotNoCode(String oldValue) {
         char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
         //not have text => item= "a.1"
-        if (!StringUtils.hasTextAfterTrim(oldValue)) return alphabet[0] + "." + 1;
+        if (!StringUtils.hasText(oldValue)) return alphabet[0] + "." + 1;
         String[] item = oldValue.split("\\.");
         //check item has valid
         if (item.length != 2 || NumberUtils.isNumeric(item[0]) || !NumberUtils.isNumeric(item[1])) {

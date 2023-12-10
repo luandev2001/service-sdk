@@ -60,6 +60,6 @@ public final class AssertUtils {
     }
 
     public static void notBlank(@Nullable String value, String arg) {
-        isTrue(StringUtils.hasTextAfterTrim(value), "error.not_blank", arg);
+        isTrue(StringUtils.hasText(value), "error.not_blank", arg);
     }
 }

@@ -21,7 +21,7 @@ public class MessageUtils {
     }
 
     protected void put(String key, String message, MessageType type) {
-        if (StringUtils.hasTextAfterTrim(message)) {
+        if (StringUtils.hasText(message)) {
             key = key.toLowerCase();
             getType(type).putIfAbsent(key, message);
             keys.add(key);

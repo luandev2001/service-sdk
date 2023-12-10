@@ -42,7 +42,7 @@ public class DataSequenceServiceImpl {
     @Transactional(rollbackFor = Exception.class)
     public <T> DataSequence generateDataSequence(String clientId, String orgId, Class<T> tClass, SequenceType type) {
         DataSequence sequence = getSequence(clientId, orgId, tClass, type);
-        if (!StringUtils.hasTextAfterTrim(sequence.getSequenceValue())) {
+        if (!StringUtils.hasText(sequence.getSequenceValue())) {
             sequence = generateDataSequenceNext(clientId, orgId, tClass, type);
         }
         logger.info("Cập nhật sequence, type= " + sequence.getType() + ", thành " + sequence.getSequenceValue());

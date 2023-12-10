@@ -39,9 +39,9 @@ public abstract class BaseRepository<T> {
 
     private boolean checkInstanceofField(String nameField, Object valueField) {
         boolean flag = false;
-        if (StringUtils.hasTextAfterTrim(nameField)) {
+        if (StringUtils.hasText(nameField)) {
             if (valueField instanceof String) {
-                if (!StringUtils.hasTextAfterTrim((String) valueField) || valueField.equals("null")) {
+                if (!StringUtils.hasText((String) valueField) || valueField.equals("null")) {
                     return false;
                 }
             } else if (!(valueField instanceof Long) && !(valueField instanceof Double) && !(valueField instanceof Integer) && !(valueField instanceof Boolean)) {
@@ -52,16 +52,9 @@ public abstract class BaseRepository<T> {
         return flag;
     }
 
-    protected Predicate filterEqualAnyField(String nameField, Object valueField) {
-        return this.checkInstanceofField(nameField, valueField) ? this.builder.equal(this.root.get(nameField), valueField) : null;
-    }
 
-    protected Predicate filterNotEqualAnyField(String nameField, Object valueField) {
-        return this.checkInstanceofField(nameField, valueField) ? this.builder.notEqual(this.root.get(nameField), valueField) : null;
-    }
-
-    protected Predicate filterLikeAnyField(String nameField, String searchKey) {
-        return StringUtils.hasTextAfterTrim(nameField) && StringUtils.hasTextAfterTrim(searchKey) ? this.builder.like(this.root.get(nameField), "%" + searchKey + "%") : null;
+    protected Predicate likeOperator(String nameField, String searchKey) {
+        return StringUtils.hasText(nameField) && StringUtils.hasText(searchKey) ? builder.like(root.get(nameField), "%" + searchKey + "%") : null;
     }
 
     protected List<Predicate> getFilters(String clientId) {
@@ -84,10 +77,10 @@ public abstract class BaseRepository<T> {
         appendFilter(builder.lessThanOrEqualTo(root.get("createdAt"), filter.getCreatedAtTo()), filter.getCreatedAtTo(), predicates);
         //find record of userId
         appendFilter(builder.or(root.get("createdBy").in(filter.getUserIds()), root.get("updatedBy").in(filter.getUserIds())), filter.getUserIds(), predicates);
-        if (StringUtils.hasTextAfterTrim(filter.getSearch()) && searchFilters != null) {
+        if (StringUtils.hasText(filter.getSearch()) && searchFilters != null) {
             Predicate predicate = null;
             for (String key : searchFilters) {
-                predicate = predicate != null ? builder.or(predicate, this.filterLikeAnyField(key, filter.getSearch())) : this.filterLikeAnyField(key, filter.getSearch());
+                predicate = predicate != null ? builder.or(predicate, this.likeOperator(key, filter.getSearch())) : this.likeOperator(key, filter.getSearch());
             }
             if (predicate != null) predicates.add(predicate);
         }
@@ -105,8 +98,8 @@ public abstract class BaseRepository<T> {
     }
 
     protected List<Predicate> appendFilter(String nameField, Object valueField, List<Predicate> predicates) {
-        Predicate predicate = this.filterEqualAnyField(nameField, valueField);
-        if (predicate != null) predicates.add(predicate);
+        boolean checked = checkInstanceofField(nameField, valueField);
+        if (checked) predicates.add(builder.equal(root.get(nameField), valueField));
         return predicates;
     }
 
