@@ -12,5 +12,5 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class BaseEntity extends EntityModel {
     @Id
-    private String id = StringUtils.generateId();
+    private String id;
 }

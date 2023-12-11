@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 @Getter
 @Setter
 @Entity
-public class DataSequence extends PersistenceEntity {
+public class DataSequence extends BaseEntity {
     private String clientId;
     private String orgId;
     private String className;

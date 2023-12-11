@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-public class Configuration extends PersistenceEntity {
+public class Configuration extends BaseEntity {
     @Column(nullable = false, updatable = false)
     private String clientId;
     @Convert(converter = ObjectJpaConverter.class)
