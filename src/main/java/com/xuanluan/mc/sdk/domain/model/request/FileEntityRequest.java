@@ -1,6 +1,5 @@
 package com.xuanluan.mc.sdk.domain.model.request;
 
-import com.xuanluan.mc.sdk.domain.entity.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class FileEntityRequest<T extends BaseEntity> {
+public class FileEntityRequest<T> {
     private String entityId;
     private Class<T> entityClass;
     private FileRequest file;

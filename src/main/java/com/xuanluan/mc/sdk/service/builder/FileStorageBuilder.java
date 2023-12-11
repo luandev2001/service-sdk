@@ -1,6 +1,5 @@
 package com.xuanluan.mc.sdk.service.builder;
 
-import com.xuanluan.mc.sdk.domain.entity.BaseEntity;
 import com.xuanluan.mc.sdk.domain.entity.FileStorage;
 import com.xuanluan.mc.sdk.domain.model.request.FileEntityRequest;
 import com.xuanluan.mc.sdk.domain.model.request.FileRequest;
@@ -11,7 +10,7 @@ import org.apache.commons.codec.binary.Base64;
  * @author Xuan Luan
  * @createdAt 4/16/2023
  */
-public class FileStorageBuilder<T extends BaseEntity> {
+public class FileStorageBuilder<T> {
     private final String clientId;
     private final String orgId;
     private final FileEntityRequest<T> fileEntity;

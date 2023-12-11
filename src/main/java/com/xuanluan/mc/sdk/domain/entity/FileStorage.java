@@ -16,7 +16,7 @@ import javax.persistence.Lob;
 @AllArgsConstructor
 @Builder
 @Entity
-public class FileStorage extends BaseEntity {
+public class FileStorage extends PersistenceEntity {
     @Column(nullable = false, updatable = false)
     private String clientId;
     @Column(nullable = false, updatable = false)
