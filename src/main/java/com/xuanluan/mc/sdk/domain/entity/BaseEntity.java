@@ -1,6 +1,7 @@
 package com.xuanluan.mc.sdk.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +23,7 @@ public class BaseEntity {
     private String updatedBy;
     @Column(nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
-    private Date createdAt = new Date();
+    private Date createdAt;
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date updatedAt;
     private boolean isActive = true;
@@ -30,5 +31,7 @@ public class BaseEntity {
     @PrePersist
     private void setDefault() {
         if (id == null) id = StringUtils.generateId();
+        if (createdAt == null) createdAt = new Date();
+        if (createdBy == null) createdBy = BaseConstant.byUser;
     }
 }

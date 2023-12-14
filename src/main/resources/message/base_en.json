@@ -19,5 +19,6 @@
   "error.confirmed": "%s has been confirmed. Please check the information again",
   "error.unconfirmed": "%s has not been confirmed. Please confirm to be able to use",
   "error.unsupported.file": "Files are not supported",
-  "error.data_type": "The requested data is %s. Please edit the data as required"
+  "error.data_type": "The requested data is %s. Please edit the data as required",
+  "error.invalid_tenant": "Invalid tenant"
 }

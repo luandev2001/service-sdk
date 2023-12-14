@@ -39,14 +39,14 @@ public class StringUtils {
         if (!StringUtils.hasText(oldValue)) return alphabet[0] + "." + 1;
         String[] item = oldValue.split("\\.");
         //check item has valid
-        if (item.length != 2 || NumberUtils.isNumeric(item[0]) || !NumberUtils.isNumeric(item[1])) {
+        Integer suffix = toInteger(item[1]);
+        if (item.length != 2 || toInteger(item[0]) == null || suffix == null) {
             throw new ServiceException(HttpStatus.BAD_REQUEST, "Mã ký tự không hợp lệ, nguyên tắc 'chuỗi.số'");
         }
-        long suffix = Long.parseLong(item[1]);
-
-        if (suffix <= 0 || suffix > 99999999) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, "Invalid data, 0<data<99999999", "Dữ liệu không hợp lệ, 0<data<9999");
-        } else if (suffix < 99999999) {
+        int maxSuffix = 999999999;
+        if (suffix <= 0 || suffix > maxSuffix) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST, "Invalid data, 0<data<" + maxSuffix, "Dữ liệu không hợp lệ, 0<data<" + maxSuffix);
+        } else if (suffix < maxSuffix) {
             ++suffix;
             return item[0] + "." + suffix;
         } else {
@@ -65,6 +65,14 @@ public class StringUtils {
                 }
                 throw new ServiceException(HttpStatus.BAD_REQUEST, "Invalid generate data", "Khởi tạo dữ liệu không thành công");
             }
+        }
+    }
+
+    private static Integer toInteger(String text) {
+        try {
+            return Integer.valueOf(text);
+        } catch (Exception e) {
+            return null;
         }
     }
 }
