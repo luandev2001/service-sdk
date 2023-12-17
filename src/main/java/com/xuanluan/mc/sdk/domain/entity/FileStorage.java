@@ -18,20 +18,18 @@ import javax.persistence.Lob;
 @Entity
 public class FileStorage extends BaseEntity {
     @Column(nullable = false, updatable = false)
-    private String clientId;
-    @Column(nullable = false, updatable = false)
     private String orgId;
     @Column(nullable = false, updatable = false)
     private String type; // png/jpg/...
+    @Column(updatable = false)
     private String name;
+    @Column(updatable = false)
     private String originFile;
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     private long size;
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     @Lob
     private byte[] data;
-    @Column(nullable = false, updatable = false)
     private String entityId;
-    @Column(nullable = false, updatable = false)
     private String entityClass;
 }

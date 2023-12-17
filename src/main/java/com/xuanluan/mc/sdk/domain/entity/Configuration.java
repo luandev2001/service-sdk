@@ -11,8 +11,6 @@ import javax.persistence.*;
 @Setter
 @Entity
 public class Configuration extends BaseEntity {
-    @Column(nullable = false, updatable = false)
-    private String clientId;
     @Convert(converter = ObjectJpaConverter.class)
     private Object value;
     @Column(nullable = false, updatable = false, length = 50)

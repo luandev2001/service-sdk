@@ -16,6 +16,6 @@ public class ConfigurationConverter {
 
     public static String replaceName(String name) {
         AssertUtils.notNull(name, "name");
-        return name.trim().replaceAll("[^a-zA-Z0-9-]", "-").toLowerCase();
+        return name.trim().replaceAll("[^a-zA-Z0-9-]", "_").toLowerCase();
     }
 }

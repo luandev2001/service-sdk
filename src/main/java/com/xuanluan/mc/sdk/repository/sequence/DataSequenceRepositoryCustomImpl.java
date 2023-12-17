@@ -5,6 +5,7 @@ import com.xuanluan.mc.sdk.repository.BaseRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -19,10 +20,9 @@ public class DataSequenceRepositoryCustomImpl extends BaseRepository<DataSequenc
     }
 
     @Override
-    public DataSequence findByClassName(String clientId, String orgId, String className, int type) {
+    public DataSequence findByClassName(String className, int type) {
         refresh();
-        List<Predicate> filters = getFilters(clientId, orgId);
-        appendFilter("className", className, filters);
+        List<Predicate> filters = appendFilter("className", className, new LinkedList<>());
         appendFilter("type", type, filters);
         return getSingleResult(filters);
     }

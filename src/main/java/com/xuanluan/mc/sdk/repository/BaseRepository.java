@@ -57,20 +57,9 @@ public abstract class BaseRepository<T> {
         return StringUtils.hasText(nameField) && StringUtils.hasText(searchKey) ? builder.like(root.get(nameField), "%" + searchKey + "%") : null;
     }
 
-    protected List<Predicate> getFilters(String clientId) {
-        AssertUtils.notBlank(clientId, "client");
-        return appendFilter("clientId", clientId, new LinkedList<>());
-    }
-
-    protected List<Predicate> getFilters(String clientId, String orgId) {
-        AssertUtils.notBlank(orgId, "organization");
-        return appendFilter("orgId", orgId, this.getFilters(clientId));
-    }
-
-    private List<Predicate> filterSearch(String clientId, Set<String> searchFilters, BaseFilter filter) {
+    protected List<Predicate> filterSearch(Set<String> searchFilters, BaseFilter filter) {
         AssertUtils.notNull(filter, "filter");
         List<Predicate> predicates = new LinkedList<>();
-        appendFilter("clientId", clientId, predicates);
         appendFilter(root.get("id").in(filter.getIds()), filter.getIds(), predicates);
         appendFilter("isActive", filter.getIsActive(), predicates);
         appendFilter(builder.greaterThanOrEqualTo(root.get("createdAt"), filter.getCreatedAtFrom()), filter.getCreatedAtFrom(), predicates);
@@ -85,16 +74,6 @@ public abstract class BaseRepository<T> {
             if (predicate != null) predicates.add(predicate);
         }
         return predicates;
-    }
-
-    protected List<Predicate> getFilterSearch(String clientId, Set<String> searchFilters, BaseFilter filter) {
-        return this.filterSearch(clientId, searchFilters, filter);
-    }
-
-    protected List<Predicate> getFilterSearch(String clientId, String orgId, Set<String> searchFilters, BaseFilter filter) {
-        List<Predicate> filters = this.getFilterSearch(clientId, searchFilters, filter);
-        appendFilter("orgId", orgId, filters);
-        return filters;
     }
 
     protected List<Predicate> appendFilter(String nameField, Object valueField, List<Predicate> predicates) {

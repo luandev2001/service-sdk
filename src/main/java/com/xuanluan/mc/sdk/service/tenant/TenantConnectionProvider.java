@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @RequiredArgsConstructor
-public class TenantConnectionProvider extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl{
+public class TenantConnectionProvider extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl {
     private final DataSource dataSource;
 
     @Override

@@ -7,6 +7,7 @@ import com.xuanluan.mc.sdk.repository.BaseRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -17,27 +18,17 @@ public class ConfigurationRepositoryCustomImpl extends BaseRepository<Configurat
     }
 
     @Override
-    public List<Configuration> findAll(String clientId) {
+    public Configuration findByName(String name, String type) {
         refresh();
-        return getListResult(getFilters(clientId));
+        List<Predicate> predicates = appendFilter("name", name, new LinkedList<>());
+        appendFilter("type", type, predicates);
+        return getSingleResult(predicates);
     }
 
     @Override
-    public List<Configuration> findAll(String clientId, String type) {
+    public ResultList<Configuration> search(ConfigurationFilter filter) {
         refresh();
-        return getListResult(appendFilter("type", type, getFilters(clientId)));
-    }
-
-    @Override
-    public Configuration findByName(String clientId, String name, String type) {
-        refresh();
-        return getSingleResult(appendFilter("type", type, appendFilter("name", name, getFilters(clientId))));
-    }
-
-    @Override
-    public ResultList<Configuration> search(String clientId, ConfigurationFilter filter) {
-        refresh();
-        List<Predicate> predicates = getFilterSearch(clientId, Set.of("name"), filter);
+        List<Predicate> predicates = filterSearch(Set.of("name"), filter);
         appendFilter(root.get("type").in(filter.getTypes()), filter.getTypes(), predicates);
         appendFilter(root.get("dataType").in(filter.getDataTypes()), filter.getDataTypes(), predicates);
         return getResultList(predicates, filter.getIndex(), filter.getMaxResult());

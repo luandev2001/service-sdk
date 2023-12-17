@@ -6,8 +6,7 @@ import com.xuanluan.mc.sdk.repository.sequence.DataSequenceRepository;
 import com.xuanluan.mc.sdk.utils.AssertUtils;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,75 +19,67 @@ import java.util.Map;
  * @author Xuan Luan
  * @createdAt 12/10/2022
  */
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class DataSequenceServiceImpl {
-    private final Logger logger = LoggerFactory.getLogger(DataSequenceServiceImpl.class);
     private final DataSequenceRepository sequenceRepository;
     private final Map<String, DataSequence> sequenceMap = new HashMap<>();
 
-    public <T> String getSequenceNext(String clientId, String orgId, Class<T> tClass, SequenceType type) {
-        return getDataSequenceNext(clientId, orgId, tClass, type).getSequenceValue();
+    public <T> String getSequenceNext(Class<T> tClass, SequenceType type) {
+        return getDataSequenceNext(tClass, type).getSequenceValue();
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public <T> DataSequence generateDataSequenceNext(String clientId, String orgId, Class<T> tClass, SequenceType type) {
+    public <T> DataSequence generateDataSequenceNext(Class<T> tClass, SequenceType type) {
         //increase sequence value
-        DataSequence sequence = getDataSequenceNext(clientId, orgId, tClass, type);
-        logger.info("Cập nhật sequence, type= " + sequence.getType() + ", thành " + sequence.getSequenceValue());
+        DataSequence sequence = getDataSequenceNext(tClass, type);
+        log.info("Cập nhật sequence, type= " + sequence.getType() + ", thành " + sequence.getSequenceValue());
         return sequenceRepository.save(sequence);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public <T> DataSequence generateDataSequence(String clientId, String orgId, Class<T> tClass, SequenceType type) {
-        DataSequence sequence = getSequence(clientId, orgId, tClass, type);
+    public <T> DataSequence generateDataSequence(Class<T> tClass, SequenceType type) {
+        DataSequence sequence = getSequence(tClass, type);
         if (!StringUtils.hasText(sequence.getSequenceValue())) {
-            sequence = generateDataSequenceNext(clientId, orgId, tClass, type);
+            sequence = generateDataSequenceNext(tClass, type);
         }
-        logger.info("Cập nhật sequence, type= " + sequence.getType() + ", thành " + sequence.getSequenceValue());
+        log.info("Cập nhật sequence, type= " + sequence.getType() + ", thành " + sequence.getSequenceValue());
         return sequenceRepository.save(sequence);
     }
 
-    private <T> DataSequence getDataSequenceNext(String clientId, String orgId, Class<T> tClass, SequenceType type) {
-        DataSequence currentSequence = getSequence(clientId, orgId, tClass, type);
-        currentSequence = generateDataSequence(clientId, orgId, tClass, type, currentSequence);
+    private <T> DataSequence getDataSequenceNext(Class<T> tClass, SequenceType type) {
+        DataSequence currentSequence = getSequence(tClass, type);
+        currentSequence = generateDataSequence(tClass, type, currentSequence);
         generateSequenceValue(currentSequence);
         return currentSequence;
     }
 
-    private <T> DataSequence getSequence(String clientId, String orgId, Class<T> tClass, SequenceType type) {
-        AssertUtils.notBlank(clientId, "clientId");
-        AssertUtils.notBlank(orgId, "orgId");
+    private <T> DataSequence getSequence(Class<T> tClass, SequenceType type) {
         AssertUtils.notNull(tClass, "class");
         AssertUtils.notNull(type, "type");
 
-        String key = clientId + "_" + orgId + "_" + tClass.getName() + "_" + type.name();
+        String key = tClass.getName() + "_" + type.name();
         DataSequence currentSequence = sequenceMap.get(key);
         if (currentSequence == null) {
-            currentSequence = getDataSequence(clientId, orgId, tClass.getName(), type);
-            currentSequence = currentSequence != null ? currentSequence : generateDataSequence(clientId, orgId, tClass, type, null);
+            currentSequence = getDataSequence(tClass.getName(), type);
+            currentSequence = currentSequence != null ? currentSequence : generateDataSequence(tClass, type, null);
             sequenceMap.put(key, currentSequence);
         }
         return currentSequence;
     }
 
-    private <T> DataSequence generateDataSequence(String clientId, String orgId, Class<T> tClass, SequenceType type, DataSequence sequence) {
+    private <T> DataSequence generateDataSequence(Class<T> tClass, SequenceType type, DataSequence sequence) {
         if (sequence == null) {
             sequence = new DataSequence();
-            sequence.setClientId(clientId);
             sequence.setClassName(tClass.getName());
-            sequence.setOrgId(orgId);
             sequence.setType(type.value);
-            sequence.setCreatedBy("system");
-        } else {
-            sequence.setUpdatedAt(new Date());
-            sequence.setUpdatedBy("system");
         }
         return sequence;
     }
 
-    private DataSequence getDataSequence(String clientId, String orgId, String className, SequenceType type) {
-        return sequenceRepository.findByClassName(clientId, orgId, className, type.value);
+    private DataSequence getDataSequence(String className, SequenceType type) {
+        return sequenceRepository.findByClassName(className, type.value);
     }
 
     private void generateSequenceValue(DataSequence sequence) {

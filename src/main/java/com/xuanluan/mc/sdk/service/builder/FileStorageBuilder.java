@@ -11,18 +11,15 @@ import org.apache.commons.codec.binary.Base64;
  * @createdAt 4/16/2023
  */
 public class FileStorageBuilder<T> {
-    private final String clientId;
     private final String orgId;
     private final FileEntityRequest<T> fileEntity;
 
-    public FileStorageBuilder(String clientId, String orgId, FileEntityRequest<T> fileEntity) {
-        AssertUtils.notBlank(clientId, "client");
+    public FileStorageBuilder(String orgId, FileEntityRequest<T> fileEntity) {
         AssertUtils.notBlank(orgId, "organization");
         AssertUtils.notNull(fileEntity, "request");
         AssertUtils.notNull(fileEntity.getEntityClass(), "object");
         AssertUtils.notBlank(fileEntity.getEntityId(), "object_id");
         AssertUtils.notNull(fileEntity.getFile(), "request");
-        this.clientId = clientId;
         this.orgId = orgId;
         this.fileEntity = fileEntity;
     }
@@ -30,7 +27,6 @@ public class FileStorageBuilder<T> {
     public FileStorage init() {
         FileRequest fileRequest = fileEntity.getFile();
         FileStorage fileStorage = FileStorage.builder()
-                .clientId(clientId)
                 .orgId(orgId)
                 .entityClass(fileEntity.getEntityClass().getName())
                 .entityId(fileEntity.getEntityId())

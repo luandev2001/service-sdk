@@ -3,6 +3,7 @@ package com.xuanluan.mc.sdk.domain.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 /**
@@ -13,9 +14,10 @@ import javax.persistence.Entity;
 @Setter
 @Entity
 public class DataSequence extends BaseEntity {
-    private String clientId;
-    private String orgId;
+    @Column(nullable = false, updatable = false)
     private String className;
+    @Column(nullable = false)
     private String sequenceValue;
+    @Column(updatable = false)
     private int type;
 }
