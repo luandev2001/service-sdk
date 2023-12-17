@@ -21,8 +21,6 @@
         <maven.compiler.source>11</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <flyway-maven-plugin.version>8.5.13</flyway-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -48,11 +46,6 @@
         </dependency>
 
         <!--    Others    -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
