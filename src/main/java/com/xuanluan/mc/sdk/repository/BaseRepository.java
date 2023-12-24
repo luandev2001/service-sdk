@@ -6,6 +6,7 @@ import com.xuanluan.mc.sdk.utils.AssertUtils;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.QueryUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -17,8 +18,8 @@ import java.util.*;
  * @author Xuan Luan
  * @createdAt 9/13/2022
  */
-public abstract class BaseRepository<T> {
-    @PersistenceContext(type = PersistenceContextType.EXTENDED)
+@Transactional(readOnly = true)
+public class BaseRepository<T> {
     protected final EntityManager entityManager;
     protected final Class<T> tClass;
     protected CriteriaBuilder builder;

@@ -4,7 +4,7 @@ import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.utils.AssertUtils;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.engine.jdbc.connections.spi.AbstractDataSourceBasedMultiTenantConnectionProviderImpl;
+import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 
 import javax.sql.DataSource;
@@ -13,33 +13,51 @@ import java.sql.SQLException;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class TenantConnectionProvider extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl implements HibernatePropertiesCustomizer {
+public class TenantConnectionProvider implements MultiTenantConnectionProvider, HibernatePropertiesCustomizer {
     private final DataSource dataSource;
 
     @Override
-    protected DataSource selectAnyDataSource() {
-        return selectDataSource(BaseConstant.clientId);
+    public Connection getAnyConnection() throws SQLException {
+        return getConnection(BaseConstant.clientId);
     }
 
     @Override
-    protected DataSource selectDataSource(String tenantIdentifier) {
-        try {
-            Connection connection = dataSource.getConnection();
-            connection.setSchema(tenantIdentifier);
-        } catch (SQLException e) {
-            AssertUtils.isTrue(false, "error.invalid_tenant", "");
-        }
-        return dataSource;
+    public void releaseAnyConnection(Connection connection) throws SQLException {
+        connection.close();
     }
 
     @Override
-    public void customize(Map<String, Object> hibernateProperties) {
-        hibernateProperties.put(AvailableSettings.MULTI_TENANT_IDENTIFIER_RESOLVER, this);
+    public Connection getConnection(String tenantIdentifier) throws SQLException {
+        Connection connection = dataSource.getConnection();
+        connection.setSchema(tenantIdentifier);
+        return connection;
     }
 
     @Override
     public void releaseConnection(String tenantIdentifier, Connection connection) throws SQLException {
         connection.setSchema(BaseConstant.clientId);
-        super.releaseConnection(tenantIdentifier, connection);
+        connection.close();
     }
+
+    @Override
+    public boolean supportsAggressiveRelease() {
+        return true;
+    }
+
+    @Override
+    public boolean isUnwrappableAs(Class unwrapType) {
+        return DataSource.class.isAssignableFrom(unwrapType) ||
+                MultiTenantConnectionProvider.class.isAssignableFrom(unwrapType);
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> unwrapType) {
+        return null;
+    }
+
+    @Override
+    public void customize(Map<String, Object> hibernateProperties) {
+        hibernateProperties.put(AvailableSettings.MULTI_TENANT_CONNECTION_PROVIDER, this);
+    }
+
 }
