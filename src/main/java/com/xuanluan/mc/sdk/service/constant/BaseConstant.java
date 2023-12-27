@@ -16,4 +16,8 @@ public class BaseConstant {
             return !skipFields.contains(name);
         };
     }
+
+    public static class CacheName {
+        public static final String configuration = "configurations";
+    }
 }

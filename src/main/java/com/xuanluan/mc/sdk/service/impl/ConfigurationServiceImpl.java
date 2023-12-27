@@ -5,14 +5,15 @@ import com.xuanluan.mc.sdk.domain.enums.DataType;
 import com.xuanluan.mc.sdk.domain.model.request.CreateConfiguration;
 import com.xuanluan.mc.sdk.domain.model.request.UpdateConfiguration;
 import com.xuanluan.mc.sdk.repository.config.ConfigurationRepository;
+import com.xuanluan.mc.sdk.service.builder.CacheBuilder;
+import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.service.converter.ConfigurationConverter;
+import com.xuanluan.mc.sdk.service.tenant.TenantIdentifierResolver;
 import com.xuanluan.mc.sdk.utils.AssertUtils;
 import com.xuanluan.mc.sdk.service.IConfigurationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +23,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@CacheConfig(cacheNames = "configurations")
 @RequiredArgsConstructor
 @Service
 public class ConfigurationServiceImpl implements IConfigurationService {
     private final ConfigurationRepository configurationRepository;
     private final ModelMapper modelMapper;
+    private final CacheManager cacheManager;
+    private final TenantIdentifierResolver tenantIdentifierResolver;
+
+    private CacheBuilder<Configuration> configurationCache;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -61,13 +65,19 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         return !configurations.isEmpty() ? (List<Configuration>) configurationRepository.saveAll(configurations) : null;
     }
 
-    @Cacheable(key = "#name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"_\").toLowerCase()+'.'+#type")
     @Override
     public Configuration get(String name, String type) {
         AssertUtils.notBlank(name, "name");
         AssertUtils.notBlank(type, "type");
-        Configuration configuration = configurationRepository.findByName(ConfigurationConverter.replaceName(name), type);
-        AssertUtils.notFound(configuration, "Configuration", "name: " + name);
+
+        String nameConverted = ConfigurationConverter.replaceName(name);
+        Configuration configuration = getCache().get(getKeyCache(nameConverted, type));
+        if (configuration != null) return configuration;
+
+        configuration = configurationRepository.findByName(nameConverted, type);
+        AssertUtils.notFound(configuration, "configuration", "name: " + name);
+
+        getCache().put(getKeyCache(nameConverted, type), configuration);
         return configuration;
     }
 
@@ -76,7 +86,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         return get(name, type).getValue();
     }
 
-    @CachePut(key = "#dto.name.trim().replaceAll(\"[^a-zA-Z0-9-]\", \"_\").toLowerCase()+'.'+#dto.type")
     @Override
     public Configuration update(UpdateConfiguration dto, String byUser) {
         AssertUtils.notNull(dto, "request");
@@ -92,7 +101,18 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         configuration.setValue(dto.getValue());
         configuration.setUpdatedBy(byUser);
         configuration.setUpdatedAt(new Date());
-        return configurationRepository.save(configuration);
+        configuration = configurationRepository.save(configuration);
+        //update cache
+        getCache().put(getKeyCache(configuration.getName(), configuration.getType()), configuration);
+        return configuration;
+    }
+
+    @Override
+    public CacheBuilder<Configuration> getCache() {
+        if (configurationCache == null) {
+            configurationCache = new CacheBuilder<>(cacheManager, BaseConstant.CacheName.configuration, Configuration.class);
+        }
+        return configurationCache;
     }
 
     private void validateDataType(DataType dataType, Object value) {
@@ -116,5 +136,9 @@ public class ConfigurationServiceImpl implements IConfigurationService {
                     break;
             }
         }
+    }
+
+    private String getKeyCache(String name, String type) {
+        return tenantIdentifierResolver.resolveCurrentTenantIdentifier() + "_" + name + "_" + type;
     }
 }

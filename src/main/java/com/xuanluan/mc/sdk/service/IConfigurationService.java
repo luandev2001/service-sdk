@@ -3,6 +3,7 @@ package com.xuanluan.mc.sdk.service;
 import com.xuanluan.mc.sdk.domain.entity.Configuration;
 import com.xuanluan.mc.sdk.domain.model.request.CreateConfiguration;
 import com.xuanluan.mc.sdk.domain.model.request.UpdateConfiguration;
+import com.xuanluan.mc.sdk.service.builder.CacheBuilder;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface IConfigurationService {
     Object getValue(String name, String type);
 
     Configuration update(UpdateConfiguration dto, String byUser);
+
+    CacheBuilder<Configuration> getCache();
 }
