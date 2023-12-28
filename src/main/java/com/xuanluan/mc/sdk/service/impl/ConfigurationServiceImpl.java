@@ -136,6 +136,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
     }
 
     private String getKeyCache(String name, String type) {
-        return tenantIdentifierResolver.resolveCurrentTenantIdentifier() + "_" + name + "_" + type;
+        return tenantIdentifierResolver.resolveCurrentTenantIdentifier() + "/" + name + "/" + type;
     }
 }
