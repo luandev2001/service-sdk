@@ -51,7 +51,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
                     dto.setName(nameConvert);
                     validateDataType(dto.getDataType(), dto.getValue());
 
-                    Configuration configuration = configurationRepository.findByName(nameConvert, dto.getType());
+                    Configuration configuration = configurationRepository.findByNameAndType(nameConvert, dto.getType());
                     if (configuration == null) {
                         configuration = modelMapper.map(dto, Configuration.class);
                         configuration.setCreatedBy(byUser);
@@ -71,14 +71,11 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         AssertUtils.notBlank(type, "type");
 
         String nameConverted = ConfigurationConverter.replaceName(name);
-        Configuration configuration = getCache().get(getKeyCache(nameConverted, type));
-        if (configuration != null) return configuration;
-
-        configuration = configurationRepository.findByName(nameConverted, type);
-        AssertUtils.notFound(configuration, "configuration", "name: " + name);
-
-        getCache().put(getKeyCache(nameConverted, type), configuration);
-        return configuration;
+        return getCache().putIfAbsent(getKeyCache(nameConverted, type), () -> {
+            Configuration configuration = configurationRepository.findByNameAndType(nameConverted, type);
+            AssertUtils.notFound(configuration, "configuration", "name: " + name);
+            return configuration;
+        });
     }
 
     @Override
@@ -93,7 +90,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         AssertUtils.notBlank(dto.getType(), "type");
 
         final String nameConvert = ConfigurationConverter.replaceName(dto.getName());
-        Configuration configuration = configurationRepository.findByName(nameConvert, dto.getType());
+        Configuration configuration = configurationRepository.findByNameAndType(nameConvert, dto.getType());
         AssertUtils.notFound(configuration, "configuration", "name: " + dto.getName());
         AssertUtils.isTrue(configuration.isEdit(), "error.not_modify", "configuration");
         validateDataType(configuration.getDataType(), dto.getValue());

@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
+import java.util.function.Supplier;
+
 @RequiredArgsConstructor
 public class CacheBuilder<T> {
 
@@ -27,6 +29,15 @@ public class CacheBuilder<T> {
 
     public T get(String key) {
         return checkCache().get(key, type);
+    }
+
+    public T putIfAbsent(String key, Supplier<T> supplier) {
+        T value = get(key);
+        if (value == null) {
+            value = supplier.get();
+            put(key, value);
+        }
+        return value;
     }
 
     public void clearAll() {

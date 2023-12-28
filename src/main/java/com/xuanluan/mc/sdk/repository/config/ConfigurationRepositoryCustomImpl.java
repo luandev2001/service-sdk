@@ -18,14 +18,6 @@ public class ConfigurationRepositoryCustomImpl extends BaseRepository<Configurat
     }
 
     @Override
-    public Configuration findByName(String name, String type) {
-        refresh();
-        List<Predicate> predicates = appendFilter("name", name, new LinkedList<>());
-        appendFilter("type", type, predicates);
-        return getSingleResult(predicates);
-    }
-
-    @Override
     public ResultList<Configuration> search(ConfigurationFilter filter) {
         refresh();
         List<Predicate> predicates = filterSearch(Set.of("name"), filter);

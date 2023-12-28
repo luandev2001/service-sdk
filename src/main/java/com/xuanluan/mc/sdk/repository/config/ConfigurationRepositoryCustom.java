@@ -5,8 +5,5 @@ import com.xuanluan.mc.sdk.domain.model.filter.ConfigurationFilter;
 import com.xuanluan.mc.sdk.domain.model.filter.ResultList;
 
 public interface ConfigurationRepositoryCustom {
-
-    Configuration findByName(String name, String type);
-
     ResultList<Configuration> search(ConfigurationFilter filter);
 }
