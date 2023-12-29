@@ -3,8 +3,8 @@ package com.xuanluan.mc.sdk.service.builder;
 import com.xuanluan.mc.sdk.domain.entity.FileStorage;
 import com.xuanluan.mc.sdk.domain.model.request.FileEntityRequest;
 import com.xuanluan.mc.sdk.domain.model.request.FileRequest;
-import com.xuanluan.mc.sdk.utils.AssertUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.util.Assert;
 
 /**
  * @author Xuan Luan
@@ -15,11 +15,11 @@ public class FileStorageBuilder<T> {
     private final FileEntityRequest<T> fileEntity;
 
     public FileStorageBuilder(String orgId, FileEntityRequest<T> fileEntity) {
-        AssertUtils.notBlank(orgId, "organization");
-        AssertUtils.notNull(fileEntity, "request");
-        AssertUtils.notNull(fileEntity.getEntityClass(), "object");
-        AssertUtils.notBlank(fileEntity.getEntityId(), "object_id");
-        AssertUtils.notNull(fileEntity.getFile(), "request");
+        Assert.notNull(orgId, "organization");
+        Assert.notNull(fileEntity, "request");
+        Assert.notNull(fileEntity.getEntityClass(), "object");
+        Assert.notNull(fileEntity.getEntityId(), "object_id");
+        Assert.notNull(fileEntity.getFile(), "request");
         this.orgId = orgId;
         this.fileEntity = fileEntity;
     }

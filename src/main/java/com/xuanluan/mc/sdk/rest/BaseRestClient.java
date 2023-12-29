@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
 import com.xuanluan.mc.sdk.exception.MessageException;
-import com.xuanluan.mc.sdk.utils.AssertUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.*;
@@ -18,48 +16,28 @@ import org.springframework.web.client.RestTemplate;
  * @author Xuan Luan
  * @createdAt 1/4/2023
  */
+@RequiredArgsConstructor
 public abstract class BaseRestClient {
-    private final Logger logger = LoggerFactory.getLogger(BaseRestClient.class);
+    private final ObjectMapper objectMapper;
+    private final RestTemplate restTemplate;
 
-    protected final String servicePath;
-    protected final String clientId;
-    private static RestTemplate restTemplate;
-    private static ObjectMapper objectMapper;
+    protected abstract String getServicePath();
 
-    protected BaseRestClient(String servicePath, String clientId) {
-        this.servicePath = servicePath;
-        this.clientId = clientId;
-        AssertUtils.notBlank(this.servicePath, "service_path");
-        AssertUtils.notBlank(this.clientId, "client");
-    }
+    protected abstract String getClientId();
 
     protected HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("clientId", clientId);
+        headers.set("clientId", getClientId());
         return headers;
-    }
-
-    public static RestTemplate getRestTemplate() {
-        if (restTemplate == null) {
-            restTemplate = new RestTemplate();
-        }
-        return restTemplate;
-    }
-
-    public static ObjectMapper getObjectMapper() {
-        if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
-        }
-        return objectMapper;
     }
 
     private <T> Object processRestClient(String path, HttpMethod method, HttpEntity<Object> entity, Class<T> tClass, boolean isWrapper) {
         try {
             if (isWrapper) {
                 ResponseEntity<WrapperResponse<T>> response =
-                        getRestTemplate().exchange(
-                                servicePath + path,
+                        restTemplate.exchange(
+                                getServicePath() + path,
                                 method,
                                 entity,
                                 ParameterizedTypeReference.forType(ResolvableType.forClassWithGenerics(WrapperResponse.class, tClass).getType())
@@ -68,8 +46,8 @@ public abstract class BaseRestClient {
                 return response.getBody();
             } else {
                 ResponseEntity<T> response =
-                        getRestTemplate().exchange(
-                                servicePath + path,
+                        restTemplate.exchange(
+                                getServicePath() + path,
                                 method,
                                 entity,
                                 ParameterizedTypeReference.forType(tClass)
@@ -79,10 +57,9 @@ public abstract class BaseRestClient {
             }
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             try {
-                WrapperResponse result = getObjectMapper().readValue(e.getResponseBodyAsString(), WrapperResponse.class);
-                throw new MessageException(result.getMessage_vn(), result.getMessage(), result.getStatus());
+                WrapperResponse result = objectMapper.readValue(e.getResponseBodyAsString(), WrapperResponse.class);
+                throw new MessageException(result.getMessage(), result.getStatus());
             } catch (JsonProcessingException jsonE) {
-                logger.error(jsonE.getMessage(), jsonE);
                 throw new RuntimeException(jsonE);
             }
         }

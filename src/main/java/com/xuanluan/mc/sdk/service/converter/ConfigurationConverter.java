@@ -1,21 +1,10 @@
 package com.xuanluan.mc.sdk.service.converter;
 
-import com.xuanluan.mc.sdk.domain.entity.Configuration;
-import com.xuanluan.mc.sdk.domain.model.request.CreateConfiguration;
-import com.xuanluan.mc.sdk.utils.AssertUtils;
+import org.springframework.util.Assert;
 
 public class ConfigurationConverter {
-    public static Configuration toConfiguration(Configuration configuration, CreateConfiguration dto) {
-        AssertUtils.notNull(dto, "ConfigurationDTO");
-        configuration.setValue(dto.getValue());
-        configuration.setType(dto.getType());
-        configuration.setName(replaceName(dto.getName()));
-        configuration.setEdit(dto.isEdit());
-        return configuration;
-    }
-
     public static String replaceName(String name) {
-        AssertUtils.notNull(name, "name");
+        Assert.notNull(name, "name not null");
         return name.trim().replaceAll("[^a-zA-Z0-9-]", "_").toLowerCase();
     }
 }

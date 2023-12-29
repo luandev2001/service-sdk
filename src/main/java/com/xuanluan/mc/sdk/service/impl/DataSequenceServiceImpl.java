@@ -3,7 +3,7 @@ package com.xuanluan.mc.sdk.service.impl;
 import com.xuanluan.mc.sdk.domain.entity.DataSequence;
 import com.xuanluan.mc.sdk.domain.enums.SequenceType;
 import com.xuanluan.mc.sdk.repository.sequence.DataSequenceRepository;
-import com.xuanluan.mc.sdk.utils.AssertUtils;
+import com.xuanluan.mc.sdk.service.locale.MessageAssert;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +24,7 @@ import java.util.Map;
 public class DataSequenceServiceImpl {
     private final DataSequenceRepository sequenceRepository;
     private final Map<String, DataSequence> sequenceMap = new HashMap<>();
+    private final MessageAssert messageAssert;
 
     public <T> String getSequenceNext(Class<T> tClass, SequenceType type) {
         return getDataSequenceNext(tClass, type).getSequenceValue();
@@ -50,14 +50,14 @@ public class DataSequenceServiceImpl {
 
     private <T> DataSequence getDataSequenceNext(Class<T> tClass, SequenceType type) {
         DataSequence currentSequence = getSequence(tClass, type);
-        currentSequence = generateDataSequence(tClass, type, currentSequence);
+        generateDataSequence(tClass, type, currentSequence);
         generateSequenceValue(currentSequence);
         return currentSequence;
     }
 
     private <T> DataSequence getSequence(Class<T> tClass, SequenceType type) {
-        AssertUtils.notNull(tClass, "class");
-        AssertUtils.notNull(type, "type");
+        messageAssert.notNull(tClass, "class");
+        messageAssert.notNull(type, "type");
 
         String key = tClass.getName() + "_" + type.name();
         DataSequence currentSequence = sequenceMap.get(key);

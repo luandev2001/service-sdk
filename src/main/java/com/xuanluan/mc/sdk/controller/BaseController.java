@@ -1,15 +1,19 @@
 package com.xuanluan.mc.sdk.controller;
 
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
-import com.xuanluan.mc.sdk.exception.MessageException;
-import com.xuanluan.mc.sdk.utils.MessageUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 
 /**
  * @author Xuan Luan
  * @createdAt 3/2/2023
  */
+@RequiredArgsConstructor
 public class BaseController {
+    private final MessageSource messageSource;
+
     protected <T> WrapperResponse<T> get(T data, String arg) {
         return responseMethod(data, "rest.get", arg);
     }
@@ -27,12 +31,11 @@ public class BaseController {
     }
 
     protected <T> WrapperResponse<T> responseMethod(T data, String messageKey, String arg) {
-        MessageUtils.Message message = MessageUtils.get(messageKey);
-        MessageException.MessageObject messageObject = MessageException.convert(arg);
-        return response(data, String.format(message.getVn(), messageObject.getVns()).trim(), String.format(message.getEn(), messageObject.getEns()).trim());
+        String message = messageSource.getMessage(messageKey, new Object[]{arg}, LocaleContextHolder.getLocale());
+        return response(data, message);
     }
 
-    protected <T> WrapperResponse<T> response(T data, String messageVN, String messageEN) {
-        return WrapperResponse.<T>builder().status(HttpStatus.OK).message_vn(messageVN).message(messageEN).data(data).build();
+    protected <T> WrapperResponse<T> response(T data, String message) {
+        return WrapperResponse.<T>builder().status(HttpStatus.OK).message(message).data(data).build();
     }
 }

@@ -2,33 +2,31 @@ package com.xuanluan.mc.sdk.service.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.xuanluan.mc.sdk.exception.MessageException;
-import com.xuanluan.mc.sdk.rest.BaseRestClient;
-import lombok.extern.slf4j.Slf4j;
+import com.xuanluan.mc.sdk.exception.ConverterException;
+import com.xuanluan.mc.sdk.utils.GeneratorUtils;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import java.util.Map;
 
-@Slf4j
+@Converter
 public class MapJpaConverter implements AttributeConverter<Map<String, Object>, String> {
     @Override
     public String convertToDatabaseColumn(Map<String, Object> stringObjectMap) {
         try {
-            return BaseRestClient.getObjectMapper().writeValueAsString(stringObjectMap);
+            return GeneratorUtils.getObjectMapper().writeValueAsString(stringObjectMap);
         } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
-            throw MessageException.assign("jpa.error.converter", "Map<String, Object>", "String");
+            throw new ConverterException("jpa.error.converter");
         }
     }
 
     @Override
     public Map<String, Object> convertToEntityAttribute(String s) {
         try {
-            return BaseRestClient.getObjectMapper().readValue(s, new TypeReference<>() {
+            return GeneratorUtils.getObjectMapper().readValue(s, new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
-            throw MessageException.assign("jpa.error.converter", "String", "Map<String, Object>");
+            throw new ConverterException("jpa.error.converter");
         }
     }
 }

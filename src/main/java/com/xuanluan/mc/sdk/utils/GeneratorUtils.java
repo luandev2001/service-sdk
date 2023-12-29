@@ -1,6 +1,8 @@
 package com.xuanluan.mc.sdk.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.util.Assert;
 
 import java.util.Random;
 
@@ -9,13 +11,14 @@ import java.util.Random;
  * @createdAt 3/31/2023
  */
 public class GeneratorUtils {
+    private static ObjectMapper objectMapper;
 
     public static String getRandomCode4Digits() {
         return generateCodeDigits(4);
     }
 
     public static String generateCodeDigits(int length) {
-        AssertUtils.isTrue(length > 0 && length < 10, "0 < length < 10");
+        Assert.isTrue(length > 0 && length < 10, "0 < length < 10");
         char[] oneDigits = new char[length];
         char[] nineDigits = new char[length];
         oneDigits[0] = '1';
@@ -39,9 +42,10 @@ public class GeneratorUtils {
         return RandomStringUtils.random(length, characters);
     }
 
-    public static String generateUsernameFromEmail(String email) {
-        AssertUtils.notBlank(email, "email");
-        String splitEmail = email.split("@gmail")[0];
-        return splitEmail.replaceAll("[^0-9a-zA-Z]", "");
+    public static ObjectMapper getObjectMapper() {
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
+        return objectMapper;
     }
 }

@@ -2,7 +2,6 @@ package com.xuanluan.mc.sdk.repository;
 
 import com.xuanluan.mc.sdk.domain.model.filter.BaseFilter;
 import com.xuanluan.mc.sdk.domain.model.filter.ResultList;
-import com.xuanluan.mc.sdk.utils.AssertUtils;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.query.QueryUtils;
@@ -59,7 +58,7 @@ public class BaseRepository<T> {
     }
 
     protected List<Predicate> filterSearch(Set<String> searchFilters, BaseFilter filter) {
-        AssertUtils.notNull(filter, "filter");
+        Assert.notNull(filter, "filter must not null");
         List<Predicate> predicates = new LinkedList<>();
         appendFilter(root.get("id").in(filter.getIds()), filter.getIds(), predicates);
         appendFilter("isActive", filter.getIsActive(), predicates);
@@ -88,7 +87,7 @@ public class BaseRepository<T> {
     }
 
     protected List<Predicate> appendFilter(Predicate predicate, Collection<Object> values, List<Predicate> predicates) {
-        Assert.notNull(predicate, "predicate must be not null");
+        Assert.notNull(predicate, "predicate must not null");
         if (values != null && !values.isEmpty()) predicates.add(predicate);
         return predicates;
     }

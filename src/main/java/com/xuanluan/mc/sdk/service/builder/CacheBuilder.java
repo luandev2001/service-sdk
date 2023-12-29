@@ -1,9 +1,9 @@
 package com.xuanluan.mc.sdk.service.builder;
 
-import com.xuanluan.mc.sdk.utils.AssertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.util.Assert;
 
 import java.util.function.Supplier;
 
@@ -17,9 +17,9 @@ public class CacheBuilder<T> {
     private final Class<T> type;
 
     private Cache checkCache() {
-        AssertUtils.notBlank(name, "name_cache");
+        Assert.notNull(name, "name cache must not null");
         Cache cache = cacheManager.getCache(name);
-        AssertUtils.notFound(cache, "cache", "name: " + name);
+        Assert.notNull(name, "cache must not null");
         return cache;
     }
 

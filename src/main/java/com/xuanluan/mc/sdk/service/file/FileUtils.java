@@ -3,7 +3,6 @@ package com.xuanluan.mc.sdk.service.file;
 import com.xuanluan.mc.sdk.domain.entity.FileStorage;
 import com.xuanluan.mc.sdk.domain.model.request.FileRequest;
 import com.xuanluan.mc.sdk.exception.ServiceException;
-import com.xuanluan.mc.sdk.utils.AssertUtils;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,6 @@ import java.io.IOException;
  */
 public class FileUtils {
     public static FileRequest uploadFile(MultipartFile file) {
-        Assert.notNull(file, "file must not be null!");
         try {
             return FileRequest
                     .builder()
@@ -34,8 +32,8 @@ public class FileUtils {
     }
 
     public static String getImage(FileStorage file) {
-        AssertUtils.notNull(file, "request");
-        AssertUtils.isTrue(StringUtils.checkSuffixImage(file.getType()), "error.unsupported.file", "");
+        Assert.notNull(file, "request must not null");
+        Assert.isTrue(StringUtils.checkSuffixImage(file.getType()), "error.unsupported.file");
         return "data:" + file.getType() + ";base64, " + new String(Base64.encodeBase64(file.getData()));
     }
 }

@@ -1,5 +1,7 @@
 package com.xuanluan.mc.sdk.utils;
 
+import org.springframework.util.Assert;
+
 import java.util.HashMap;
 
 /**
@@ -8,7 +10,7 @@ import java.util.HashMap;
  */
 public class MapUtils {
     public static <T> HashMap<String, T> append(String key, T value, HashMap<String, T> oldMap) {
-        AssertUtils.notBlank(key, "key");
+        Assert.notNull(key, "key must not null");
         if (value != null) {
             oldMap.put(key, value);
         }

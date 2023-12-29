@@ -1,7 +1,6 @@
 package com.xuanluan.mc.sdk.service.tenant;
 
 import com.xuanluan.mc.sdk.service.constant.BaseConstant;
-import com.xuanluan.mc.sdk.utils.AssertUtils;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;

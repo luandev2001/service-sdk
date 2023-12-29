@@ -3,6 +3,7 @@ package com.xuanluan.mc.sdk.service.file;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.xuanluan.mc.sdk.rest.BaseRestClient;
+import com.xuanluan.mc.sdk.utils.GeneratorUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class BaseLoadFile {
     private static <T> T convert(String fileName, Class<T> tClass, boolean isList) {
         InputStream inputStream = loadDataFromFile(fileName);
         try {
-            ObjectMapper mapper = BaseRestClient.getObjectMapper();
+            ObjectMapper mapper = GeneratorUtils.getObjectMapper();
             if (isList) {
                 CollectionType listType = mapper.getTypeFactory().constructCollectionType(List.class, tClass);
                 return mapper.readValue(new InputStreamReader(inputStream), listType);
