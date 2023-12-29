@@ -1,8 +1,7 @@
 package com.xuanluan.mc.sdk.service.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.xuanluan.mc.sdk.exception.ConverterException;
-import com.xuanluan.mc.sdk.rest.BaseRestClient;
+import com.xuanluan.mc.sdk.exception.JpaConverterException;
 import com.xuanluan.mc.sdk.utils.GeneratorUtils;
 
 import javax.persistence.AttributeConverter;
@@ -16,7 +15,7 @@ public class ObjectJpaConverter implements AttributeConverter<Object, String> {
         try {
             return GeneratorUtils.getObjectMapper().writeValueAsString(o);
         } catch (JsonProcessingException e) {
-            throw new ConverterException("jpa.error.converter");
+            throw new JpaConverterException(e, Object.class.getSimpleName(), String.class.getSimpleName());
         }
     }
 
@@ -25,7 +24,7 @@ public class ObjectJpaConverter implements AttributeConverter<Object, String> {
         try {
             return GeneratorUtils.getObjectMapper().readValue(s, Object.class);
         } catch (JsonProcessingException e) {
-            throw new ConverterException("jpa.error.converter");
+            throw new JpaConverterException(e, String.class.getSimpleName(), Object.class.getSimpleName());
         }
     }
 }

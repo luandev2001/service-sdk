@@ -1,8 +1,10 @@
 package com.xuanluan.mc.sdk.exception;
 
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,27 +18,45 @@ import java.util.Map;
  * @author Xuan Luan
  * @createdAt 8/29/2022
  */
+@RequiredArgsConstructor
+@Slf4j
 public class ResponseExceptionHandler {
+    private final MessageSource messageSource;
 
-    private final Logger logger = LoggerFactory.getLogger(ResponseExceptionHandler.class);
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(ServiceException.class)
-    public WrapperResponse<Object> handleServiceException(ServiceException e) {
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(TenantException.class)
+    public WrapperResponse<Object> handleTenantException(TenantException e) {
         return WrapperResponse.builder()
-                .status(e.getStatus())
-                .message_vn((String) e.getData())
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .message(e.getMessage())
                 .build();
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(JpaConverterException.class)
+    public WrapperResponse<Object> handleJpaConverterException(JpaConverterException e) {
+        String message = messageSource.getMessage("jpa.error.converter", new Object[]{e.getFrom(), e.getTo()}, LocaleContextHolder.getLocale());
+        return WrapperResponse.builder()
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .message(message)
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(ServiceException.class)
+    public WrapperResponse<Object> handleServiceException(ServiceException e) {
+        return WrapperResponse.builder()
+                .status(e.getStatus())
+                .message(e.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(MessageException.class)
     public WrapperResponse<Object> handleMessageException(MessageException e) {
         return WrapperResponse.builder()
                 .status(e.getStatus())
-                .message_vn(e.getVn())
-                .message(e.getEn())
+                .message(e.getMessage())
                 .build();
     }
 
@@ -55,8 +75,7 @@ public class ResponseExceptionHandler {
         });
         return WrapperResponse.builder()
                 .status(HttpStatus.BAD_REQUEST)
-                .message_vn("Dữ liệu nhập vào không hợp lệ")
-                .message("Invalid input data!")
+                .message("Dữ liệu nhập vào không hợp lệ")
                 .data(errorDetail)
                 .build();
     }
@@ -64,11 +83,10 @@ public class ResponseExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public WrapperResponse<Object> handleException(Exception e) {
-        logger.error(e.getMessage(), e);
+        log.error(e.getMessage(), e);
         return WrapperResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .message_vn("Đã xảy ra lỗi hệ thống")
-                .message("Internal server error")
+                .message("Đã xảy ra lỗi hệ thống")
                 .build();
     }
 }

@@ -2,7 +2,7 @@ package com.xuanluan.mc.sdk.service.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.xuanluan.mc.sdk.exception.ConverterException;
+import com.xuanluan.mc.sdk.exception.JpaConverterException;
 import com.xuanluan.mc.sdk.utils.GeneratorUtils;
 
 import javax.persistence.AttributeConverter;
@@ -16,7 +16,7 @@ public class MapJpaConverter implements AttributeConverter<Map<String, Object>, 
         try {
             return GeneratorUtils.getObjectMapper().writeValueAsString(stringObjectMap);
         } catch (JsonProcessingException e) {
-            throw new ConverterException("jpa.error.converter");
+            throw new JpaConverterException(e, Map.class.getSimpleName(), String.class.getSimpleName());
         }
     }
 
@@ -26,7 +26,7 @@ public class MapJpaConverter implements AttributeConverter<Map<String, Object>, 
             return GeneratorUtils.getObjectMapper().readValue(s, new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {
-            throw new ConverterException("jpa.error.converter");
+            throw new JpaConverterException(e, String.class.getSimpleName(), Map.class.getSimpleName());
         }
     }
 }
