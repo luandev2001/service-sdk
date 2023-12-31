@@ -23,16 +23,24 @@ public class CacheBuilder<T> {
         return cache;
     }
 
-    public void put(String key, T value) {
+    public void put(String key, Object value) {
         checkCache().put(key, value);
     }
 
     public T get(String key) {
+        return get(key, type);
+    }
+
+    public <X> X get(String key, Class<X> type) {
         return checkCache().get(key, type);
     }
 
     public T putIfAbsent(String key, Supplier<T> supplier) {
-        T value = get(key);
+        return putIfAbsent(key, type, supplier);
+    }
+
+    public <X> X putIfAbsent(String key, Class<X> type, Supplier<X> supplier) {
+        X value = get(key, type);
         if (value == null) {
             value = supplier.get();
             put(key, value);
