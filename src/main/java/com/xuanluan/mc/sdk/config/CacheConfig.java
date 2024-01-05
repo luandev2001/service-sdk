@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,16 +20,14 @@ public class CacheConfig {
     private int expireWriteDay;
 
     @Bean
-    public Caffeine<Object, Object> caffeineConfig() {
-        return Caffeine.newBuilder()
-                .expireAfterWrite(expireWriteDay, TimeUnit.DAYS)
-                .maximumSize(500);
-    }
-
-    @Bean
-    public CacheManager cacheManager(Caffeine<Object, Object> caffeine) {
+    @Primary
+    public CacheManager cacheManager() {
         CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
-        caffeineCacheManager.setCaffeine(caffeine);
+        caffeineCacheManager.setCaffeine(
+                Caffeine.newBuilder()
+                        .expireAfterWrite(expireWriteDay, TimeUnit.DAYS)
+                        .maximumSize(500)
+        );
         return caffeineCacheManager;
     }
 
