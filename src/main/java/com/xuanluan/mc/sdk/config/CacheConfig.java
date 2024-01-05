@@ -16,8 +16,12 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableCaching
 public class CacheConfig {
-    @Value("${expire.write.day:7}")
-    private int expireWriteDay;
+    @Value("${cache.primary.expire_time:7}")
+    private int expireTime;
+    @Value("${cache.primary.period:DAYS}")
+    private String period;
+    @Value("${cache.primary.maxsize:500}")
+    private int maxSize;
 
     @Bean
     @Primary
@@ -25,8 +29,8 @@ public class CacheConfig {
         CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
         caffeineCacheManager.setCaffeine(
                 Caffeine.newBuilder()
-                        .expireAfterWrite(expireWriteDay, TimeUnit.DAYS)
-                        .maximumSize(500)
+                        .expireAfterWrite(expireTime, TimeUnit.valueOf(period.toUpperCase()))
+                        .maximumSize(maxSize)
         );
         return caffeineCacheManager;
     }
