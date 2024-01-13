@@ -17,7 +17,7 @@ public class BaseEntityListener {
 
     @PreUpdate
     public void preUpdate(BaseEntity entity) {
-        if (entity.getUpdatedAt() == null) entity.setUpdatedAt(new Date());
+        entity.setUpdatedAt(new Date());
         if (entity.getUpdatedBy() == null) entity.setUpdatedBy(BaseConstant.byUser);
     }
 }
