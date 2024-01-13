@@ -40,7 +40,6 @@ public class CacheConfig {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         modelMapper.getConfiguration().setSkipNullEnabled(true);
-        modelMapper.getConfiguration().setPropertyCondition(BaseConstant.Mapper.skipEntityFields);
         return modelMapper;
     }
 }
