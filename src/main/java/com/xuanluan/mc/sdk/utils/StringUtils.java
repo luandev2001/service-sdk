@@ -3,6 +3,7 @@ package com.xuanluan.mc.sdk.utils;
 
 import com.xuanluan.mc.sdk.exception.ServiceException;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,11 @@ import java.util.UUID;
  * @createdAt 11/8/2022
  */
 public class StringUtils {
+    public static String toKey(String... names) {
+        Assert.notEmpty(names, "array name must not be empty");
+        return String.join(":", names);
+    }
+
     public static boolean hasText(String text) {
         return text != null && !text.trim().isEmpty();
     }
