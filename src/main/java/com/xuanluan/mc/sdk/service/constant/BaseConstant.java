@@ -9,6 +9,7 @@ public class BaseConstant {
     public static final String SUPER_ADMIN = "super_admin/";
     public static final String HOOK = "hook/";
     public static final String EMPLOYEE = "employee/";
+    public static final String DEVELOPER = "developer/";
 
     public static class CacheName {
         public static final String configuration = "configurations";
