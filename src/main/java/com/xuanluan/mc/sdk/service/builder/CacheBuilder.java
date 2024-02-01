@@ -24,6 +24,7 @@ public class CacheBuilder<T> {
     }
 
     public void put(String key, Object value) {
+        Assert.notNull(value, "value must be not null");
         checkCache().put(key, value);
     }
 
