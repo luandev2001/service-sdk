@@ -46,7 +46,7 @@ public class StringUtils {
         String[] item = oldValue.split("\\.");
         //check item has valid
         Integer suffix = toInteger(item[1]);
-        if (item.length != 2 || toInteger(item[0]) == null || suffix == null) {
+        if (item.length != 2 || toInteger(item[0]) != null || suffix == null) {
             throw new ServiceException(HttpStatus.BAD_REQUEST, "Mã ký tự không hợp lệ, nguyên tắc 'chuỗi.số'");
         }
         int maxSuffix = 999999999;
