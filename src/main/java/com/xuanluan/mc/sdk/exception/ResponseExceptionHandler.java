@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ResponseExceptionHandler {
     private final MessageSource messageSource;
 
+    /**
+     * message of exception is code to get message
+     */
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ExceptionHandler(MessageException.class)
     public WrapperResponse<Object> handleMessageSourceException(MessageSourceException e) {
@@ -36,7 +39,7 @@ public class ResponseExceptionHandler {
                 .build();
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(JpaConverterException.class)
     public WrapperResponse<Object> handleJpaConverterException(JpaConverterException e) {
         String message = messageSource.getMessage("jpa.error.converter", new Object[]{e.getFrom(), e.getTo()}, LocaleContextHolder.getLocale());
@@ -59,7 +62,7 @@ public class ResponseExceptionHandler {
     @ExceptionHandler(MessageException.class)
     public WrapperResponse<Object> handleMessageException(MessageException e) {
         return WrapperResponse.builder()
-                .status(e.getStatus())
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .message(e.getMessage())
                 .build();
     }

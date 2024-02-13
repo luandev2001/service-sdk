@@ -5,7 +5,6 @@ import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -18,15 +17,11 @@ import java.util.Objects;
 public class MessageAssert {
     private final MessageSource messageSource;
 
-    public void isTrue(boolean expression, String key, HttpStatus status, @Nullable Object... args) {
+    public void isTrue(boolean expression, String key, @Nullable Object... args) {
         if (!expression) {
             String message = messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
-            throw new MessageException(message, status);
+            throw new MessageException(message);
         }
-    }
-
-    public void isTrue(boolean expression, String key, @Nullable Object... args) {
-        isTrue(expression, key, HttpStatus.BAD_REQUEST, args);
     }
 
     public void notMatch(@Nullable Object value1, @Nullable Object value2, String arg) {
@@ -34,18 +29,14 @@ public class MessageAssert {
     }
 
     public void isTrue(boolean expression, String arg) {
-        isTrue(expression, "error.not_correct", HttpStatus.BAD_REQUEST, arg);
-    }
-
-    public void notNull(@Nullable Object value, String key, HttpStatus status, @Nullable Object... args) {
-        if (value == null) {
-            String message = messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
-            throw new MessageException(message, status);
-        }
+        isTrue(expression, "error.not_correct", arg);
     }
 
     public void notNull(@Nullable Object value, String key, @Nullable Object... args) {
-        notNull(value, key, HttpStatus.BAD_REQUEST, args);
+        if (value == null) {
+            String message = messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
+            throw new MessageException(message);
+        }
     }
 
     public void notNull(@Nullable Object value, String arg) {
@@ -55,7 +46,7 @@ public class MessageAssert {
     public void notEmpty(@Nullable Collection<?> values, String key, @Nullable Object... args) {
         if (CollectionUtils.isEmpty(values)) {
             String message = messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
-            throw new MessageException(message, HttpStatus.BAD_REQUEST);
+            throw new MessageException(message);
         }
     }
 
@@ -64,7 +55,7 @@ public class MessageAssert {
     }
 
     public void notFound(@Nullable Object value, String arg1, String arg2) {
-        notNull(value, "error.not_found", HttpStatus.NOT_FOUND, arg1, arg2);
+        notNull(value, "error.not_found", arg1, arg2);
     }
 
     public void notBlank(@Nullable String value, String arg) {

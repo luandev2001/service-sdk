@@ -58,7 +58,7 @@ public abstract class BaseRestClient {
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             try {
                 WrapperResponse result = objectMapper.readValue(e.getResponseBodyAsString(), WrapperResponse.class);
-                throw new MessageException(result.getMessage(), result.getStatus());
+                throw new MessageException(result.getMessage());
             } catch (JsonProcessingException jsonE) {
                 throw new RuntimeException(jsonE);
             }
