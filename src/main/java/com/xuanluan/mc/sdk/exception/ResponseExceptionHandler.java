@@ -18,6 +18,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ResponseExceptionHandler {
     private final MessageSource messageSource;
 
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    @ExceptionHandler(MessageException.class)
+    public WrapperResponse<Object> handleMessageSourceException(MessageSourceException e) {
+        return WrapperResponse.builder()
+                .status(e.getStatus())
+                .message(messageSource.getMessage(e.getMessage(), e.getArgs(), LocaleContextHolder.getLocale()))
+                .build();
+    }
+
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(TenantException.class)
     public WrapperResponse<Object> handleTenantException(TenantException e) {
