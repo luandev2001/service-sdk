@@ -18,14 +18,14 @@ import java.util.Objects;
 public class MessageAssert {
     private final MessageSource messageSource;
 
-    public void isTrue(boolean expression, String key, HttpStatus status, Object... args) {
+    public void isTrue(boolean expression, String key, HttpStatus status, @Nullable Object... args) {
         if (!expression) {
             String message = messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
             throw new MessageException(message, status);
         }
     }
 
-    public void isTrue(boolean expression, String key, Object... args) {
+    public void isTrue(boolean expression, String key, @Nullable Object... args) {
         isTrue(expression, key, HttpStatus.BAD_REQUEST, args);
     }
 
@@ -37,14 +37,14 @@ public class MessageAssert {
         isTrue(expression, "error.not_correct", HttpStatus.BAD_REQUEST, arg);
     }
 
-    public void notNull(@Nullable Object value, String key, HttpStatus status, Object... args) {
+    public void notNull(@Nullable Object value, String key, HttpStatus status, @Nullable Object... args) {
         if (value == null) {
             String message = messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
             throw new MessageException(message, status);
         }
     }
 
-    public void notNull(@Nullable Object value, String key, Object... args) {
+    public void notNull(@Nullable Object value, String key, @Nullable Object... args) {
         notNull(value, key, HttpStatus.BAD_REQUEST, args);
     }
 
@@ -52,14 +52,14 @@ public class MessageAssert {
         notNull(value, "error.not_null", arg);
     }
 
-    public void notEmpty(@Nullable Collection<?> values, String key, Object... args) {
+    public void notEmpty(@Nullable Collection<?> values, String key, @Nullable Object... args) {
         if (CollectionUtils.isEmpty(values)) {
             String message = messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
             throw new MessageException(message, HttpStatus.BAD_REQUEST);
         }
     }
 
-    public void notEmpty(Collection<?> values, String arg) {
+    public void notEmpty(@Nullable Collection<?> values, String arg) {
         notEmpty(values, "error.not_empty", arg);
     }
 
