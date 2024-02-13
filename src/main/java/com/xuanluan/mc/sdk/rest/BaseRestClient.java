@@ -18,17 +18,15 @@ import org.springframework.web.client.RestTemplate;
  */
 @RequiredArgsConstructor
 public abstract class BaseRestClient {
+    private final String servicePath;
+    private final String clientId;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
-
-    protected abstract String getServicePath();
-
-    protected abstract String getClientId();
 
     protected HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("clientId", getClientId());
+        headers.set("clientId", clientId);
         return headers;
     }
 
@@ -37,7 +35,7 @@ public abstract class BaseRestClient {
             if (isWrapper) {
                 ResponseEntity<WrapperResponse<T>> response =
                         restTemplate.exchange(
-                                getServicePath() + path,
+                                servicePath + path,
                                 method,
                                 entity,
                                 ParameterizedTypeReference.forType(ResolvableType.forClassWithGenerics(WrapperResponse.class, tClass).getType())
@@ -47,7 +45,7 @@ public abstract class BaseRestClient {
             } else {
                 ResponseEntity<T> response =
                         restTemplate.exchange(
-                                getServicePath() + path,
+                                servicePath + path,
                                 method,
                                 entity,
                                 ParameterizedTypeReference.forType(tClass)
