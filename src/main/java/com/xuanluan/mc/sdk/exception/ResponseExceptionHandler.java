@@ -22,7 +22,7 @@ public class ResponseExceptionHandler {
      * message of exception is code to get message
      */
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ExceptionHandler(MessageException.class)
+    @ExceptionHandler(MessageSourceException.class)
     public WrapperResponse<Object> handleMessageSourceException(MessageSourceException e) {
         return WrapperResponse.builder()
                 .status(e.getStatus())
