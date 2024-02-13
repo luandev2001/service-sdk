@@ -18,12 +18,14 @@ public class MessageLocaleConfig implements WebMvcConfigurer {
     @Value("${language.default:vi}")
     private String language;
     @Value("${language.param:lang}")
-    private String languageParam;
+    private String param;
+    @Value("${language.messages:locales/messages}")
+    private String messages;
 
     @Bean
     public MessageSource messageSource() {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-        source.setBasename("messages");
+        source.setBasename(messages);
         source.setUseCodeAsDefaultMessage(true);
         return source;
     }
@@ -38,7 +40,7 @@ public class MessageLocaleConfig implements WebMvcConfigurer {
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-        lci.setParamName(languageParam);
+        lci.setParamName(param);
         return lci;
     }
 
