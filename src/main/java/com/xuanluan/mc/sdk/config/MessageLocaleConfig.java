@@ -19,13 +19,13 @@ public class MessageLocaleConfig implements WebMvcConfigurer {
     private String language;
     @Value("${language.param:lang}")
     private String param;
-    @Value("${language.messages:locales/messages}")
-    private String messages;
+    @Value("${language.messages:locales/messages,locales/errors}")
+    private String[] messages;
 
     @Bean
     public MessageSource messageSource() {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-        source.setBasename(messages);
+        source.setBasenames(messages);
         source.setUseCodeAsDefaultMessage(true);
         return source;
     }
