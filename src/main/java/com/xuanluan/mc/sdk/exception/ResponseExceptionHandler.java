@@ -6,13 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Xuan Luan
@@ -57,26 +52,6 @@ public class ResponseExceptionHandler {
         return WrapperResponse.builder()
                 .status(e.getStatus())
                 .message(e.getMessage())
-                .build();
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public WrapperResponse<Object> handleInputDataException(MethodArgumentNotValidException e) {
-        return processFieldErrors(e);
-    }
-
-    private WrapperResponse<Object> processFieldErrors(MethodArgumentNotValidException exception) {
-        Map<String, String> errorDetail = new HashMap<>();
-        exception.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String messageError = error.getDefaultMessage();
-            errorDetail.put(fieldName, messageError);
-        });
-        return WrapperResponse.builder()
-                .status(HttpStatus.BAD_REQUEST)
-                .message("Dữ liệu nhập vào không hợp lệ")
-                .data(errorDetail)
                 .build();
     }
 
