@@ -21,12 +21,15 @@ public class MessageLocaleConfig implements WebMvcConfigurer {
     private String param;
     @Value("${language.messages:locales/messages,locales/errors}")
     private String[] messages;
+    @Value("${language.encode:UTF-8}")
+    private String encode;
 
     @Bean
     public MessageSource messageSource() {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
         source.setBasenames(messages);
         source.setUseCodeAsDefaultMessage(true);
+        source.setDefaultEncoding(encode);
         return source;
     }
 

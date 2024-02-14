@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequiredArgsConstructor
 @Slf4j
 public class ResponseExceptionHandler {
-    private final MessageSource messageSource;
+    protected final MessageSource messageSource;
 
     /**
      * message of exception is code to get message
