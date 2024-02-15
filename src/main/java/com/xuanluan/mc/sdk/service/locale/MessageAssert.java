@@ -3,8 +3,7 @@ package com.xuanluan.mc.sdk.service.locale;
 import com.xuanluan.mc.sdk.exception.MessageException;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -15,11 +14,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Component
 public class MessageAssert {
-    private final MessageSource messageSource;
+    private final MessageSourceAccessor messageSourceAccessor;
 
     public void isTrue(boolean expression, String key, @Nullable Object... args) {
         if (!expression) {
-            String message = messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
+            String message = messageSourceAccessor.getMessage(key, args);
             throw new MessageException(message);
         }
     }
@@ -34,7 +33,7 @@ public class MessageAssert {
 
     public void notNull(@Nullable Object value, String key, @Nullable Object... args) {
         if (value == null) {
-            String message = messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
+            String message = messageSourceAccessor.getMessage(key, args);
             throw new MessageException(message);
         }
     }
@@ -45,7 +44,7 @@ public class MessageAssert {
 
     public void notEmpty(@Nullable Collection<?> values, String key, @Nullable Object... args) {
         if (CollectionUtils.isEmpty(values)) {
-            String message = messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
+            String message = messageSourceAccessor.getMessage(key, args);
             throw new MessageException(message);
         }
     }
