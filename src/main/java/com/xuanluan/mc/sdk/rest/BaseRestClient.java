@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
 import com.xuanluan.mc.sdk.exception.MessageException;
+import com.xuanluan.mc.sdk.utils.GeneratorUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
@@ -20,8 +21,6 @@ import org.springframework.web.client.RestTemplate;
 public abstract class BaseRestClient {
     private final String servicePath;
     private final String clientId;
-    private final ObjectMapper objectMapper;
-    private final RestTemplate restTemplate;
 
     protected HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
@@ -34,7 +33,7 @@ public abstract class BaseRestClient {
         try {
             if (isWrapper) {
                 ResponseEntity<WrapperResponse<T>> response =
-                        restTemplate.exchange(
+                        GeneratorUtils.restTemplate.exchange(
                                 servicePath + path,
                                 method,
                                 entity,
@@ -44,7 +43,7 @@ public abstract class BaseRestClient {
                 return response.getBody();
             } else {
                 ResponseEntity<T> response =
-                        restTemplate.exchange(
+                        GeneratorUtils.restTemplate.exchange(
                                 servicePath + path,
                                 method,
                                 entity,
@@ -55,7 +54,7 @@ public abstract class BaseRestClient {
             }
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             try {
-                WrapperResponse result = objectMapper.readValue(e.getResponseBodyAsString(), WrapperResponse.class);
+                WrapperResponse result = GeneratorUtils.objectMapper.readValue(e.getResponseBodyAsString(), WrapperResponse.class);
                 throw new MessageException(result.getMessage());
             } catch (JsonProcessingException jsonE) {
                 throw new RuntimeException(jsonE);

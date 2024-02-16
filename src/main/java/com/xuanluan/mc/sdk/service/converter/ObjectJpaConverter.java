@@ -13,7 +13,7 @@ public class ObjectJpaConverter implements AttributeConverter<Object, String> {
     @Override
     public String convertToDatabaseColumn(Object o) {
         try {
-            return GeneratorUtils.getObjectMapper().writeValueAsString(o);
+            return GeneratorUtils.objectMapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
             throw new JpaConverterException(e, Object.class.getSimpleName(), String.class.getSimpleName());
         }
@@ -22,7 +22,7 @@ public class ObjectJpaConverter implements AttributeConverter<Object, String> {
     @Override
     public Object convertToEntityAttribute(String s) {
         try {
-            return GeneratorUtils.getObjectMapper().readValue(s, Object.class);
+            return GeneratorUtils.objectMapper.readValue(s, Object.class);
         } catch (JsonProcessingException e) {
             throw new JpaConverterException(e, String.class.getSimpleName(), Object.class.getSimpleName());
         }

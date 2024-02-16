@@ -3,8 +3,7 @@ package com.xuanluan.mc.sdk.exception;
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequiredArgsConstructor
 @Slf4j
 public class ResponseExceptionHandler {
-    protected final MessageSource messageSource;
+    protected final MessageSourceAccessor messageSource;
 
     /**
      * message of exception is code to get message
@@ -26,7 +25,7 @@ public class ResponseExceptionHandler {
     public WrapperResponse<Object> handleMessageSourceException(MessageSourceException e) {
         return WrapperResponse.builder()
                 .status(e.getStatus())
-                .message(messageSource.getMessage(e.getMessage(), e.getArgs(), LocaleContextHolder.getLocale()))
+                .message(messageSource.getMessage(e.getMessage(), e.getArgs()))
                 .build();
     }
 
@@ -42,7 +41,7 @@ public class ResponseExceptionHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(JpaConverterException.class)
     public WrapperResponse<Object> handleJpaConverterException(JpaConverterException e) {
-        String message = messageSource.getMessage("jpa.error.converter", new Object[]{e.getFrom(), e.getTo()}, LocaleContextHolder.getLocale());
+        String message = messageSource.getMessage("jpa.error.converter", new Object[]{e.getFrom(), e.getTo()});
         return WrapperResponse.builder()
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .message(message)

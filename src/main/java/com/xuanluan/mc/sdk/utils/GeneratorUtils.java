@@ -3,6 +3,7 @@ package com.xuanluan.mc.sdk.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.util.Assert;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Random;
 
@@ -11,7 +12,8 @@ import java.util.Random;
  * @createdAt 3/31/2023
  */
 public class GeneratorUtils {
-    private static ObjectMapper objectMapper;
+    public static final ObjectMapper objectMapper = new ObjectMapper();
+    public static final RestTemplate restTemplate = new RestTemplate();
 
     public static String getRandomCode4Digits() {
         return generateCodeDigits(4);
@@ -40,12 +42,5 @@ public class GeneratorUtils {
     public static String generateRegexRandom(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}";
         return RandomStringUtils.random(length, characters);
-    }
-
-    public static ObjectMapper getObjectMapper() {
-        if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
-        }
-        return objectMapper;
     }
 }

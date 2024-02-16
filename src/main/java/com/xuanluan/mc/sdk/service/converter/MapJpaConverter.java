@@ -14,7 +14,7 @@ public class MapJpaConverter implements AttributeConverter<Map<String, Object>, 
     @Override
     public String convertToDatabaseColumn(Map<String, Object> stringObjectMap) {
         try {
-            return GeneratorUtils.getObjectMapper().writeValueAsString(stringObjectMap);
+            return GeneratorUtils.objectMapper.writeValueAsString(stringObjectMap);
         } catch (JsonProcessingException e) {
             throw new JpaConverterException(e, Map.class.getSimpleName(), String.class.getSimpleName());
         }
@@ -23,7 +23,7 @@ public class MapJpaConverter implements AttributeConverter<Map<String, Object>, 
     @Override
     public Map<String, Object> convertToEntityAttribute(String s) {
         try {
-            return GeneratorUtils.getObjectMapper().readValue(s, new TypeReference<>() {
+            return GeneratorUtils.objectMapper.readValue(s, new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {
             throw new JpaConverterException(e, String.class.getSimpleName(), Map.class.getSimpleName());
