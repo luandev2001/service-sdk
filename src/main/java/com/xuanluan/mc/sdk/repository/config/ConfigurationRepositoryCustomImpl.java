@@ -2,12 +2,11 @@ package com.xuanluan.mc.sdk.repository.config;
 
 import com.xuanluan.mc.sdk.domain.entity.Configuration;
 import com.xuanluan.mc.sdk.domain.model.filter.ConfigurationFilter;
-import com.xuanluan.mc.sdk.domain.model.filter.ResultList;
 import com.xuanluan.mc.sdk.repository.BaseRepository;
+import org.springframework.data.domain.Page;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,11 +17,11 @@ public class ConfigurationRepositoryCustomImpl extends BaseRepository<Configurat
     }
 
     @Override
-    public ResultList<Configuration> search(ConfigurationFilter filter) {
+    public Page<Configuration> search(ConfigurationFilter filter) {
         refresh();
         List<Predicate> predicates = filterSearch(Set.of("name"), filter);
-        appendFilter(root.get("type").in(filter.getTypes()), filter.getTypes(), predicates);
-        appendFilter(root.get("dataType").in(filter.getDataTypes()), filter.getDataTypes(), predicates);
-        return getResultList(predicates, filter.getIndex(), filter.getMaxResult());
+        appendFilter(filter.getTypes(), predicates).apply(root.get("type").in(filter.getTypes()));
+        appendFilter(filter.getDataTypes(), predicates).apply(root.get("dataType").in(filter.getDataTypes()));
+        return getResultList(predicates, filter.getPage(), filter.getSize());
     }
 }
