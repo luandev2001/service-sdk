@@ -10,17 +10,18 @@ import java.util.List;
 public class PostgresTenantServiceImpl implements ITenantService {
     private final EntityManager entityManager;
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<String> getSchemas() {
-        String query = "SELECT nspname AS schema_name\n" +
-                "FROM pg_catalog.pg_namespace\n" +
-                "WHERE nspname not like 'pg_%'";
-        return (List<String>) entityManager.createNativeQuery(query).getResultList();
+        return getSchemas("nspname not like 'pg_%'");
     }
 
     @Override
     public boolean contains(String schema) {
-        return getSchemas().contains(schema);
+        return !getSchemas(String.format("nspname = '%s'", schema)).isEmpty();
+    }
+
+    private List<String> getSchemas(String condition) {
+        String query = "SELECT nspname AS schema_name FROM pg_catalog.pg_namespace WHERE :condition";
+        return entityManager.createQuery(query, String.class).setParameter("condition", condition).getResultList();
     }
 }
