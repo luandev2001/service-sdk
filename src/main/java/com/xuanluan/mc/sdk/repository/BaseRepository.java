@@ -112,13 +112,8 @@ public class BaseRepository<T> {
     protected List<T> getListResult(List<Predicate> filters, Pageable pageable) {
         this.query.where(filters.toArray(new Predicate[0]))
                 .orderBy(QueryUtils.toOrders(pageable.getSort(), this.root, this.builder));
-        return this.getTypedQuery(pageable.getPageSize(), pageable.getOffset()).getResultList();
-    }
-
-    protected TypedQuery<T> getTypedQuery(int maxResult, long offset) {
-        TypedQuery<T> typedQuery = this.entityManager.createQuery(this.query);
-        if (maxResult > 0) typedQuery.setMaxResults(maxResult);
-        if (offset > 0) typedQuery.setFirstResult((int) offset);
-        return typedQuery;
+        return this.entityManager.createQuery(this.query)
+                .setMaxResults(pageable.getPageSize())
+                .setFirstResult((int) pageable.getOffset()).getResultList();
     }
 }
