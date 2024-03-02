@@ -20,8 +20,9 @@ public class PostgresTenantServiceImpl implements ITenantService {
         return !getSchemas(String.format("nspname = '%s'", schema)).isEmpty();
     }
 
+    @SuppressWarnings("unchecked")
     private List<String> getSchemas(String condition) {
-        String query = "SELECT nspname AS schema_name FROM pg_catalog.pg_namespace WHERE :condition";
-        return entityManager.createQuery(query, String.class).setParameter("condition", condition).getResultList();
+        String query = "SELECT nspname AS schema_name FROM pg_catalog.pg_namespace WHERE " + condition;
+        return (List<String>) entityManager.createNativeQuery(query).getResultList();
     }
 }
