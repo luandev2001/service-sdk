@@ -2,6 +2,7 @@ package com.xuanluan.mc.sdk.service.impl;
 
 import com.xuanluan.mc.sdk.domain.entity.Configuration;
 import com.xuanluan.mc.sdk.domain.enums.DataType;
+import com.xuanluan.mc.sdk.domain.model.filter.ConfigurationFilter;
 import com.xuanluan.mc.sdk.domain.model.request.CreateConfiguration;
 import com.xuanluan.mc.sdk.domain.model.request.UpdateConfiguration;
 import com.xuanluan.mc.sdk.repository.config.ConfigurationRepository;
@@ -14,6 +15,7 @@ import com.xuanluan.mc.sdk.service.IConfigurationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,6 +113,11 @@ public class ConfigurationServiceImpl implements IConfigurationService {
             configurationCache = new CacheBuilder<>(cacheManager, BaseConstant.CacheName.configuration, Configuration.class);
         }
         return configurationCache;
+    }
+
+    @Override
+    public Page<Configuration> search(ConfigurationFilter filter) {
+        return configurationRepository.search(filter);
     }
 
     private void validateDataType(DataType dataType, Object value) {

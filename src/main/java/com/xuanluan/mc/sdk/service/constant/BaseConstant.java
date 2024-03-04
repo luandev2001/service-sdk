@@ -14,4 +14,8 @@ public class BaseConstant {
     public static class CacheName {
         public static final String configuration = "configurations";
     }
+
+    public static class Repository {
+        public static final int maxResult = 20;
+    }
 }
