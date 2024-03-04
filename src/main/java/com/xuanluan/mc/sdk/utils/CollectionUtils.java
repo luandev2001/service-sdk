@@ -2,8 +2,11 @@ package com.xuanluan.mc.sdk.utils;
 
 import org.springframework.util.Assert;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * @author Xuan Luan
@@ -16,5 +19,12 @@ public class CollectionUtils extends org.springframework.util.CollectionUtils {
             oldMap.put(key, value);
         }
         return oldMap;
+    }
+
+    public static <T> Function<T, List<T>> append(Supplier<Boolean> supplier, List<T> list) {
+        return (value) -> {
+            if (supplier.get() != null && supplier.get()) list.add(value);
+            return list;
+        };
     }
 }
