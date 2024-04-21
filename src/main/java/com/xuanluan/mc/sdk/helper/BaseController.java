@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.controller;
+package com.xuanluan.mc.sdk.helper;
 
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
 import lombok.RequiredArgsConstructor;
