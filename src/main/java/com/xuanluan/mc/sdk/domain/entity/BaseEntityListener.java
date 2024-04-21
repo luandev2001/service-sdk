@@ -12,12 +12,11 @@ public class BaseEntityListener {
     public void prePersist(BaseEntity entity) {
         if (entity.getId() == null) entity.setId(StringUtils.generateId());
         if (entity.getCreatedAt() == null) entity.setCreatedAt(new Date());
-        if (entity.getCreatedBy() == null) entity.setCreatedBy(BaseConstant.byUser);
+        if (entity.getUpdatedAt() == null) entity.setUpdatedAt(new Date());
     }
 
     @PreUpdate
     public void preUpdate(BaseEntity entity) {
         entity.setUpdatedAt(new Date());
-        if (entity.getUpdatedBy() == null) entity.setUpdatedBy(BaseConstant.byUser);
     }
 }
