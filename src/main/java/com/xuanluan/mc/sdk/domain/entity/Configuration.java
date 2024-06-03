@@ -13,9 +13,9 @@ import javax.persistence.*;
 public class Configuration extends BaseEntity {
     @Convert(converter = ObjectJpaConverter.class)
     private Object value;
-    @Column(nullable = false, updatable = false, length = 50)
+    @Column(nullable = false)
     private String name;
-    @Column(nullable = false, updatable = false, length = 25)
+    @Column(nullable = false, length = 50)
     private String type;
     @Column(updatable = false)
     private boolean isEdit = true;

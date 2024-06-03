@@ -12,14 +12,10 @@ import java.util.UUID;
  * @author Xuan Luan
  * @createdAt 11/8/2022
  */
-public class StringUtils {
+public class StringUtils extends org.springframework.util.StringUtils {
     public static String toKey(String... names) {
         Assert.notEmpty(names, "array name must not be empty");
         return String.join(":", names);
-    }
-
-    public static boolean hasText(String text) {
-        return text != null && !text.trim().isEmpty();
     }
 
     public static boolean checkSuffixImage(String file) {

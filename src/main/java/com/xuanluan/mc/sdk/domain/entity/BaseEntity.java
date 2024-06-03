@@ -17,7 +17,7 @@ public class BaseEntity {
     @Column(updatable = false)
     private String createdBy;
     private String updatedBy;
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date createdAt;
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)

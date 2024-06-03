@@ -42,11 +42,6 @@ public class BaseRepository<T> {
         root.alias(tClass.getSimpleName());
     }
 
-
-    protected Predicate likeOperator(String nameField, String searchKey) {
-        return StringUtils.hasText(nameField) && StringUtils.hasText(searchKey) ? builder.like(root.get(nameField), "%" + searchKey + "%") : null;
-    }
-
     protected List<Predicate> appendFilter(String nameField, Object valueField, List<Predicate> predicates) {
         Assert.isTrue(StringUtils.hasText(nameField), "nameField must not blank");
         return appendFilter(valueField, predicates).apply(builder.equal(root.get(nameField), valueField));
@@ -57,7 +52,7 @@ public class BaseRepository<T> {
     }
 
     protected Page<T> getPage(@Nullable List<Predicate> predicates, Pageable pageable) {
-        predicates = predicates != null ? predicates : new ArrayList<>();
+        predicates = CollectionUtils.isEmpty(predicates) ? new LinkedList<>() : predicates;
         long totalRecord = getCount(predicates);
         return PageableExecutionUtils.getPage(
                 totalRecord > 0 ? getListResult(predicates, pageable) : new ArrayList<>(),
@@ -66,9 +61,8 @@ public class BaseRepository<T> {
         );
     }
 
-    protected Page<T> getPage(List<Predicate> predicates, BaseFilter filter) {
-        List<Predicate> _predicates = filterSearch(filter);
-        CollectionUtils.mergeArrayIntoCollection(predicates, _predicates);
+    protected Page<T> getPage(@Nullable List<Predicate> predicates, BaseFilter filter) {
+        List<Predicate> _predicates = CollectionUtils.isEmpty(predicates) ? new LinkedList<>() : predicates;
         Set<String> columns = new HashSet<>(filter.getFilters().keySet());
         columns.addAll(filter.getSorts().keySet());
 
@@ -121,18 +115,5 @@ public class BaseRepository<T> {
                 .setMaxResults(pageable.getPageSize())
                 .setFirstResult((int) pageable.getOffset())
                 .getResultList();
-    }
-
-    private List<Predicate> filterSearch(BaseFilter filter) {
-        Assert.notNull(filter, "filter must not null");
-        List<Predicate> predicates = new LinkedList<>();
-        if (StringUtils.hasText(filter.getKeyword())) {
-            Predicate predicate = null;
-            for (String key : filter.keywordParams()) {
-                predicate = predicate != null ? builder.or(predicate, this.likeOperator(key, filter.getKeyword())) : this.likeOperator(key, filter.getKeyword());
-            }
-            if (predicate != null) predicates.add(predicate);
-        }
-        return predicates;
     }
 }
