@@ -22,5 +22,4 @@ public class BaseEntity {
     private Date createdAt;
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date updatedAt;
-    private boolean isActive = true;
 }
