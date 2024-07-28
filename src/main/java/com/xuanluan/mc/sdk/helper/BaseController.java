@@ -1,8 +1,8 @@
 package com.xuanluan.mc.sdk.helper;
 
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
+import com.xuanluan.mc.sdk.service.locale.MessageLocale;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
  */
 @RequiredArgsConstructor
 public class BaseController {
-    private final MessageSourceAccessor messageSourceAccessor;
+    private final MessageLocale messageLocale;
 
     protected <T> WrapperResponse<T> get(T data, String arg) {
         return response(data, "rest.get", arg);
@@ -30,7 +30,7 @@ public class BaseController {
     }
 
     protected <T> WrapperResponse<T> response(T data, String messageKey, String... args) {
-        String message = messageSourceAccessor.getMessage(messageKey, args);
+        String message = messageLocale.getMessage(messageKey, args);
         return WrapperResponse.<T>builder().status(HttpStatus.OK).message(message).data(data).build();
     }
 }

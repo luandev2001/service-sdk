@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.service.file;
+package com.xuanluan.mc.sdk.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
