@@ -6,10 +6,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ConfirmationStatus {
-    approving(1, "Chờ phê duyệt"),
-    processing(2, "Đang hoạt động"),
-    closing(3, "Tạm ngưng");
+    approving("Chờ phê duyệt"),
+    processing("Đang hoạt động"),
+    closing("Tạm ngưng");
 
-    private final int value;
     private final String label;
 }

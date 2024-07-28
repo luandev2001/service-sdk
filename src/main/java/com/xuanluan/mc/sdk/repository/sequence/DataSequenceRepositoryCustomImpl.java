@@ -1,6 +1,7 @@
 package com.xuanluan.mc.sdk.repository.sequence;
 
 import com.xuanluan.mc.sdk.domain.entity.DataSequence;
+import com.xuanluan.mc.sdk.domain.enums.SequenceType;
 import com.xuanluan.mc.sdk.repository.BaseRepository;
 
 import javax.persistence.EntityManager;
@@ -20,7 +21,7 @@ public class DataSequenceRepositoryCustomImpl extends BaseRepository<DataSequenc
     }
 
     @Override
-    public DataSequence findByClassName(String className, int type) {
+    public DataSequence findByClassName(String className, SequenceType type) {
         refresh();
         List<Predicate> filters = appendFilter("className", className, new LinkedList<>());
         appendFilter("type", type, filters);

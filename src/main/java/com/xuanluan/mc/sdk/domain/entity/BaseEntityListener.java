@@ -1,6 +1,5 @@
 package com.xuanluan.mc.sdk.domain.entity;
 
-import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 
 import javax.persistence.PrePersist;

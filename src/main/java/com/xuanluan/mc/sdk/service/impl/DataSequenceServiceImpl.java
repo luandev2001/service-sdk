@@ -34,7 +34,7 @@ public class DataSequenceServiceImpl {
     public <T> DataSequence generateDataSequenceNext(Class<T> tClass, SequenceType type) {
         //increase sequence value
         DataSequence sequence = getDataSequenceNext(tClass, type);
-        log.info("Cập nhật sequence, type= " + sequence.getType() + ", thành " + sequence.getSequenceValue());
+        log.info("Cập nhật sequence, type= {}, thành {}", sequence.getType(), sequence.getSequenceValue());
         return sequenceRepository.save(sequence);
     }
 
@@ -44,7 +44,6 @@ public class DataSequenceServiceImpl {
         if (!StringUtils.hasText(sequence.getSequenceValue())) {
             sequence = generateDataSequenceNext(tClass, type);
         }
-        log.info("Cập nhật sequence, type= " + sequence.getType() + ", thành " + sequence.getSequenceValue());
         return sequenceRepository.save(sequence);
     }
 
@@ -73,17 +72,17 @@ public class DataSequenceServiceImpl {
         if (sequence == null) {
             sequence = new DataSequence();
             sequence.setClassName(tClass.getName());
-            sequence.setType(type.value);
+            sequence.setType(type);
         }
         return sequence;
     }
 
     private DataSequence getDataSequence(String className, SequenceType type) {
-        return sequenceRepository.findByClassName(className, type.value);
+        return sequenceRepository.findByClassName(className, type);
     }
 
     private void generateSequenceValue(DataSequence sequence) {
-        if (SequenceType.ALPHABET_DOT_NO.value == sequence.getType()) {
+        if (SequenceType.ALPHABET_DOT_NO == sequence.getType()) {
             sequence.setSequenceValue(StringUtils.generateAlphabetDotNoCode(sequence.getSequenceValue()));
         } else {
             String oldSeq = sequence.getSequenceValue() != null ? sequence.getSequenceValue() : "0";

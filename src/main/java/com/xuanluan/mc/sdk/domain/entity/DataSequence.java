@@ -1,10 +1,12 @@
 package com.xuanluan.mc.sdk.domain.entity;
 
+import com.xuanluan.mc.sdk.domain.enums.SequenceType;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 
 /**
  * @author Xuan Luan
@@ -19,5 +21,6 @@ public class DataSequence extends BaseEntity {
     @Column(nullable = false)
     private String sequenceValue;
     @Column(updatable = false)
-    private int type;
+    @Enumerated
+    private SequenceType type;
 }
