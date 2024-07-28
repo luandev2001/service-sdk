@@ -7,7 +7,6 @@ import com.xuanluan.mc.sdk.utils.StringUtils;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -51,8 +50,7 @@ public class BaseRepository<T> {
         return predicate -> CollectionUtils.append(() -> value != null, predicates).apply(predicate);
     }
 
-    protected Page<T> getPage(@Nullable List<Predicate> predicates, Pageable pageable) {
-        predicates = CollectionUtils.isEmpty(predicates) ? new LinkedList<>() : predicates;
+    protected Page<T> getPage(List<Predicate> predicates, Pageable pageable) {
         long totalRecord = getCount(predicates);
         return PageableExecutionUtils.getPage(
                 totalRecord > 0 ? getListResult(predicates, pageable) : new ArrayList<>(),
@@ -61,8 +59,7 @@ public class BaseRepository<T> {
         );
     }
 
-    protected Page<T> getPage(@Nullable List<Predicate> predicates, BaseFilter filter) {
-        List<Predicate> _predicates = CollectionUtils.isEmpty(predicates) ? new LinkedList<>() : predicates;
+    protected Page<T> getPage(List<Predicate> predicates, BaseFilter filter) {
         Set<String> columns = new HashSet<>(filter.getFilters().keySet());
         columns.addAll(filter.getSorts().keySet());
 
@@ -73,13 +70,13 @@ public class BaseRepository<T> {
                 Object value = filter.getFilters().get(column);
                 String direction = filter.getSorts().get(column);
                 if (model.getAttribute(column).getPersistentAttributeType() == Attribute.PersistentAttributeType.BASIC) {
-                    appendFilter(value, _predicates).apply(root.get(column).in(value));
+                    appendFilter(value, predicates).apply(root.get(column).in(value));
                     CollectionUtils.append(() -> StringUtils.hasText(direction), orders).apply(new Sort.Order(RepositoryUtils.convertDirection(direction), column));
                 }
             } catch (Exception ignored) {
             }
         });
-        return getPage(_predicates, PageRequest.of(filter.getPage(), filter.getSize(), Sort.by(orders)));
+        return getPage(predicates, PageRequest.of(filter.getPage(), filter.getSize(), Sort.by(orders)));
     }
 
     private long getCount(List<Predicate> filters) {

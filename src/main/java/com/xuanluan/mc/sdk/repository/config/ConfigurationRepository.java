@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConfigurationRepository extends CrudRepository<Configuration, String>, ConfigurationRepositoryCustom {
     Configuration findByNameAndType(String name, String type);
-
 }

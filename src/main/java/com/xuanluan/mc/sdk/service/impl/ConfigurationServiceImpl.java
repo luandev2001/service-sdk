@@ -2,7 +2,6 @@ package com.xuanluan.mc.sdk.service.impl;
 
 import com.xuanluan.mc.sdk.domain.entity.Configuration;
 import com.xuanluan.mc.sdk.domain.enums.DataType;
-import com.xuanluan.mc.sdk.domain.model.filter.ConfigurationFilter;
 import com.xuanluan.mc.sdk.domain.model.request.CreateConfiguration;
 import com.xuanluan.mc.sdk.domain.model.request.UpdateConfiguration;
 import com.xuanluan.mc.sdk.repository.config.ConfigurationRepository;
@@ -15,7 +14,6 @@ import com.xuanluan.mc.sdk.service.IConfigurationService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.CacheManager;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,15 +36,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Configuration create(CreateConfiguration dto, String byUser) {
-        List<Configuration> configurations = create(List.of(dto), byUser);
+    public Configuration create(CreateConfiguration dto) {
+        List<Configuration> configurations = create(List.of(dto));
         messageAssert.notEmpty(configurations, "error.create_failed", "Configuration");
         return configurations.get(0);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<Configuration> create(List<CreateConfiguration> dtos, String byUser) {
+    public List<Configuration> create(List<CreateConfiguration> dtos) {
         messageAssert.notEmpty(dtos, "request");
         List<Configuration> configurations = dtos.stream()
                 .map(dto -> {
@@ -57,7 +55,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
                     Configuration configuration = configurationRepository.findByNameAndType(nameConvert, dto.getType());
                     if (configuration == null) {
                         configuration = modelMapper.map(dto, Configuration.class);
-                        configuration.setCreatedBy(byUser);
                         messageAssert.isTrue(nameConvert.equals(configuration.getName()), "configuration.name not equal nameConvert");
                         messageAssert.notBlank(configuration.getName(), "name");
                         messageAssert.notBlank(configuration.getType(), "type");
@@ -87,7 +84,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
     }
 
     @Override
-    public Configuration update(UpdateConfiguration dto, String byUser) {
+    public Configuration update(UpdateConfiguration dto) {
         messageAssert.notNull(dto, "request");
         messageAssert.notBlank(dto.getName(), "name");
         messageAssert.notBlank(dto.getType(), "type");
@@ -99,7 +96,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         validateDataType(configuration.getDataType(), dto.getValue());
 
         configuration.setValue(dto.getValue());
-        configuration.setUpdatedBy(byUser);
         configuration.setUpdatedAt(new Date());
         configuration = configurationRepository.save(configuration);
         //update cache
@@ -113,11 +109,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
             configurationCache = new CacheBuilder<>(cacheManager, BaseConstant.CacheName.configuration, Configuration.class);
         }
         return configurationCache;
-    }
-
-    @Override
-    public Page<Configuration> search(ConfigurationFilter filter) {
-        return configurationRepository.search(filter);
     }
 
     private void validateDataType(DataType dataType, Object value) {

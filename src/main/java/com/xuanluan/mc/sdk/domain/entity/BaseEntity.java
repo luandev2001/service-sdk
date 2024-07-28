@@ -14,9 +14,6 @@ public class BaseEntity {
     @Id
     private String id;
     @Column(updatable = false)
-    private String createdBy;
-    private String updatedBy;
-    @Column(updatable = false)
     private Date createdAt;
     private Date updatedAt;
 }
