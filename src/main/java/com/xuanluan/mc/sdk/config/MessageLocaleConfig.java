@@ -1,6 +1,6 @@
 package com.xuanluan.mc.sdk.config;
 
-import com.xuanluan.mc.sdk.service.locale.MessageLocale;
+import com.xuanluan.mc.sdk.service.i18n.MessageLocale;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

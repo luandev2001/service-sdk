@@ -2,7 +2,7 @@ package com.xuanluan.mc.sdk.config;
 
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
 import com.xuanluan.mc.sdk.exception.*;
-import com.xuanluan.mc.sdk.service.locale.MessageLocale;
+import com.xuanluan.mc.sdk.service.i18n.MessageLocale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

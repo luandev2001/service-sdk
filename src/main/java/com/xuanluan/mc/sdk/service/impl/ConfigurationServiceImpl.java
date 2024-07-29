@@ -8,7 +8,7 @@ import com.xuanluan.mc.sdk.repository.config.ConfigurationRepository;
 import com.xuanluan.mc.sdk.service.builder.CacheBuilder;
 import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.service.converter.ConfigurationConverter;
-import com.xuanluan.mc.sdk.service.locale.MessageAssert;
+import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
 import com.xuanluan.mc.sdk.service.tenant.TenantIdentifierResolver;
 import com.xuanluan.mc.sdk.service.IConfigurationService;
 import lombok.RequiredArgsConstructor;

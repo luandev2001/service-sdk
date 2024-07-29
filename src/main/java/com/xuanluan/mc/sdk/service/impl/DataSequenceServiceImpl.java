@@ -3,7 +3,7 @@ package com.xuanluan.mc.sdk.service.impl;
 import com.xuanluan.mc.sdk.domain.entity.DataSequence;
 import com.xuanluan.mc.sdk.domain.enums.SequenceType;
 import com.xuanluan.mc.sdk.repository.sequence.DataSequenceRepository;
-import com.xuanluan.mc.sdk.service.locale.MessageAssert;
+import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

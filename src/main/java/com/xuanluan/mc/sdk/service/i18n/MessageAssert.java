@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.service.locale;
+package com.xuanluan.mc.sdk.service.i18n;
 
 import com.xuanluan.mc.sdk.exception.MessageException;
 import com.xuanluan.mc.sdk.utils.StringUtils;

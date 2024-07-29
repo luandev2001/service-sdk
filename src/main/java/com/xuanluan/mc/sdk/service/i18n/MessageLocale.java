@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.service.locale;
+package com.xuanluan.mc.sdk.service.i18n;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceAccessor;
