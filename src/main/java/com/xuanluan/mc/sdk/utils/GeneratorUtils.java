@@ -15,11 +15,7 @@ public class GeneratorUtils {
     public static final ObjectMapper objectMapper = new ObjectMapper();
     public static final RestTemplate restTemplate = new RestTemplate();
 
-    public static String getRandomCode4Digits() {
-        return generateCodeDigits(4);
-    }
-
-    public static String generateCodeDigits(int length) {
+    public static String randomDigits(int length) {
         Assert.isTrue(length > 0 && length < 10, "0 < length < 10");
         char[] oneDigits = new char[length];
         char[] nineDigits = new char[length];
@@ -35,11 +31,7 @@ public class GeneratorUtils {
         return "" + (new Random().nextInt(max) + min);
     }
 
-    public static String generateRegexRandom() {
-        return generateRegexRandom(20);
-    }
-
-    public static String generateRegexRandom(int length) {
+    public static String random(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}";
         return RandomStringUtils.random(length, characters);
     }
