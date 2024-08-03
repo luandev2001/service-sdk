@@ -14,4 +14,9 @@ public class BaseConstant {
     public static class CacheName {
         public static final String CONFIGURATION = "configurations";
     }
+
+    public static class ResponseCode {
+        public static final String INVALID = "invalid";
+        public static final String EXPIRED = "expired";
+    }
 }

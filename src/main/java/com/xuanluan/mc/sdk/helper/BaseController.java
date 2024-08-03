@@ -3,7 +3,6 @@ package com.xuanluan.mc.sdk.helper;
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
 import com.xuanluan.mc.sdk.service.i18n.MessageLocale;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 
 /**
  * @author Xuan Luan

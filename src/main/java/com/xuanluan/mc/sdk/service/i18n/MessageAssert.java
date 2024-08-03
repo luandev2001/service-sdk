@@ -1,6 +1,7 @@
 package com.xuanluan.mc.sdk.service.i18n;
 
-import com.xuanluan.mc.sdk.exception.UnprocessableException;
+import com.xuanluan.mc.sdk.exception.BadRequestException;
+import com.xuanluan.mc.sdk.exception.NotFoundException;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
@@ -18,7 +19,7 @@ public class MessageAssert {
     public void isTrue(boolean expression, String key, @Nullable Object... args) {
         if (!expression) {
             String message = messageLocale.get(key, args);
-            throw new UnprocessableException(message);
+            throw new BadRequestException(message);
         }
     }
 
@@ -33,7 +34,7 @@ public class MessageAssert {
     public void notNull(@Nullable Object value, String key, @Nullable Object... args) {
         if (value == null) {
             String message = messageLocale.get(key, args);
-            throw new UnprocessableException(message);
+            throw new BadRequestException(message);
         }
     }
 
@@ -44,7 +45,7 @@ public class MessageAssert {
     public void notEmpty(@Nullable Collection<?> values, String key, @Nullable Object... args) {
         if (CollectionUtils.isEmpty(values)) {
             String message = messageLocale.get(key, args);
-            throw new UnprocessableException(message);
+            throw new BadRequestException(message);
         }
     }
 
@@ -53,7 +54,10 @@ public class MessageAssert {
     }
 
     public void notFound(@Nullable Object value, String arg1, String arg2) {
-        notNull(value, "error.not_found", arg1, arg2);
+        if (value == null) {
+            String message = messageLocale.get("error.not_found", arg1, arg2);
+            throw new NotFoundException(message);
+        }
     }
 
     public void notBlank(@Nullable String value, String arg) {
