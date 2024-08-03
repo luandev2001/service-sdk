@@ -49,11 +49,11 @@ public class ResponseExceptionHandler {
                 .build();
     }
 
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    @ExceptionHandler(ServiceException.class)
-    public WrapperResponse<Object> handleServiceException(ServiceException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadRequestException.class)
+    public WrapperResponse<Object> handleBadRequestException(BadRequestException e) {
         return WrapperResponse.builder()
-                .status(e.getStatus())
+                .status(HttpStatus.BAD_REQUEST)
                 .message(e.getMessage())
                 .build();
     }

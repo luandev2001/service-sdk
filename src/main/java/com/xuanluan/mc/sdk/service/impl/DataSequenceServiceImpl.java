@@ -8,6 +8,7 @@ import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * avoid use with async
+ *
  * @author Xuan Luan
  * @createdAt 12/10/2022
  */
@@ -25,6 +28,8 @@ public class DataSequenceServiceImpl {
     private final DataSequenceRepository sequenceRepository;
     private final Map<String, DataSequence> sequenceMap = new HashMap<>();
     private final MessageAssert messageAssert;
+    @Value("${sequence.alphabet_dot_no.suffix.max:999999999}")
+    private int maxSuffix;
 
     public <T> String getSequenceNext(Class<T> tClass, SequenceType type) {
         return getDataSequenceNext(tClass, type).getSequenceValue();
@@ -83,7 +88,7 @@ public class DataSequenceServiceImpl {
 
     private void generateSequenceValue(DataSequence sequence) {
         if (SequenceType.ALPHABET_DOT_NO == sequence.getType()) {
-            sequence.setSequenceValue(StringUtils.generateAlphabetDotNoCode(sequence.getSequenceValue()));
+            sequence.setSequenceValue(StringUtils.generateAlphabetDotNoCode(sequence.getSequenceValue(), maxSuffix));
         } else {
             String oldSeq = sequence.getSequenceValue() != null ? sequence.getSequenceValue() : "0";
             long oldSeqNumber = Long.parseLong(oldSeq) + 1;
