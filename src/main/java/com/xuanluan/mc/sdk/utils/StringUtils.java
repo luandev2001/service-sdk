@@ -5,7 +5,6 @@ import com.xuanluan.mc.sdk.exception.ServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -18,12 +17,9 @@ public class StringUtils extends org.springframework.util.StringUtils {
         return String.join(":", names);
     }
 
-    public static boolean checkSuffixImage(String file) {
-        return checkSuffix(file, List.of("png", "jpg", "jpeg"));
-    }
-
-    public static boolean checkSuffix(String file, List<String> extensions) {
-        return hasText(file) && extensions.stream().anyMatch(file::endsWith);
+    public static String replaceSpecial(String name) {
+        Assert.notNull(name, "name not null");
+        return name.trim().replaceAll("[^a-zA-Z0-9-]", "_").toLowerCase();
     }
 
     public static String generateId() {

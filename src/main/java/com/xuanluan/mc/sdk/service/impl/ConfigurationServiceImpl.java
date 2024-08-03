@@ -7,10 +7,10 @@ import com.xuanluan.mc.sdk.domain.model.request.UpdateConfiguration;
 import com.xuanluan.mc.sdk.repository.config.ConfigurationRepository;
 import com.xuanluan.mc.sdk.service.builder.CacheBuilder;
 import com.xuanluan.mc.sdk.service.constant.BaseConstant;
-import com.xuanluan.mc.sdk.service.converter.ConfigurationConverter;
 import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
 import com.xuanluan.mc.sdk.service.tenant.TenantIdentifierResolver;
 import com.xuanluan.mc.sdk.service.IConfigurationService;
+import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.CacheManager;
@@ -48,7 +48,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         messageAssert.notEmpty(dtos, "request");
         List<Configuration> configurations = dtos.stream()
                 .map(dto -> {
-                    final String nameConvert = ConfigurationConverter.replaceName(dto.getName());
+                    final String nameConvert = StringUtils.replaceSpecial(dto.getName());
                     dto.setName(nameConvert);
                     validateDataType(dto.getDataType(), dto.getValue());
 
@@ -70,7 +70,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         messageAssert.notBlank(name, "name");
         messageAssert.notBlank(type, "type");
 
-        String nameConverted = ConfigurationConverter.replaceName(name);
+        String nameConverted = StringUtils.replaceSpecial(name);
         return getCache().putIfAbsent(getKeyCache(nameConverted, type), () -> {
             Configuration configuration = configurationRepository.findByNameAndType(nameConverted, type);
             messageAssert.notFound(configuration, "configuration", "name: " + name);
@@ -89,7 +89,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         messageAssert.notBlank(dto.getName(), "name");
         messageAssert.notBlank(dto.getType(), "type");
 
-        final String nameConvert = ConfigurationConverter.replaceName(dto.getName());
+        final String nameConvert = StringUtils.replaceSpecial(dto.getName());
         Configuration configuration = configurationRepository.findByNameAndType(nameConvert, dto.getType());
         messageAssert.notFound(configuration, "configuration", "name: " + dto.getName());
         messageAssert.isTrue(configuration.isEdit(), "error.not_modify", "configuration");
