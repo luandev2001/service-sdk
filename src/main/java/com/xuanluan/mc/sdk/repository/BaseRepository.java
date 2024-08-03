@@ -102,15 +102,19 @@ public class BaseRepository<T> {
     }
 
     protected List<T> getListResult(List<Predicate> filters) {
-        return this.getListResult(filters, PageRequest.of(0, 0));
+        return getListResult(filters, 0, 0, Sort.unsorted());
     }
 
     protected List<T> getListResult(List<Predicate> filters, Pageable pageable) {
+        return getListResult(filters, (int) pageable.getOffset(), pageable.getPageSize(), pageable.getSort());
+    }
+
+    private List<T> getListResult(List<Predicate> filters, int offset, int size, Sort sort) {
         this.query.where(filters.toArray(new Predicate[0]))
-                .orderBy(QueryUtils.toOrders(pageable.getSort(), this.root, this.builder));
+                .orderBy(QueryUtils.toOrders(sort, this.root, this.builder));
         return this.entityManager.createQuery(this.query)
-                .setMaxResults(pageable.getPageSize())
-                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(size)
+                .setFirstResult(offset)
                 .getResultList();
     }
 }

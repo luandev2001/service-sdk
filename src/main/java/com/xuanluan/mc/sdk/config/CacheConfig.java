@@ -1,7 +1,6 @@
 package com.xuanluan.mc.sdk.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;

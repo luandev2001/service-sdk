@@ -5,7 +5,6 @@ import com.xuanluan.mc.sdk.domain.enums.DataType;
 import com.xuanluan.mc.sdk.domain.model.request.CreateConfiguration;
 import com.xuanluan.mc.sdk.domain.model.request.UpdateConfiguration;
 import com.xuanluan.mc.sdk.repository.config.ConfigurationRepository;
-import com.xuanluan.mc.sdk.service.builder.CacheBuilder;
 import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
 import com.xuanluan.mc.sdk.service.tenant.TenantIdentifierResolver;
@@ -13,6 +12,7 @@ import com.xuanluan.mc.sdk.service.IConfigurationService;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -31,8 +32,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
     private final CacheManager cacheManager;
     private final TenantIdentifierResolver tenantIdentifierResolver;
     private final MessageAssert messageAssert;
-
-    private CacheBuilder<Configuration> configurationCache;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -71,11 +70,12 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         messageAssert.notBlank(type, "type");
 
         String nameConverted = StringUtils.replaceSpecial(name);
-        return getCache().putIfAbsent(getKeyCache(nameConverted, type), () -> {
+        Supplier<Configuration> supplier = () -> {
             Configuration configuration = configurationRepository.findByNameAndType(nameConverted, type);
             messageAssert.notFound(configuration, "configuration", "name: " + name);
             return configuration;
-        });
+        };
+        return (Configuration) getCache().putIfAbsent(getKeyCache(nameConverted, type), supplier.get());
     }
 
     @Override
@@ -103,14 +103,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         return configuration;
     }
 
-    @Override
-    public CacheBuilder<Configuration> getCache() {
-        if (configurationCache == null) {
-            configurationCache = new CacheBuilder<>(cacheManager, BaseConstant.CacheName.CONFIGURATION, Configuration.class);
-        }
-        return configurationCache;
-    }
-
     private void validateDataType(DataType dataType, Object value) {
         messageAssert.notNull(dataType, "data_type");
         if (value != null) {
@@ -135,6 +127,10 @@ public class ConfigurationServiceImpl implements IConfigurationService {
     }
 
     private String getKeyCache(String name, String type) {
-        return tenantIdentifierResolver.resolveCurrentTenantIdentifier() + "/" + name + "/" + type;
+        return StringUtils.toKey(tenantIdentifierResolver.resolveCurrentTenantIdentifier(), name, type);
+    }
+
+    private Cache getCache() {
+        return cacheManager.getCache(BaseConstant.CacheName.CONFIGURATION);
     }
 }
