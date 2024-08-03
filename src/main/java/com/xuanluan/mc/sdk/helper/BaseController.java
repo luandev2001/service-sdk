@@ -29,8 +29,8 @@ public class BaseController {
         return response(data, "rest.delete", arg);
     }
 
-    protected <T> WrapperResponse<T> response(T data, String messageKey, String... args) {
+    protected <T> WrapperResponse<T> response(T data, String messageKey, Object... args) {
         String message = messageLocale.get(messageKey, args);
-        return WrapperResponse.<T>builder().status(HttpStatus.OK).message(message).data(data).build();
+        return WrapperResponse.<T>builder().message(message).data(data).build();
     }
 }

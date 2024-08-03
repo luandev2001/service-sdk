@@ -106,7 +106,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
     @Override
     public CacheBuilder<Configuration> getCache() {
         if (configurationCache == null) {
-            configurationCache = new CacheBuilder<>(cacheManager, BaseConstant.CacheName.configuration, Configuration.class);
+            configurationCache = new CacheBuilder<>(cacheManager, BaseConstant.CacheName.CONFIGURATION, Configuration.class);
         }
         return configurationCache;
     }

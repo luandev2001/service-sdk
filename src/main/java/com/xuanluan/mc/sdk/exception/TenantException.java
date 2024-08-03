@@ -1,12 +1,12 @@
 package com.xuanluan.mc.sdk.exception;
 
-public class TenantException extends RuntimeException {
+public class TenantException extends BaseCodeException {
 
     public TenantException(String message) {
         super(message);
     }
 
-    public TenantException(String message, Throwable cause) {
-        super(message, cause);
+    public TenantException(String code, String message) {
+        super(code, message);
     }
 }

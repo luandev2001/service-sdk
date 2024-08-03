@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver, HibernatePropertiesCustomizer {
     @Setter
-    private String currentTenant = BaseConstant.clientId;
+    private String currentTenant = BaseConstant.CLIENT_ID;
 
     /**
      * switch to param tenant and process => after processed then rollback oldTenant
@@ -45,6 +45,6 @@ public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver
     }
 
     public String getCurrentTenant() {
-        return StringUtils.hasText(currentTenant) ? currentTenant : BaseConstant.clientId;
+        return StringUtils.hasText(currentTenant) ? currentTenant : BaseConstant.CLIENT_ID;
     }
 }

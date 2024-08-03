@@ -1,9 +1,8 @@
 package com.xuanluan.mc.sdk.helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
-import com.xuanluan.mc.sdk.exception.MessageException;
+import com.xuanluan.mc.sdk.exception.UnprocessableException;
 import com.xuanluan.mc.sdk.utils.GeneratorUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -11,7 +10,6 @@ import org.springframework.core.ResolvableType;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * @author Xuan Luan
@@ -55,7 +53,7 @@ public abstract class BaseRestClient {
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             try {
                 WrapperResponse result = GeneratorUtils.objectMapper.readValue(e.getResponseBodyAsString(), WrapperResponse.class);
-                throw new MessageException(result.getMessage());
+                throw new UnprocessableException(result.getMessage());
             } catch (JsonProcessingException jsonE) {
                 throw new RuntimeException(jsonE);
             }
