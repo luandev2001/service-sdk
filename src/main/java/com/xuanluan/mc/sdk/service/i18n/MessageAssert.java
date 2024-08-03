@@ -17,7 +17,7 @@ public class MessageAssert {
 
     public void isTrue(boolean expression, String key, @Nullable Object... args) {
         if (!expression) {
-            String message = messageLocale.getMessage(key, args);
+            String message = messageLocale.get(key, args);
             throw new MessageException(message);
         }
     }
@@ -32,7 +32,7 @@ public class MessageAssert {
 
     public void notNull(@Nullable Object value, String key, @Nullable Object... args) {
         if (value == null) {
-            String message = messageLocale.getMessage(key, args);
+            String message = messageLocale.get(key, args);
             throw new MessageException(message);
         }
     }
@@ -43,7 +43,7 @@ public class MessageAssert {
 
     public void notEmpty(@Nullable Collection<?> values, String key, @Nullable Object... args) {
         if (CollectionUtils.isEmpty(values)) {
-            String message = messageLocale.getMessage(key, args);
+            String message = messageLocale.get(key, args);
             throw new MessageException(message);
         }
     }

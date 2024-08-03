@@ -26,7 +26,7 @@ public class ResponseExceptionHandler {
     public WrapperResponse<Object> handleMessageSourceException(MessageSourceException e) {
         return WrapperResponse.builder()
                 .status(e.getStatus())
-                .message(messageLocale.getMessage(e.getMessage(), e.getArgs()))
+                .message(messageLocale.get(e.getMessage(), e.getArgs()))
                 .build();
     }
 
@@ -42,7 +42,7 @@ public class ResponseExceptionHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(JpaConverterException.class)
     public WrapperResponse<Object> handleJpaConverterException(JpaConverterException e) {
-        String message = messageLocale.getMessage("jpa.error.converter", new Object[]{e.getFrom(), e.getTo()});
+        String message = messageLocale.get("jpa.error.converter", new Object[]{e.getFrom(), e.getTo()});
         return WrapperResponse.builder()
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .message(message)

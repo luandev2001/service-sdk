@@ -30,7 +30,7 @@ public class BaseController {
     }
 
     protected <T> WrapperResponse<T> response(T data, String messageKey, String... args) {
-        String message = messageLocale.getMessage(messageKey, args);
+        String message = messageLocale.get(messageKey, args);
         return WrapperResponse.<T>builder().status(HttpStatus.OK).message(message).data(data).build();
     }
 }
