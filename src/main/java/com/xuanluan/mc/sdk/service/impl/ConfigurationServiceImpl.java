@@ -37,7 +37,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
     @Override
     public Configuration create(CreateConfiguration dto) {
         List<Configuration> configurations = create(List.of(dto));
-        messageAssert.notEmpty(configurations, "error.create_failed", "Configuration");
+        messageAssert.notEmpty(configurations, "error.create.failed", "Configuration");
         return configurations.get(0);
     }
 
