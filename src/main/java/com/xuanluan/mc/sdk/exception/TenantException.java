@@ -1,6 +1,8 @@
 package com.xuanluan.mc.sdk.exception;
 
 public class TenantException extends BaseCodeException {
+    public TenantException() {
+    }
 
     public TenantException(String message) {
         super(message);

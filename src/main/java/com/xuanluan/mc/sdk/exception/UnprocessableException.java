@@ -1,6 +1,8 @@
 package com.xuanluan.mc.sdk.exception;
 
 public class UnprocessableException extends BaseCodeException {
+    public UnprocessableException() {
+    }
 
     public UnprocessableException(String message) {
         super(message);

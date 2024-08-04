@@ -21,22 +21,25 @@ public class ResponseExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(ForbiddenException.class)
     public WrapperResponse<Object> handleForbiddenException(ForbiddenException e) {
-        return WrapperResponse.builder()
-                .code(e.getCode())
-                .message(e.getMessage())
-                .build();
+        return response(e, "error.forbidden");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public WrapperResponse<Object> handleUnauthorizedException(UnauthorizedException e) {
-        return response(e);
+        return response(e, "error.unauthorized");
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     public WrapperResponse<Object> handleNotFoundException(NotFoundException e) {
-        return response(e);
+        return response(e, "error.not_found");
+    }
+
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ExceptionHandler(UnsupportedException.class)
+    public WrapperResponse<Object> handleNotSupportException(UnsupportedException e) {
+        return response(e, "error.not_support");
     }
 
     /**
@@ -54,7 +57,7 @@ public class ResponseExceptionHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(TenantException.class)
     public WrapperResponse<Object> handleTenantException(TenantException e) {
-        return response(e);
+        return response(e, "error.tenant.invalid");
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -69,13 +72,13 @@ public class ResponseExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestException.class)
     public WrapperResponse<Object> handleBadRequestException(BadRequestException e) {
-        return response(e);
+        return response(e, "error.bad_request");
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(UnprocessableException.class)
     public WrapperResponse<Object> handleUnprocessableException(UnprocessableException e) {
-        return response(e);
+        return response(e, "error.unprocessable");
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -87,10 +90,11 @@ public class ResponseExceptionHandler {
                 .build();
     }
 
-    private WrapperResponse<Object> response(BaseCodeException e) {
+    private WrapperResponse<Object> response(BaseCodeException e, String subMessage) {
+        String message = e.getMessage() != null ? e.getMessage() : messageLocale.get(subMessage);
         return WrapperResponse.builder()
                 .code(e.getCode())
-                .message(e.getMessage())
+                .message(message)
                 .build();
     }
 }

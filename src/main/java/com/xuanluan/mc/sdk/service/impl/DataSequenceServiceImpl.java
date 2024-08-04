@@ -2,6 +2,7 @@ package com.xuanluan.mc.sdk.service.impl;
 
 import com.xuanluan.mc.sdk.domain.entity.DataSequence;
 import com.xuanluan.mc.sdk.domain.enums.SequenceType;
+import com.xuanluan.mc.sdk.exception.NotSupportException;
 import com.xuanluan.mc.sdk.repository.sequence.DataSequenceRepository;
 import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
 import com.xuanluan.mc.sdk.utils.StringUtils;
@@ -55,7 +56,7 @@ public class DataSequenceServiceImpl {
     private <T> DataSequence getDataSequenceNext(Class<T> tClass, SequenceType type) {
         DataSequence currentSequence = getSequence(tClass, type);
         generateDataSequence(tClass, type, currentSequence);
-        generateSequenceValue(currentSequence);
+        currentSequence.setSequenceValue(generateValue(type, currentSequence.getSequenceValue()));
         return currentSequence;
     }
 
@@ -66,7 +67,7 @@ public class DataSequenceServiceImpl {
         String key = tClass.getName() + "_" + type.name();
         DataSequence currentSequence = sequenceMap.get(key);
         if (currentSequence == null) {
-            currentSequence = getDataSequence(tClass.getName(), type);
+            currentSequence = sequenceRepository.findByClassName(tClass.getName(), type);
             currentSequence = currentSequence != null ? currentSequence : generateDataSequence(tClass, type, null);
             sequenceMap.put(key, currentSequence);
         }
@@ -82,17 +83,16 @@ public class DataSequenceServiceImpl {
         return sequence;
     }
 
-    private DataSequence getDataSequence(String className, SequenceType type) {
-        return sequenceRepository.findByClassName(className, type);
-    }
-
-    private void generateSequenceValue(DataSequence sequence) {
-        if (SequenceType.ALPHABET_DOT_NO == sequence.getType()) {
-            sequence.setSequenceValue(StringUtils.generateAlphabetDotNoCode(sequence.getSequenceValue(), maxSuffix));
-        } else {
-            String oldSeq = sequence.getSequenceValue() != null ? sequence.getSequenceValue() : "0";
-            long oldSeqNumber = Long.parseLong(oldSeq) + 1;
-            sequence.setSequenceValue("" + oldSeqNumber);
+    private String generateValue(SequenceType type, String value) {
+        switch (type) {
+            case ALPHABET_DOT_NO:
+                return StringUtils.generateAlphabetDotNoCode(value, maxSuffix);
+            case NUMBER:
+                String oldSeq = StringUtils.hasText(value) ? value : "0";
+                long oldSeqNumber = Long.parseLong(oldSeq) + 1;
+                return "" + oldSeqNumber;
+            default:
+                throw new NotSupportException();
         }
     }
 }

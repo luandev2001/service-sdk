@@ -1,6 +1,8 @@
 package com.xuanluan.mc.sdk.exception;
 
 public class ForbiddenException extends BaseCodeException {
+    public ForbiddenException() {
+    }
 
     public ForbiddenException(String message) {
         super(message);

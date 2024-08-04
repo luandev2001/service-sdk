@@ -6,6 +6,9 @@ import lombok.Getter;
 public abstract class BaseCodeException extends RuntimeException {
     private String code;
 
+    public BaseCodeException() {
+    }
+
     public BaseCodeException(String message) {
         super(message);
     }
