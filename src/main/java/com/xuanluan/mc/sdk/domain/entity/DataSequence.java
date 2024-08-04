@@ -17,10 +17,10 @@ import javax.persistence.Enumerated;
 @Entity
 public class DataSequence extends BaseEntity {
     @Column(nullable = false, updatable = false)
-    private String className;
+    private String objectType;
     @Column(nullable = false)
-    private String sequenceValue;
-    @Column(updatable = false)
+    private String value;
+    @Column(nullable = false, updatable = false)
     @Enumerated
     private SequenceType type;
 }

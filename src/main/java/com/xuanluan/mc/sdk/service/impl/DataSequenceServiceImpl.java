@@ -2,19 +2,21 @@ package com.xuanluan.mc.sdk.service.impl;
 
 import com.xuanluan.mc.sdk.domain.entity.DataSequence;
 import com.xuanluan.mc.sdk.domain.enums.SequenceType;
-import com.xuanluan.mc.sdk.exception.NotSupportException;
+import com.xuanluan.mc.sdk.exception.UnsupportedException;
 import com.xuanluan.mc.sdk.repository.sequence.DataSequenceRepository;
+import com.xuanluan.mc.sdk.service.IDataSequenceService;
 import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * avoid use with async
@@ -25,65 +27,65 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class DataSequenceServiceImpl {
+public class DataSequenceServiceImpl<T> implements IDataSequenceService<T> {
     private final DataSequenceRepository sequenceRepository;
-    private final Map<String, DataSequence> sequenceMap = new HashMap<>();
+    private final Map<String, DataSequence> sequenceMap = new ConcurrentHashMap<>();
     private final MessageAssert messageAssert;
+
     @Value("${sequence.alphabet_dot_no.suffix.max:999999999}")
     private int maxSuffix;
 
-    public <T> String getSequenceNext(Class<T> tClass, SequenceType type) {
-        return getDataSequenceNext(tClass, type).getSequenceValue();
+    @Override
+    public String getNextValue(Class<T> object, SequenceType type) {
+        DataSequence sequenceConcurrent = getConcurrent(object, type);
+        sequenceConcurrent.setValue(generateValueNext(type, sequenceConcurrent.getValue()));
+        return sequenceConcurrent.getValue();
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public <T> DataSequence generateDataSequenceNext(Class<T> tClass, SequenceType type) {
-        //increase sequence value
-        DataSequence sequence = getDataSequenceNext(tClass, type);
-        log.info("Cập nhật sequence, type= {}, thành {}", sequence.getType(), sequence.getSequenceValue());
-        return sequenceRepository.save(sequence);
+    @Override
+    public DataSequence increase(Class<T> object, SequenceType type) {
+        getNextValue(object, type);
+        return update(object, type);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public <T> DataSequence generateDataSequence(Class<T> tClass, SequenceType type) {
-        DataSequence sequence = getSequence(tClass, type);
-        if (!StringUtils.hasText(sequence.getSequenceValue())) {
-            sequence = generateDataSequenceNext(tClass, type);
-        }
-        return sequenceRepository.save(sequence);
+    @Override
+    public DataSequence update(Class<T> object, SequenceType type) {
+        return sequenceRepository.save(getConcurrent(object, type));
     }
 
-    private <T> DataSequence getDataSequenceNext(Class<T> tClass, SequenceType type) {
-        DataSequence currentSequence = getSequence(tClass, type);
-        generateDataSequence(tClass, type, currentSequence);
-        currentSequence.setSequenceValue(generateValue(type, currentSequence.getSequenceValue()));
-        return currentSequence;
+    @Override
+    public DataSequence get(Class<T> object, SequenceType type) {
+        Specification<DataSequence> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
+                criteriaBuilder.equal(root.get("objectType"), object.getName()),
+                criteriaBuilder.equal(root.get("type"), type)
+        );
+        return sequenceRepository.findOne(specification).orElse(null);
     }
 
-    private <T> DataSequence getSequence(Class<T> tClass, SequenceType type) {
-        messageAssert.notNull(tClass, "class");
+    public DataSequence getConcurrent(Class<T> object, SequenceType type) {
+        messageAssert.notNull(object, "object");
         messageAssert.notNull(type, "type");
 
-        String key = tClass.getName() + "_" + type.name();
-        DataSequence currentSequence = sequenceMap.get(key);
-        if (currentSequence == null) {
-            currentSequence = sequenceRepository.findByClassName(tClass.getName(), type);
-            currentSequence = currentSequence != null ? currentSequence : generateDataSequence(tClass, type, null);
-            sequenceMap.put(key, currentSequence);
-        }
-        return currentSequence;
+        String key = StringUtils.toKey(object.getName(), type.name());
+        return sequenceMap.computeIfAbsent(key,
+                (_key) -> {
+                    DataSequence dataSequence = get(object, type);
+                    return dataSequence != null ? dataSequence : create(object, type);
+                }
+        );
     }
 
-    private <T> DataSequence generateDataSequence(Class<T> tClass, SequenceType type, DataSequence sequence) {
-        if (sequence == null) {
-            sequence = new DataSequence();
-            sequence.setClassName(tClass.getName());
-            sequence.setType(type);
-        }
-        return sequence;
+    private DataSequence create(Class<T> object, SequenceType type) {
+        DataSequence dataSequence = new DataSequence();
+        dataSequence.setType(type);
+        dataSequence.setValue(generateValueNext(dataSequence.getType(), null));
+        dataSequence.setObjectType(object.getSimpleName());
+        return sequenceRepository.save(dataSequence);
     }
 
-    private String generateValue(SequenceType type, String value) {
+    private String generateValueNext(SequenceType type, String value) {
         switch (type) {
             case ALPHABET_DOT_NO:
                 return StringUtils.generateAlphabetDotNoCode(value, maxSuffix);
@@ -92,7 +94,7 @@ public class DataSequenceServiceImpl {
                 long oldSeqNumber = Long.parseLong(oldSeq) + 1;
                 return "" + oldSeqNumber;
             default:
-                throw new NotSupportException();
+                throw new UnsupportedException();
         }
     }
 }
