@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @RequiredArgsConstructor
 @Service
-public class DataSequenceServiceImpl<T> implements IDataSequenceService<T> {
+public class DataSequenceServiceImpl implements IDataSequenceService {
     private final DataSequenceRepository sequenceRepository;
     private final Map<String, DataSequence> sequenceMap = new ConcurrentHashMap<>();
     private final MessageAssert messageAssert;
@@ -34,7 +34,7 @@ public class DataSequenceServiceImpl<T> implements IDataSequenceService<T> {
     private int maxSuffix;
 
     @Override
-    public String getNextValue(Class<T> object, SequenceType type) {
+    public <T> String getNextValue(Class<T> object, SequenceType type) {
         DataSequence sequenceConcurrent = getConcurrent(object, type);
         sequenceConcurrent.setValue(generateValueNext(type, sequenceConcurrent.getValue()));
         return sequenceConcurrent.getValue();
@@ -42,19 +42,19 @@ public class DataSequenceServiceImpl<T> implements IDataSequenceService<T> {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public DataSequence increase(Class<T> object, SequenceType type) {
+    public <T> DataSequence increase(Class<T> object, SequenceType type) {
         getNextValue(object, type);
         return update(object, type);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public DataSequence update(Class<T> object, SequenceType type) {
+    public <T> DataSequence update(Class<T> object, SequenceType type) {
         return sequenceRepository.save(getConcurrent(object, type));
     }
 
     @Override
-    public DataSequence get(Class<T> object, SequenceType type) {
+    public <T> DataSequence get(Class<T> object, SequenceType type) {
         Specification<DataSequence> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
                 criteriaBuilder.equal(root.get("objectType"), object.getName()),
                 criteriaBuilder.equal(root.get("type"), type)
@@ -62,7 +62,7 @@ public class DataSequenceServiceImpl<T> implements IDataSequenceService<T> {
         return sequenceRepository.findOne(specification).orElse(null);
     }
 
-    public DataSequence getConcurrent(Class<T> object, SequenceType type) {
+    public <T> DataSequence getConcurrent(Class<T> object, SequenceType type) {
         messageAssert.notNull(object, "object");
         messageAssert.notNull(type, "type");
 
@@ -75,7 +75,7 @@ public class DataSequenceServiceImpl<T> implements IDataSequenceService<T> {
         );
     }
 
-    private DataSequence create(Class<T> object, SequenceType type) {
+    private <T> DataSequence create(Class<T> object, SequenceType type) {
         DataSequence dataSequence = new DataSequence();
         dataSequence.setType(type);
         dataSequence.setValue(generateValueNext(dataSequence.getType(), null));
