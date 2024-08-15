@@ -66,7 +66,7 @@ public class DataSequenceServiceImpl implements IDataSequenceService {
         messageAssert.notNull(object, "object");
         messageAssert.notNull(type, "type");
 
-        String key = StringUtils.toKey(object.getName(), type.name());
+        String key = String.join(":", object.getName(), type.name());
         return sequenceMap.computeIfAbsent(key,
                 (_key) -> {
                     DataSequence dataSequence = get(object, type);

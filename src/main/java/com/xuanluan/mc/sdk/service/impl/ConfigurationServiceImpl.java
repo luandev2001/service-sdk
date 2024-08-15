@@ -47,7 +47,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         messageAssert.notEmpty(dtos, "request");
         List<Configuration> configurations = dtos.stream()
                 .map(dto -> {
-                    final String nameConvert = StringUtils.replaceSpecial(dto.getName());
+                    final String nameConvert = StringUtils.replaceSpecial(dto.getName(), "_");
                     dto.setName(nameConvert);
                     validateDataType(dto.getDataType(), dto.getValue());
 
@@ -69,7 +69,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         messageAssert.notBlank(name, "name");
         messageAssert.notBlank(type, "type");
 
-        String nameConverted = StringUtils.replaceSpecial(name);
+        String nameConverted = StringUtils.replaceSpecial(name, "_");
         Supplier<Configuration> supplier = () -> {
             Configuration configuration = configurationRepository.findByNameAndType(nameConverted, type);
             messageAssert.notFound(configuration, "configuration", "name: " + name);
@@ -89,7 +89,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         messageAssert.notBlank(dto.getName(), "name");
         messageAssert.notBlank(dto.getType(), "type");
 
-        final String nameConvert = StringUtils.replaceSpecial(dto.getName());
+        final String nameConvert = StringUtils.replaceSpecial(dto.getName(), "_");
         Configuration configuration = configurationRepository.findByNameAndType(nameConvert, dto.getType());
         messageAssert.notFound(configuration, "configuration", "name: " + dto.getName());
         messageAssert.isTrue(configuration.isEdit(), "error.not_modify", "configuration");
@@ -127,7 +127,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
     }
 
     private String getKeyCache(String name, String type) {
-        return StringUtils.toKey(tenantIdentifierResolver.resolveCurrentTenantIdentifier(), name, type);
+        return String.join(":", tenantIdentifierResolver.resolveCurrentTenantIdentifier(), name, type);
     }
 
     private Cache getCache() {

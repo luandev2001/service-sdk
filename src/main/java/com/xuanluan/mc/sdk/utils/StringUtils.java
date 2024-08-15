@@ -11,14 +11,9 @@ import java.util.UUID;
  * @createdAt 11/8/2022
  */
 public class StringUtils extends org.springframework.util.StringUtils {
-    public static String toKey(String... names) {
-        Assert.notEmpty(names, "array name must not be empty");
-        return String.join(":", names);
-    }
-
-    public static String replaceSpecial(String name) {
+    public static String replaceSpecial(String name, String replaceText) {
         Assert.notNull(name, "name not null");
-        return name.trim().replaceAll("[^a-zA-Z0-9-]", "_").toLowerCase();
+        return name.trim().replaceAll("[^a-zA-Z0-9-]", replaceText).toLowerCase();
     }
 
     public static String generateId() {
