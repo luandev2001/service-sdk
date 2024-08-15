@@ -8,7 +8,6 @@ import com.xuanluan.mc.sdk.service.IDataSequenceService;
 import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,7 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Xuan Luan
  * @createdAt 12/10/2022
  */
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class DataSequenceServiceImpl<T> implements IDataSequenceService<T> {

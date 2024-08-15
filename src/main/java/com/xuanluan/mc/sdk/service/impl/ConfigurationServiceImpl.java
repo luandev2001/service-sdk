@@ -61,7 +61,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
                     return configuration;
                 })
                 .collect(Collectors.toList());
-        return !configurations.isEmpty() ? (List<Configuration>) configurationRepository.saveAll(configurations) : null;
+        return !configurations.isEmpty() ? configurationRepository.saveAll(configurations) : null;
     }
 
     @Override
