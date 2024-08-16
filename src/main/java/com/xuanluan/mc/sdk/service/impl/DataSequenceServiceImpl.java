@@ -5,7 +5,6 @@ import com.xuanluan.mc.sdk.domain.enums.SequenceType;
 import com.xuanluan.mc.sdk.exception.UnsupportedException;
 import com.xuanluan.mc.sdk.repository.sequence.DataSequenceRepository;
 import com.xuanluan.mc.sdk.service.IDataSequenceService;
-import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 
@@ -13,9 +12,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * avoid use with async
@@ -27,30 +27,34 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class DataSequenceServiceImpl implements IDataSequenceService {
     private final DataSequenceRepository sequenceRepository;
-    private final Map<String, DataSequence> sequenceMap = new ConcurrentHashMap<>();
-    private final MessageAssert messageAssert;
 
     @Value("${sequence.alphabet_dot_no.suffix.max:999999999}")
     private int maxSuffix;
 
-    @Override
-    public <T> String getNextValue(Class<T> object, SequenceType type) {
-        DataSequence sequenceConcurrent = getConcurrent(object, type);
-        sequenceConcurrent.setValue(generateValueNext(type, sequenceConcurrent.getValue()));
-        return sequenceConcurrent.getValue();
-    }
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public <T> DataSequence increase(Class<T> object, SequenceType type) {
-        getNextValue(object, type);
-        return update(object, type);
+        DataSequence sequenceConcurrent = get(object, type);
+        sequenceConcurrent.setValue(generateValueNext(type, sequenceConcurrent.getValue()));
+        return increase(object, type, _s -> {
+        }).apply(0);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public <T> DataSequence update(Class<T> object, SequenceType type) {
-        return sequenceRepository.save(getConcurrent(object, type));
+    public <T> Function<Integer, DataSequence> increase(Class<T> object, SequenceType type, Consumer<String> consumer) {
+        DataSequence dataSequence = get(object, type);
+        if (dataSequence == null) dataSequence = init(object, type);
+
+        DataSequence finalDataSequence = dataSequence;
+        return number -> {
+            Assert.isTrue(number >= 0, "require number greater than zero");
+            while (number-- > 0) {
+                finalDataSequence.setValue(generateValueNext(type, finalDataSequence.getValue()));
+                consumer.accept(finalDataSequence.getValue());
+            }
+            return sequenceRepository.save(finalDataSequence);
+        };
     }
 
     @Override
@@ -62,25 +66,11 @@ public class DataSequenceServiceImpl implements IDataSequenceService {
         return sequenceRepository.findOne(specification).orElse(null);
     }
 
-    public <T> DataSequence getConcurrent(Class<T> object, SequenceType type) {
-        messageAssert.notNull(object, "object");
-        messageAssert.notNull(type, "type");
-
-        String key = String.join(":", object.getName(), type.name());
-        return sequenceMap.computeIfAbsent(key,
-                (_key) -> {
-                    DataSequence dataSequence = get(object, type);
-                    return dataSequence != null ? dataSequence : create(object, type);
-                }
-        );
-    }
-
-    private <T> DataSequence create(Class<T> object, SequenceType type) {
+    private <T> DataSequence init(Class<T> object, SequenceType type) {
         DataSequence dataSequence = new DataSequence();
         dataSequence.setType(type);
-        dataSequence.setValue(generateValueNext(dataSequence.getType(), null));
         dataSequence.setObjectType(object.getSimpleName());
-        return sequenceRepository.save(dataSequence);
+        return dataSequence;
     }
 
     private String generateValueNext(SequenceType type, String value) {
