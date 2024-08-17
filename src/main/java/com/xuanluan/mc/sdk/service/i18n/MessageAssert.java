@@ -5,14 +5,12 @@ import com.xuanluan.mc.sdk.exception.NotFoundException;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.Objects;
 
 @RequiredArgsConstructor
-@Component
 public class MessageAssert {
     private final MessageLocale messageLocale;
 
