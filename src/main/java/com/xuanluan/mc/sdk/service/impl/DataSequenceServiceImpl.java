@@ -34,10 +34,8 @@ public class DataSequenceServiceImpl implements IDataSequenceService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public <T> DataSequence increase(Class<T> object, SequenceType type) {
-        DataSequence sequenceConcurrent = get(object, type);
-        sequenceConcurrent.setValue(generateValueNext(type, sequenceConcurrent.getValue()));
         return increase(object, type, _s -> {
-        }).apply(0);
+        }).apply(1);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -48,7 +46,7 @@ public class DataSequenceServiceImpl implements IDataSequenceService {
 
         DataSequence finalDataSequence = dataSequence;
         return number -> {
-            Assert.isTrue(number >= 0, "require number greater than zero");
+            Assert.isTrue(number > 0, "require number greater zero");
             while (number-- > 0) {
                 finalDataSequence.setValue(generateValueNext(type, finalDataSequence.getValue()));
                 consumer.accept(finalDataSequence.getValue());
