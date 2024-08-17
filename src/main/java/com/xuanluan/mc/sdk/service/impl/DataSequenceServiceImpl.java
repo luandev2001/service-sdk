@@ -58,7 +58,7 @@ public class DataSequenceServiceImpl implements IDataSequenceService {
     @Override
     public <T> DataSequence get(Class<T> object, SequenceType type) {
         Specification<DataSequence> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
-                criteriaBuilder.equal(root.get("objectType"), object.getName()),
+                criteriaBuilder.equal(root.get("objectType"), object.getSimpleName()),
                 criteriaBuilder.equal(root.get("type"), type)
         );
         return sequenceRepository.findOne(specification).orElse(null);

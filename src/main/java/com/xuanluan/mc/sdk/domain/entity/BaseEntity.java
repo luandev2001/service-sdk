@@ -12,6 +12,7 @@ import java.util.Date;
 @EntityListeners(value = BaseEntityListener.class)
 public class BaseEntity {
     @Id
+    @Column(length = 36)
     private String id;
     @Column(updatable = false)
     private Date createdAt;
