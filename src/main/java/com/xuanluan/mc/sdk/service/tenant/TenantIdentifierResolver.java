@@ -4,14 +4,12 @@ import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.Setter;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver, HibernatePropertiesCustomizer {
-    @Setter
+@Setter
+public class TenantIdentifierResolver implements ITenantIdentifierResolver {
     private String currentTenant = BaseConstant.CLIENT_ID;
 
     /**

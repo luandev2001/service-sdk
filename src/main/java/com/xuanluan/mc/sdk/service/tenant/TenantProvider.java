@@ -6,7 +6,7 @@ import org.flywaydb.core.Flyway;
 import javax.sql.DataSource;
 
 @RequiredArgsConstructor
-public class TenantProviderImpl implements ITenantProvider {
+public class TenantProvider implements ITenantProvider {
     private final DataSource dataSource;
     private final String[] schema_locations;
 
