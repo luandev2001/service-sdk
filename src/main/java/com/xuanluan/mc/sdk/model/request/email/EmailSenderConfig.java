@@ -1,6 +1,5 @@
-package com.xuanluan.mc.sdk.domain.model.request.email;
+package com.xuanluan.mc.sdk.model.request.email;
 
-import com.xuanluan.mc.sdk.domain.model.EmailConfig;
 import lombok.Builder;
 import lombok.Getter;
 

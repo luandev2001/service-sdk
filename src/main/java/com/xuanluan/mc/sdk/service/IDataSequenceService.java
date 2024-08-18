@@ -1,7 +1,7 @@
 package com.xuanluan.mc.sdk.service;
 
-import com.xuanluan.mc.sdk.domain.entity.DataSequence;
-import com.xuanluan.mc.sdk.domain.enums.SequenceType;
+import com.xuanluan.mc.sdk.model.entity.DataSequence;
+import com.xuanluan.mc.sdk.model.enums.SequenceType;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

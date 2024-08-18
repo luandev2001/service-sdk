@@ -1,6 +1,6 @@
-package com.xuanluan.mc.sdk.domain.model.request;
+package com.xuanluan.mc.sdk.model.request;
 
-import com.xuanluan.mc.sdk.domain.enums.DataType;
+import com.xuanluan.mc.sdk.model.enums.DataType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.domain.entity;
+package com.xuanluan.mc.sdk.model.entity;
 
 import com.xuanluan.mc.sdk.utils.StringUtils;
 

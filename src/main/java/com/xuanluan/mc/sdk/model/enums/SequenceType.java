@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.domain.enums;
+package com.xuanluan.mc.sdk.model.enums;
 
 /**
  * Sequence will auto increase

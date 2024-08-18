@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.domain.model.request;
+package com.xuanluan.mc.sdk.model.request;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
-package com.xuanluan.mc.sdk.domain.entity;
+package com.xuanluan.mc.sdk.model.entity;
 
-import com.xuanluan.mc.sdk.domain.enums.SequenceType;
+import com.xuanluan.mc.sdk.model.enums.SequenceType;
 import lombok.Getter;
 import lombok.Setter;
 

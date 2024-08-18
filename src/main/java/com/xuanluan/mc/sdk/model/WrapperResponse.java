@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.domain.model;
+package com.xuanluan.mc.sdk.model;
 
 import lombok.*;
 

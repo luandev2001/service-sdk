@@ -1,7 +1,7 @@
 package com.xuanluan.mc.sdk.service.impl;
 
-import com.xuanluan.mc.sdk.domain.entity.DataSequence;
-import com.xuanluan.mc.sdk.domain.enums.SequenceType;
+import com.xuanluan.mc.sdk.model.entity.DataSequence;
+import com.xuanluan.mc.sdk.model.enums.SequenceType;
 import com.xuanluan.mc.sdk.exception.UnsupportedException;
 import com.xuanluan.mc.sdk.repository.sequence.DataSequenceRepository;
 import com.xuanluan.mc.sdk.service.IDataSequenceService;

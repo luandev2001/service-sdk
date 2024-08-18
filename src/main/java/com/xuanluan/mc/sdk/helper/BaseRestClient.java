@@ -1,7 +1,7 @@
 package com.xuanluan.mc.sdk.helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
+import com.xuanluan.mc.sdk.model.WrapperResponse;
 import com.xuanluan.mc.sdk.exception.UnprocessableException;
 import com.xuanluan.mc.sdk.utils.GeneratorUtils;
 import lombok.RequiredArgsConstructor;

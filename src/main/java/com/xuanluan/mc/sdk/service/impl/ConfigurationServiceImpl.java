@@ -1,9 +1,9 @@
 package com.xuanluan.mc.sdk.service.impl;
 
-import com.xuanluan.mc.sdk.domain.entity.Configuration;
-import com.xuanluan.mc.sdk.domain.enums.DataType;
-import com.xuanluan.mc.sdk.domain.model.request.CreateConfiguration;
-import com.xuanluan.mc.sdk.domain.model.request.UpdateConfiguration;
+import com.xuanluan.mc.sdk.model.entity.Configuration;
+import com.xuanluan.mc.sdk.model.enums.DataType;
+import com.xuanluan.mc.sdk.model.request.CreateConfiguration;
+import com.xuanluan.mc.sdk.model.request.UpdateConfiguration;
 import com.xuanluan.mc.sdk.repository.config.ConfigurationRepository;
 import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.service.i18n.MessageAssert;

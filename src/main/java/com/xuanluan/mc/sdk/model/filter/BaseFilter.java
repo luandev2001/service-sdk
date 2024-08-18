@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.domain.model.filter;
+package com.xuanluan.mc.sdk.model.filter;
 
 import lombok.Getter;
 import lombok.Setter;

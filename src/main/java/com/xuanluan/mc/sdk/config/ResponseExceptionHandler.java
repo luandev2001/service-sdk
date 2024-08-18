@@ -1,6 +1,6 @@
 package com.xuanluan.mc.sdk.config;
 
-import com.xuanluan.mc.sdk.domain.model.WrapperResponse;
+import com.xuanluan.mc.sdk.model.WrapperResponse;
 import com.xuanluan.mc.sdk.exception.*;
 import com.xuanluan.mc.sdk.service.i18n.MessageLocale;
 import lombok.RequiredArgsConstructor;

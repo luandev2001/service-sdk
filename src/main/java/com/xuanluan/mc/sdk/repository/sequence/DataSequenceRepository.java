@@ -1,6 +1,6 @@
 package com.xuanluan.mc.sdk.repository.sequence;
 
-import com.xuanluan.mc.sdk.domain.entity.DataSequence;
+import com.xuanluan.mc.sdk.model.entity.DataSequence;
 import com.xuanluan.mc.sdk.repository.JpaMultipleRepository;
 import org.springframework.stereotype.Repository;
 

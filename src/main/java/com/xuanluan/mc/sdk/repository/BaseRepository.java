@@ -1,6 +1,6 @@
 package com.xuanluan.mc.sdk.repository;
 
-import com.xuanluan.mc.sdk.domain.model.filter.BaseFilter;
+import com.xuanluan.mc.sdk.model.filter.BaseFilter;
 import com.xuanluan.mc.sdk.utils.CollectionUtils;
 import com.xuanluan.mc.sdk.utils.RepositoryUtils;
 import com.xuanluan.mc.sdk.utils.StringUtils;
