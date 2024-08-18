@@ -4,15 +4,13 @@ import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.Setter;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver, HibernatePropertiesCustomizer {
-    @Setter
-    private String currentTenant = BaseConstant.clientId;
+@Setter
+public class TenantIdentifierResolver implements ITenantIdentifierResolver {
+    private String currentTenant = BaseConstant.CLIENT_ID;
 
     /**
      * switch to param tenant and process => after processed then rollback oldTenant
@@ -45,6 +43,6 @@ public class TenantIdentifierResolver implements CurrentTenantIdentifierResolver
     }
 
     public String getCurrentTenant() {
-        return StringUtils.hasText(currentTenant) ? currentTenant : BaseConstant.clientId;
+        return StringUtils.hasText(currentTenant) ? currentTenant : BaseConstant.CLIENT_ID;
     }
 }

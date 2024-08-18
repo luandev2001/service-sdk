@@ -9,29 +9,16 @@ import java.util.Date;
  */
 public class DateUtils {
     public static Date getStartDay(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        if (null != date) {
-            calendar.setTime(date);
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.MILLISECOND, 0);
-            calendar.set(Calendar.SECOND, 0);
-            return calendar.getTime();
-        } else {
-            return null;
-        }
+        date = date != null ? date : new Date(0);
+        Calendar calendar = new Calendar.Builder().setTimeOfDay(0, 0, 0, 0).build();
+        calendar.setTime(date);
+        return calendar.getTime();
     }
 
     public static Date getEndDay(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        if (null != date) {
-            calendar.setTime(date);
-            calendar.set(Calendar.HOUR_OF_DAY, 23);
-            calendar.set(Calendar.MINUTE, 59);
-            calendar.set(Calendar.SECOND, 59);
-            return calendar.getTime();
-        } else {
-            return null;
-        }
+        date = date != null ? date : new Date();
+        Calendar calendar = new Calendar.Builder().setTimeOfDay(23, 59, 59, 999).build();
+        calendar.setTime(date);
+        return calendar.getTime();
     }
 }

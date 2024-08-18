@@ -1,33 +1,19 @@
 package com.xuanluan.mc.sdk.utils;
 
 
-import com.xuanluan.mc.sdk.exception.ServiceException;
-import org.springframework.http.HttpStatus;
+import com.xuanluan.mc.sdk.exception.BadRequestException;
 import org.springframework.util.Assert;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
  * @author Xuan Luan
  * @createdAt 11/8/2022
  */
-public class StringUtils {
-    public static String toKey(String... names) {
-        Assert.notEmpty(names, "array name must not be empty");
-        return String.join(":", names);
-    }
-
-    public static boolean hasText(String text) {
-        return text != null && !text.trim().isEmpty();
-    }
-
-    public static boolean checkSuffixImage(String file) {
-        return checkSuffix(file, List.of("png", "jpg", "jpeg"));
-    }
-
-    public static boolean checkSuffix(String file, List<String> extensions) {
-        return hasText(file) && extensions.stream().anyMatch(file::endsWith);
+public class StringUtils extends org.springframework.util.StringUtils {
+    public static String replaceSpecial(String name, String replaceText) {
+        Assert.notNull(name, "name not null");
+        return name.trim().replaceAll("[^a-zA-Z0-9-]", replaceText).toLowerCase();
     }
 
     public static String generateId() {
@@ -36,49 +22,31 @@ public class StringUtils {
 
     /**
      * prefix= "string" is char from a to z (aaa -> aaz)
-     * suffix= "number" from 1 to 99999999
+     * suffix= "number" from 1 to maxSuffix
      * item= <string>.<number>
      */
-    public static String generateAlphabetDotNoCode(String oldValue) {
-        char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-        //not have text => item= "a.1"
-        if (!StringUtils.hasText(oldValue)) return alphabet[0] + "." + 1;
-        String[] item = oldValue.split("\\.");
-        //check item has valid
-        Integer suffix = toInteger(item[1]);
-        if (item.length != 2 || toInteger(item[0]) != null || suffix == null) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, "Mã ký tự không hợp lệ, nguyên tắc 'chuỗi.số'");
-        }
-        int maxSuffix = 999999999;
-        if (suffix <= 0 || suffix > maxSuffix) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST, "Invalid data, 0<data<" + maxSuffix, "Dữ liệu không hợp lệ, 0<data<" + maxSuffix);
-        } else if (suffix < maxSuffix) {
-            ++suffix;
-            return item[0] + "." + suffix;
-        } else {
-            char[] charactersPrefix = item[0].toCharArray();
-            char cLast = charactersPrefix[charactersPrefix.length - 1];
-            if (cLast == alphabet[alphabet.length - 1]) {
-                //item=<prefix>a.<suffix>
-                return new String(charactersPrefix) + alphabet[0] + "." + item[1];
-            } else {
-                for (int index = 0; index < alphabet.length - 1; index++) {
-                    //change char last = char next in alphabet
-                    if (cLast == alphabet[index]) {
-                        charactersPrefix[charactersPrefix.length - 1] = alphabet[++index];
-                        return new String(charactersPrefix) + "." + 1;
-                    }
-                }
-                throw new ServiceException(HttpStatus.BAD_REQUEST, "Invalid generate data", "Khởi tạo dữ liệu không thành công");
-            }
-        }
-    }
+    public static String generateAlphabetDotNoCode(String oldValue, int maxSuffix) {
+        final int start = 'a';
+        final int end = 'z';
 
-    private static Integer toInteger(String text) {
-        try {
-            return Integer.valueOf(text);
-        } catch (Exception e) {
-            return null;
+        if (!StringUtils.hasText(oldValue)) return (char) start + "." + 1;
+
+        String[] item = oldValue.split("\\.");
+        Assert.isTrue(item.length == 2, "Invalid format for oldValue");
+
+        int suffix = Integer.parseInt(item[1]);
+        Assert.isTrue(suffix >= 0 && suffix <= maxSuffix, "Invalid format for oldValue");
+        if (suffix < maxSuffix) return item[0] + "." + (++suffix);
+
+        char[] charactersPrefix = item[0].toCharArray();
+        char firstChar = charactersPrefix[0];
+        if (firstChar == end) return (char) start + new String(charactersPrefix) + "." + item[1];
+
+        if (firstChar >= start && firstChar < end) {
+            charactersPrefix[0] = (char) (firstChar + 1);
+            return new String(charactersPrefix) + "." + 1;
+        } else {
+            throw new BadRequestException("Invalid generate alphabet dot number");
         }
     }
 }

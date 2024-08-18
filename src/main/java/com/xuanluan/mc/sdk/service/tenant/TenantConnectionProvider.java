@@ -4,7 +4,6 @@ import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -12,12 +11,12 @@ import java.sql.SQLException;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class TenantConnectionProvider implements MultiTenantConnectionProvider, HibernatePropertiesCustomizer {
+public class TenantConnectionProvider implements ITenantConnectionProvider {
     private final DataSource dataSource;
 
     @Override
     public Connection getAnyConnection() throws SQLException {
-        return getConnection(BaseConstant.clientId);
+        return getConnection(BaseConstant.CLIENT_ID);
     }
 
     @Override
@@ -34,7 +33,7 @@ public class TenantConnectionProvider implements MultiTenantConnectionProvider, 
 
     @Override
     public void releaseConnection(String tenantIdentifier, Connection connection) throws SQLException {
-        connection.setSchema(BaseConstant.clientId);
+        connection.setSchema(BaseConstant.CLIENT_ID);
         connection.close();
     }
 

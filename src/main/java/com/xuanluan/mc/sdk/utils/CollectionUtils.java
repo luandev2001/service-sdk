@@ -27,4 +27,12 @@ public class CollectionUtils extends org.springframework.util.CollectionUtils {
             return list;
         };
     }
+
+    public static <T> T get(Supplier<T> supplier) {
+        try {
+            return supplier.get();
+        } catch (Exception _e) {
+            return null;
+        }
+    }
 }

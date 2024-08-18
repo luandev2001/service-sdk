@@ -1,94 +1,86 @@
 package com.xuanluan.mc.sdk.service.impl;
 
-import com.xuanluan.mc.sdk.domain.entity.DataSequence;
-import com.xuanluan.mc.sdk.domain.enums.SequenceType;
+import com.xuanluan.mc.sdk.model.entity.DataSequence;
+import com.xuanluan.mc.sdk.model.enums.SequenceType;
+import com.xuanluan.mc.sdk.exception.UnsupportedException;
 import com.xuanluan.mc.sdk.repository.sequence.DataSequenceRepository;
-import com.xuanluan.mc.sdk.service.locale.MessageAssert;
+import com.xuanluan.mc.sdk.service.IDataSequenceService;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
+ * avoid use with async
+ *
  * @author Xuan Luan
  * @createdAt 12/10/2022
  */
-@Slf4j
 @RequiredArgsConstructor
 @Service
-public class DataSequenceServiceImpl {
+public class DataSequenceServiceImpl implements IDataSequenceService {
     private final DataSequenceRepository sequenceRepository;
-    private final Map<String, DataSequence> sequenceMap = new HashMap<>();
-    private final MessageAssert messageAssert;
 
-    public <T> String getSequenceNext(Class<T> tClass, SequenceType type) {
-        return getDataSequenceNext(tClass, type).getSequenceValue();
+    @Value("${sequence.alphabet_dot_no.suffix.max:999999999}")
+    private int maxSuffix;
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public <T> DataSequence increase(Class<T> object, SequenceType type) {
+        return increase(object, type, _s -> {
+        }).apply(1);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public <T> DataSequence generateDataSequenceNext(Class<T> tClass, SequenceType type) {
-        //increase sequence value
-        DataSequence sequence = getDataSequenceNext(tClass, type);
-        log.info("Cập nhật sequence, type= " + sequence.getType() + ", thành " + sequence.getSequenceValue());
-        return sequenceRepository.save(sequence);
+    @Override
+    public <T> Function<Integer, DataSequence> increase(Class<T> object, SequenceType type, Consumer<String> consumer) {
+        DataSequence dataSequence = get(object, type);
+        if (dataSequence == null) dataSequence = init(object, type);
+
+        DataSequence finalDataSequence = dataSequence;
+        return number -> {
+            Assert.isTrue(number > 0, "require number greater zero");
+            while (number-- > 0) {
+                finalDataSequence.setValue(generateValueNext(type, finalDataSequence.getValue()));
+                consumer.accept(finalDataSequence.getValue());
+            }
+            return sequenceRepository.save(finalDataSequence);
+        };
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public <T> DataSequence generateDataSequence(Class<T> tClass, SequenceType type) {
-        DataSequence sequence = getSequence(tClass, type);
-        if (!StringUtils.hasText(sequence.getSequenceValue())) {
-            sequence = generateDataSequenceNext(tClass, type);
-        }
-        log.info("Cập nhật sequence, type= " + sequence.getType() + ", thành " + sequence.getSequenceValue());
-        return sequenceRepository.save(sequence);
+    @Override
+    public <T> DataSequence get(Class<T> object, SequenceType type) {
+        Specification<DataSequence> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
+                criteriaBuilder.equal(root.get("objectType"), object.getSimpleName()),
+                criteriaBuilder.equal(root.get("type"), type)
+        );
+        return sequenceRepository.findOne(specification).orElse(null);
     }
 
-    private <T> DataSequence getDataSequenceNext(Class<T> tClass, SequenceType type) {
-        DataSequence currentSequence = getSequence(tClass, type);
-        generateDataSequence(tClass, type, currentSequence);
-        generateSequenceValue(currentSequence);
-        return currentSequence;
+    private <T> DataSequence init(Class<T> object, SequenceType type) {
+        DataSequence dataSequence = new DataSequence();
+        dataSequence.setType(type);
+        dataSequence.setObjectType(object.getSimpleName());
+        return dataSequence;
     }
 
-    private <T> DataSequence getSequence(Class<T> tClass, SequenceType type) {
-        messageAssert.notNull(tClass, "class");
-        messageAssert.notNull(type, "type");
-
-        String key = tClass.getName() + "_" + type.name();
-        DataSequence currentSequence = sequenceMap.get(key);
-        if (currentSequence == null) {
-            currentSequence = getDataSequence(tClass.getName(), type);
-            currentSequence = currentSequence != null ? currentSequence : generateDataSequence(tClass, type, null);
-            sequenceMap.put(key, currentSequence);
-        }
-        return currentSequence;
-    }
-
-    private <T> DataSequence generateDataSequence(Class<T> tClass, SequenceType type, DataSequence sequence) {
-        if (sequence == null) {
-            sequence = new DataSequence();
-            sequence.setClassName(tClass.getName());
-            sequence.setType(type.value);
-        }
-        return sequence;
-    }
-
-    private DataSequence getDataSequence(String className, SequenceType type) {
-        return sequenceRepository.findByClassName(className, type.value);
-    }
-
-    private void generateSequenceValue(DataSequence sequence) {
-        if (SequenceType.ALPHABET_DOT_NO.value == sequence.getType()) {
-            sequence.setSequenceValue(StringUtils.generateAlphabetDotNoCode(sequence.getSequenceValue()));
-        } else {
-            String oldSeq = sequence.getSequenceValue() != null ? sequence.getSequenceValue() : "0";
-            long oldSeqNumber = Long.parseLong(oldSeq) + 1;
-            sequence.setSequenceValue("" + oldSeqNumber);
+    private String generateValueNext(SequenceType type, String value) {
+        switch (type) {
+            case ALPHABET_DOT_NO:
+                return StringUtils.generateAlphabetDotNoCode(value, maxSuffix);
+            case NUMBER:
+                String oldSeq = StringUtils.hasText(value) ? value : "0";
+                long oldSeqNumber = Long.parseLong(oldSeq) + 1;
+                return "" + oldSeqNumber;
+            default:
+                throw new UnsupportedException();
         }
     }
 }

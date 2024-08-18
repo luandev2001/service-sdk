@@ -1,13 +1,12 @@
 package com.xuanluan.mc.sdk.repository;
 
-import com.xuanluan.mc.sdk.domain.model.filter.BaseFilter;
+import com.xuanluan.mc.sdk.model.filter.BaseFilter;
 import com.xuanluan.mc.sdk.utils.CollectionUtils;
 import com.xuanluan.mc.sdk.utils.RepositoryUtils;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -42,11 +41,6 @@ public class BaseRepository<T> {
         root.alias(tClass.getSimpleName());
     }
 
-
-    protected Predicate likeOperator(String nameField, String searchKey) {
-        return StringUtils.hasText(nameField) && StringUtils.hasText(searchKey) ? builder.like(root.get(nameField), "%" + searchKey + "%") : null;
-    }
-
     protected List<Predicate> appendFilter(String nameField, Object valueField, List<Predicate> predicates) {
         Assert.isTrue(StringUtils.hasText(nameField), "nameField must not blank");
         return appendFilter(valueField, predicates).apply(builder.equal(root.get(nameField), valueField));
@@ -56,8 +50,7 @@ public class BaseRepository<T> {
         return predicate -> CollectionUtils.append(() -> value != null, predicates).apply(predicate);
     }
 
-    protected Page<T> getPage(@Nullable List<Predicate> predicates, Pageable pageable) {
-        predicates = predicates != null ? predicates : new ArrayList<>();
+    protected Page<T> getPage(List<Predicate> predicates, Pageable pageable) {
         long totalRecord = getCount(predicates);
         return PageableExecutionUtils.getPage(
                 totalRecord > 0 ? getListResult(predicates, pageable) : new ArrayList<>(),
@@ -67,8 +60,6 @@ public class BaseRepository<T> {
     }
 
     protected Page<T> getPage(List<Predicate> predicates, BaseFilter filter) {
-        List<Predicate> _predicates = filterSearch(filter);
-        CollectionUtils.mergeArrayIntoCollection(predicates, _predicates);
         Set<String> columns = new HashSet<>(filter.getFilters().keySet());
         columns.addAll(filter.getSorts().keySet());
 
@@ -79,13 +70,13 @@ public class BaseRepository<T> {
                 Object value = filter.getFilters().get(column);
                 String direction = filter.getSorts().get(column);
                 if (model.getAttribute(column).getPersistentAttributeType() == Attribute.PersistentAttributeType.BASIC) {
-                    appendFilter(value, _predicates).apply(root.get(column).in(value));
+                    appendFilter(value, predicates).apply(root.get(column).in(value));
                     CollectionUtils.append(() -> StringUtils.hasText(direction), orders).apply(new Sort.Order(RepositoryUtils.convertDirection(direction), column));
                 }
             } catch (Exception ignored) {
             }
         });
-        return getPage(_predicates, PageRequest.of(filter.getPage(), filter.getSize(), Sort.by(orders)));
+        return getPage(predicates, PageRequest.of(filter.getPage(), filter.getSize(), Sort.by(orders)));
     }
 
     private long getCount(List<Predicate> filters) {
@@ -111,28 +102,19 @@ public class BaseRepository<T> {
     }
 
     protected List<T> getListResult(List<Predicate> filters) {
-        return this.getListResult(filters, PageRequest.of(0, 0));
+        return getListResult(filters, 0, 0, Sort.unsorted());
     }
 
     protected List<T> getListResult(List<Predicate> filters, Pageable pageable) {
-        this.query.where(filters.toArray(new Predicate[0]))
-                .orderBy(QueryUtils.toOrders(pageable.getSort(), this.root, this.builder));
-        return this.entityManager.createQuery(this.query)
-                .setMaxResults(pageable.getPageSize())
-                .setFirstResult((int) pageable.getOffset())
-                .getResultList();
+        return getListResult(filters, (int) pageable.getOffset(), pageable.getPageSize(), pageable.getSort());
     }
 
-    private List<Predicate> filterSearch(BaseFilter filter) {
-        Assert.notNull(filter, "filter must not null");
-        List<Predicate> predicates = new LinkedList<>();
-        if (StringUtils.hasText(filter.getKeyword())) {
-            Predicate predicate = null;
-            for (String key : filter.keywordParams()) {
-                predicate = predicate != null ? builder.or(predicate, this.likeOperator(key, filter.getKeyword())) : this.likeOperator(key, filter.getKeyword());
-            }
-            if (predicate != null) predicates.add(predicate);
-        }
-        return predicates;
+    private List<T> getListResult(List<Predicate> filters, int offset, int size, Sort sort) {
+        this.query.where(filters.toArray(new Predicate[0]))
+                .orderBy(QueryUtils.toOrders(sort, this.root, this.builder));
+        return this.entityManager.createQuery(this.query)
+                .setMaxResults(size)
+                .setFirstResult(offset)
+                .getResultList();
     }
 }

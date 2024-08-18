@@ -1,9 +1,10 @@
 package com.xuanluan.mc.sdk.config;
 
+import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
+import com.xuanluan.mc.sdk.service.i18n.MessageLocale;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -33,8 +34,13 @@ public class MessageLocaleConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public MessageSourceAccessor messageSourceAccessor() {
-        return new MessageSourceAccessor(messageSource());
+    public MessageLocale messageLocale() {
+        return new MessageLocale(messageSource());
+    }
+
+    @Bean
+    public MessageAssert messageAssert() {
+        return new MessageAssert(messageLocale());
     }
 
     @Bean
