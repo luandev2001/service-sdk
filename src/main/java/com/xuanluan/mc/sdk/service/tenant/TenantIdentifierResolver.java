@@ -42,6 +42,7 @@ public class TenantIdentifierResolver implements ITenantIdentifierResolver {
         hibernateProperties.put(AvailableSettings.MULTI_TENANT_IDENTIFIER_RESOLVER, this);
     }
 
+    @Override
     public String getCurrentTenant() {
         return StringUtils.hasText(currentTenant) ? currentTenant : BaseConstant.CLIENT_ID;
     }

@@ -7,4 +7,8 @@ import java.util.function.Supplier;
 
 public interface ITenantIdentifierResolver extends CurrentTenantIdentifierResolver, HibernatePropertiesCustomizer {
     <T> T switchInProcess(String tenant, Supplier<T> supplier);
+
+    String getCurrentTenant();
+
+    void setCurrentTenant(String tenant);
 }
