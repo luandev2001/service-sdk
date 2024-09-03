@@ -1,26 +1,21 @@
 package com.xuanluan.mc.sdk.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import java.util.concurrent.TimeUnit;
 
-@Configuration
-@EnableCaching
-public class CacheConfig {
+public class BaseCacheConfig {
     @Value("${cache.primary.expire_time:7}")
-    private int expireTime;
+    protected int expireTime;
     @Value("${cache.primary.period:DAYS}")
-    private String period;
+    protected String period;
     @Value("${cache.primary.maxsize:500}")
-    private int maxSize;
+    protected int maxSize;
 
     @Bean
     @Primary
@@ -32,13 +27,5 @@ public class CacheConfig {
                         .maximumSize(maxSize)
         );
         return caffeineCacheManager;
-    }
-
-    @Bean
-    public ModelMapper getModelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        modelMapper.getConfiguration().setSkipNullEnabled(true);
-        return modelMapper;
     }
 }
