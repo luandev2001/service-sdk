@@ -11,11 +11,11 @@ import java.util.concurrent.TimeUnit;
 
 public class BaseCacheConfig {
     @Value("${cache.primary.expire_time:7}")
-    protected int expireTime;
+    private int expireTime;
     @Value("${cache.primary.period:DAYS}")
-    protected String period;
+    private String period;
     @Value("${cache.primary.maxsize:500}")
-    protected int maxSize;
+    private int maxSize;
 
     @Bean
     @Primary
