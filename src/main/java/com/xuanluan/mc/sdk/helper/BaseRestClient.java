@@ -18,12 +18,10 @@ import org.springframework.web.client.HttpServerErrorException;
 @RequiredArgsConstructor
 public abstract class BaseRestClient {
     private final String servicePath;
-    private final String clientId;
 
     protected HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("clientId", clientId);
         return headers;
     }
 
