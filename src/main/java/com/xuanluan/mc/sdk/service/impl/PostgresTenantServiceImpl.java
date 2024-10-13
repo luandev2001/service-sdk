@@ -4,25 +4,31 @@ import com.xuanluan.mc.sdk.service.ITenantService;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class PostgresTenantServiceImpl implements ITenantService {
     private final EntityManager entityManager;
+    private final List<String> excludeNames;
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<String> getSchemas() {
-        return getSchemas("nspname not like 'pg_%'");
+        return querySchema("").getResultList();
     }
 
     @Override
     public boolean contains(String schema) {
-        return !getSchemas(String.format("nspname = '%s'", schema)).isEmpty();
+        return !querySchema(String.format(" AND nspname = '%s'", schema))
+                .setMaxResults(1).getResultList().isEmpty();
     }
 
-    @SuppressWarnings("unchecked")
-    private List<String> getSchemas(String condition) {
-        String query = "SELECT nspname AS schema_name FROM pg_catalog.pg_namespace WHERE " + condition;
-        return (List<String>) entityManager.createNativeQuery(query).getResultList();
+    private Query querySchema(String condition) {
+        String sql = "SELECT nspname FROM pg_catalog.pg_namespace WHERE nspname NOT IN :excludedNames" + condition;
+
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("excludedNames", excludeNames);
+        return query;
     }
 }

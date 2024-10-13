@@ -1,8 +1,7 @@
 package com.xuanluan.mc.sdk.service.constant;
 
 public class BaseConstant {
-    public static final String CLIENT_ID = "public";
-    public static final String ORG_ID = "public";
+    public static final String TENANT = "public";
     public static final String BY_USER = "system";
     public static final String EVERYONE = "everyone/";
     public static final String ADMIN = "admin/";

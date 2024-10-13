@@ -16,7 +16,7 @@ public class TenantConnectionProvider implements ITenantConnectionProvider {
 
     @Override
     public Connection getAnyConnection() throws SQLException {
-        return getConnection(BaseConstant.CLIENT_ID);
+        return getConnection(BaseConstant.TENANT);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class TenantConnectionProvider implements ITenantConnectionProvider {
 
     @Override
     public void releaseConnection(String tenantIdentifier, Connection connection) throws SQLException {
-        connection.setSchema(BaseConstant.CLIENT_ID);
+        connection.setSchema(BaseConstant.TENANT);
         connection.close();
     }
 

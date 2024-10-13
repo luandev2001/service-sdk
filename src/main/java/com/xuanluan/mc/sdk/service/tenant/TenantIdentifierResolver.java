@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 @Setter
 public class TenantIdentifierResolver implements ITenantIdentifierResolver {
-    private String currentTenant = BaseConstant.CLIENT_ID;
+    private String currentTenant = BaseConstant.TENANT;
 
     /**
      * switch to param tenant and process => after processed then rollback oldTenant
@@ -44,6 +44,6 @@ public class TenantIdentifierResolver implements ITenantIdentifierResolver {
 
     @Override
     public String getCurrentTenant() {
-        return StringUtils.hasText(currentTenant) ? currentTenant : BaseConstant.CLIENT_ID;
+        return StringUtils.hasText(currentTenant) ? currentTenant : BaseConstant.TENANT;
     }
 }
