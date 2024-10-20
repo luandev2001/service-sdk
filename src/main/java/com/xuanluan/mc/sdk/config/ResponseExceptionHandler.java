@@ -1,13 +1,18 @@
 package com.xuanluan.mc.sdk.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xuanluan.mc.sdk.model.WrapperResponse;
 import com.xuanluan.mc.sdk.exception.*;
 import com.xuanluan.mc.sdk.service.i18n.MessageLocale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 /**
  * @author Xuan Luan
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 public class ResponseExceptionHandler {
     protected final MessageLocale messageLocale;
+    protected final ObjectMapper objectMapper;
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(ForbiddenException.class)
@@ -88,6 +94,20 @@ public class ResponseExceptionHandler {
         return WrapperResponse.builder()
                 .message(messageLocale.get("error.internal_server"))
                 .build();
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<Object> handleHttpClientErrorException(HttpClientErrorException e) throws JsonProcessingException {
+        return ResponseEntity
+                .status(e.getStatusCode())
+                .body(objectMapper.readValue(e.getResponseBodyAsString(), Object.class));
+    }
+
+    @ExceptionHandler(HttpServerErrorException.class)
+    public ResponseEntity<Object> handleHttpServerErrorException(HttpServerErrorException e) throws JsonProcessingException {
+        return ResponseEntity
+                .status(e.getStatusCode())
+                .body(objectMapper.readValue(e.getResponseBodyAsString(), Object.class));
     }
 
     protected WrapperResponse<Object> response(BaseCodeException e, String subMessage) {
