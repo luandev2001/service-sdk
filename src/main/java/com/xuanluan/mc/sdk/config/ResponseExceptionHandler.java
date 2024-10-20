@@ -90,7 +90,7 @@ public class ResponseExceptionHandler {
                 .build();
     }
 
-    private WrapperResponse<Object> response(BaseCodeException e, String subMessage) {
+    protected WrapperResponse<Object> response(BaseCodeException e, String subMessage) {
         String message = e.getMessage() != null ? e.getMessage() : messageLocale.get(subMessage);
         return WrapperResponse.builder()
                 .code(e.getCode())

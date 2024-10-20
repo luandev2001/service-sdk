@@ -1,15 +1,11 @@
 package com.xuanluan.mc.sdk.helper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xuanluan.mc.sdk.model.WrapperResponse;
-import com.xuanluan.mc.sdk.exception.UnprocessableException;
 import com.xuanluan.mc.sdk.utils.GeneratorUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 
 /**
  * @author Xuan Luan
@@ -26,35 +22,26 @@ public abstract class BaseRestClient {
     }
 
     private <T> Object processRestClient(String path, HttpMethod method, HttpEntity<Object> entity, Class<T> tClass, boolean isWrapper) {
-        try {
-            if (isWrapper) {
-                ResponseEntity<WrapperResponse<T>> response =
-                        GeneratorUtils.restTemplate.exchange(
-                                servicePath + path,
-                                method,
-                                entity,
-                                ParameterizedTypeReference.forType(ResolvableType.forClassWithGenerics(WrapperResponse.class, tClass).getType())
-                        );
+        if (isWrapper) {
+            ResponseEntity<WrapperResponse<T>> response =
+                    GeneratorUtils.restTemplate.exchange(
+                            servicePath + path,
+                            method,
+                            entity,
+                            ParameterizedTypeReference.forType(ResolvableType.forClassWithGenerics(WrapperResponse.class, tClass).getType())
+                    );
 
-                return response.getBody();
-            } else {
-                ResponseEntity<T> response =
-                        GeneratorUtils.restTemplate.exchange(
-                                servicePath + path,
-                                method,
-                                entity,
-                                ParameterizedTypeReference.forType(tClass)
-                        );
+            return response.getBody();
+        } else {
+            ResponseEntity<T> response =
+                    GeneratorUtils.restTemplate.exchange(
+                            servicePath + path,
+                            method,
+                            entity,
+                            ParameterizedTypeReference.forType(tClass)
+                    );
 
-                return response.getBody();
-            }
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            try {
-                WrapperResponse result = GeneratorUtils.objectMapper.readValue(e.getResponseBodyAsString(), WrapperResponse.class);
-                throw new UnprocessableException(result.getMessage());
-            } catch (JsonProcessingException jsonE) {
-                throw new RuntimeException(jsonE);
-            }
+            return response.getBody();
         }
     }
 
