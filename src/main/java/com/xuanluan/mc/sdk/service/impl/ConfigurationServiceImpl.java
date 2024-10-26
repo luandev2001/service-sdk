@@ -17,11 +17,10 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -51,16 +50,16 @@ public class ConfigurationServiceImpl implements IConfigurationService {
                     dto.setName(nameConvert);
                     validateDataType(dto.getDataType(), dto.getValue());
 
-                    Configuration configuration = configurationRepository.findByNameAndType(nameConvert, dto.getType());
-                    if (configuration == null) {
+                    Configuration configuration = null;
+                    if (!configurationRepository.existsByNameAndType(nameConvert, dto.getType())) {
                         configuration = modelMapper.map(dto, Configuration.class);
-                        messageAssert.isTrue(nameConvert.equals(configuration.getName()), "configuration.name not equal nameConvert");
                         messageAssert.notBlank(configuration.getName(), "name");
                         messageAssert.notBlank(configuration.getType(), "type");
+                        messageAssert.notNull(configuration.getDataType(), "data_type");
                     }
                     return configuration;
                 })
-                .collect(Collectors.toList());
+                .filter(Objects::nonNull).collect(Collectors.toList());
         return !configurations.isEmpty() ? configurationRepository.saveAll(configurations) : null;
     }
 
@@ -69,18 +68,21 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         messageAssert.notBlank(name, "name");
         messageAssert.notBlank(type, "type");
 
-        String nameConverted = StringUtils.replaceSpecial(name, "_");
-        Supplier<Configuration> supplier = () -> {
-            Configuration configuration = configurationRepository.findByNameAndType(nameConverted, type);
-            messageAssert.notFound(configuration, "configuration", "name: " + name);
-            return configuration;
-        };
-        return (Configuration) getCache().putIfAbsent(getKeyCache(nameConverted, type), supplier.get());
+        Configuration configuration = configurationRepository.findByNameAndType(name, type);
+        messageAssert.notFound(configuration, "configuration", "name: " + name);
+
+        return configuration;
     }
 
     @Override
     public Object getValue(String name, String type) {
-        return get(name, type).getValue();
+        String key = getKeyCache(name, type);
+        Object value = getCache().get(key, Object.class);
+        if (value == null) {
+            value = get(name, type).getValue();
+            getCache().put(key, value);
+        }
+        return value;
     }
 
     @Override
@@ -96,7 +98,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         validateDataType(configuration.getDataType(), dto.getValue());
 
         configuration.setValue(dto.getValue());
-        configuration.setUpdatedAt(new Date());
         configuration = configurationRepository.save(configuration);
         //update cache
         getCache().put(getKeyCache(configuration.getName(), configuration.getType()), configuration);

@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConfigurationRepository extends JpaMultipleRepository<Configuration, String> {
     Configuration findByNameAndType(String name, String type);
+
+    boolean existsByNameAndType(String name, String type);
 }
