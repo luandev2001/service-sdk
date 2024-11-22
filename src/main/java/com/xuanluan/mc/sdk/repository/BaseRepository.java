@@ -2,6 +2,7 @@ package com.xuanluan.mc.sdk.repository;
 
 import com.xuanluan.mc.sdk.model.filter.BaseFilter;
 import com.xuanluan.mc.sdk.utils.CollectionUtils;
+import com.xuanluan.mc.sdk.utils.LambdaUtils;
 import com.xuanluan.mc.sdk.utils.RepositoryUtils;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import org.springframework.data.domain.*;
@@ -47,7 +48,7 @@ public class BaseRepository<T> {
     }
 
     protected Function<Predicate, List<Predicate>> appendFilter(Object value, List<Predicate> predicates) {
-        return predicate -> CollectionUtils.append(() -> value != null, predicates).apply(predicate);
+        return predicate -> LambdaUtils.append(() -> value != null, predicates).apply(predicate);
     }
 
     protected Page<T> getPage(List<Predicate> predicates, Pageable pageable) {
@@ -71,7 +72,7 @@ public class BaseRepository<T> {
                 String direction = filter.getSorts().get(column);
                 if (model.getAttribute(column).getPersistentAttributeType() == Attribute.PersistentAttributeType.BASIC) {
                     appendFilter(value, predicates).apply(root.get(column).in(value));
-                    CollectionUtils.append(() -> StringUtils.hasText(direction), orders).apply(new Sort.Order(RepositoryUtils.convertDirection(direction), column));
+                    LambdaUtils.append(() -> StringUtils.hasText(direction), orders).apply(new Sort.Order(RepositoryUtils.convertDirection(direction), column));
                 }
             } catch (Exception ignored) {
             }

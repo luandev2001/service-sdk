@@ -3,7 +3,6 @@ package com.xuanluan.mc.sdk.helper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.xuanluan.mc.sdk.utils.GeneratorUtils;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,31 +13,21 @@ import java.util.List;
  * @author Xuan Luan
  * @createdAt 12/29/2022
  */
-@Slf4j
 public class BaseLoadFile {
-
-    protected static InputStream loadDataFromFile(String fileName) {
+    public static InputStream loadDataFromFile(String fileName) {
         return BaseLoadFile.class.getClassLoader().getResourceAsStream(fileName);
     }
 
     private static <T> T convert(String fileName, Class<T> tClass, boolean isList) {
-        InputStream inputStream = loadDataFromFile(fileName);
-        try {
+        try (InputStreamReader reader = new InputStreamReader(loadDataFromFile(fileName))) {
             ObjectMapper mapper = GeneratorUtils.objectMapper;
             if (isList) {
                 CollectionType listType = mapper.getTypeFactory().constructCollectionType(List.class, tClass);
-                return mapper.readValue(new InputStreamReader(inputStream), listType);
+                return mapper.readValue(reader, listType);
             }
-            return mapper.readValue(new InputStreamReader(inputStream), tClass);
+            return mapper.readValue(reader, tClass);
         } catch (IOException e) {
-            log.error(e.getMessage());
-            return null;
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                log.error(e.getMessage());
-            }
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
