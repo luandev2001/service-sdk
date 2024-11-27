@@ -1,10 +1,10 @@
 package com.xuanluan.mc.sdk.config;
 
 import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
-import com.xuanluan.mc.sdk.service.i18n.MessageLocale;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -13,22 +13,20 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.util.Locale;
 
-public abstract class MessageLocaleConfig implements WebMvcConfigurer {
-    @Value("${language.default:vi}")
+public class MessageLocaleConfig implements WebMvcConfigurer {
+    @Value("${i18n.language.default:vi}")
     protected String language;
-    @Value("${language.param:lang}")
+    @Value("${18n.language.param:lang}")
     protected String param;
 
-    public abstract MessageSource messageSource();
-
     @Bean
-    public MessageLocale messageLocale() {
-        return new MessageLocale(messageSource());
+    public MessageSourceAccessor messageSourceAccessor(MessageSource messageSource) {
+        return new MessageSourceAccessor(messageSource);
     }
 
     @Bean
-    public MessageAssert messageAssert() {
-        return new MessageAssert(messageLocale());
+    public MessageAssert messageAssert(MessageSourceAccessor messageSourceAccessor) {
+        return new MessageAssert(messageSourceAccessor);
     }
 
     @Bean

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xuanluan.mc.sdk.model.WrapperResponse;
 import com.xuanluan.mc.sdk.exception.*;
-import com.xuanluan.mc.sdk.service.i18n.MessageLocale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,7 +21,7 @@ import org.springframework.web.client.HttpServerErrorException;
 @RequiredArgsConstructor
 @Slf4j
 public class ResponseExceptionHandler {
-    protected final MessageLocale messageLocale;
+    protected final MessageSourceAccessor messageSourceAccessor;
     protected final ObjectMapper objectMapper;
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -56,7 +56,7 @@ public class ResponseExceptionHandler {
     public WrapperResponse<Object> handleMessageSourceException(MessageSourceException e) {
         return WrapperResponse.builder()
                 .code(e.getCode())
-                .message(messageLocale.get(e.getMessage(), e.getArgs()))
+                .message(messageSourceAccessor.getMessage(e.getMessage(), e.getArgs()))
                 .build();
     }
 
@@ -69,7 +69,7 @@ public class ResponseExceptionHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(JpaConverterException.class)
     public WrapperResponse<Object> handleJpaConverterException(JpaConverterException e) {
-        String message = messageLocale.get("jpa.error.converter", e.getFrom(), e.getTo());
+        String message = messageSourceAccessor.getMessage("jpa.error.converter", new Object[]{e.getFrom(), e.getTo()});
         return WrapperResponse.builder()
                 .message(message)
                 .build();
@@ -92,7 +92,7 @@ public class ResponseExceptionHandler {
     public WrapperResponse<Object> handleException(Exception e) {
         log.error(e.getMessage(), e);
         return WrapperResponse.builder()
-                .message(messageLocale.get("error.internal_server"))
+                .message(messageSourceAccessor.getMessage("error.internal_server"))
                 .build();
     }
 
@@ -111,7 +111,7 @@ public class ResponseExceptionHandler {
     }
 
     protected WrapperResponse<Object> response(BaseCodeException e, String subMessage) {
-        String message = e.getMessage() != null ? e.getMessage() : messageLocale.get(subMessage);
+        String message = e.getMessage() != null ? e.getMessage() : messageSourceAccessor.getMessage(subMessage);
         return WrapperResponse.builder()
                 .code(e.getCode())
                 .message(message)
