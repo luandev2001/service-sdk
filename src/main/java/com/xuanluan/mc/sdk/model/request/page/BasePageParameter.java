@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.model.filter;
+package com.xuanluan.mc.sdk.model.request.page;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public abstract class BaseFilter {
+public abstract class BasePageParameter {
     private int size;
     private int page;
     private String keyword;

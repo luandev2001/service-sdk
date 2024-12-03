@@ -1,6 +1,6 @@
 package com.xuanluan.mc.sdk.repository;
 
-import com.xuanluan.mc.sdk.model.filter.BaseFilter;
+import com.xuanluan.mc.sdk.model.request.page.BasePageParameter;
 import com.xuanluan.mc.sdk.utils.CollectionUtils;
 import com.xuanluan.mc.sdk.utils.LambdaUtils;
 import com.xuanluan.mc.sdk.utils.RepositoryUtils;
@@ -60,7 +60,7 @@ public class BaseRepository<T> {
         );
     }
 
-    protected Page<T> getPage(List<Predicate> predicates, BaseFilter filter) {
+    protected Page<T> getPage(List<Predicate> predicates, BasePageParameter filter) {
         Set<String> columns = new HashSet<>(filter.getFilters().keySet());
         columns.addAll(filter.getSorts().keySet());
 
