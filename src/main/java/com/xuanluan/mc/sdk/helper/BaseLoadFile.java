@@ -14,12 +14,12 @@ import java.util.List;
  * @createdAt 12/29/2022
  */
 public class BaseLoadFile {
-    public static InputStream loadDataFromFile(String fileName) {
+    public static InputStream loadData(String fileName) {
         return BaseLoadFile.class.getClassLoader().getResourceAsStream(fileName);
     }
 
     private static <T> T convert(String fileName, Class<T> tClass, boolean isList) {
-        try (InputStreamReader reader = new InputStreamReader(loadDataFromFile(fileName))) {
+        try (InputStreamReader reader = new InputStreamReader(loadData(fileName))) {
             ObjectMapper mapper = GeneratorUtils.objectMapper;
             if (isList) {
                 CollectionType listType = mapper.getTypeFactory().constructCollectionType(List.class, tClass);
