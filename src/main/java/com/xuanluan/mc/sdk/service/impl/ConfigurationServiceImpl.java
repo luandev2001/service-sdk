@@ -9,6 +9,7 @@ import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
 import com.xuanluan.mc.sdk.service.tenant.TenantIdentifierResolver;
 import com.xuanluan.mc.sdk.service.IConfigurationService;
+import com.xuanluan.mc.sdk.utils.NumberUtils;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -121,7 +122,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
                     messageAssert.isTrue(value instanceof List, "error.data_type", dataType);
                     break;
                 case NUMBER:
-                    messageAssert.isTrue(value instanceof Double, "error.data_type", dataType);
+                    messageAssert.isTrue(NumberUtils.isNumeric(String.valueOf(value)), "error.data_type", dataType);
                     break;
             }
         }
