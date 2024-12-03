@@ -1,5 +1,11 @@
-Cung cấp các phương thức, chức năng hỗ trợ trong việc xây dựng ứng dụng.
+* Cung cấp các phương thức, chức năng hỗ trợ trong việc xây dựng ứng dụng.
+
 - Bổ sung các phương thức hỗ trợ việc query by predicate, query page jpa
 - Hỗ trợ việc xử lý multiple tenant với flyway
 - Tối ưu hóa với việc tốc độ ứng dụng với việc cung cấp các chức năng lưu trữ cache
-- Chức năng lưu trữ các tin tệp hình ảnh, file,...
+
+* Lưu ý:
+    * Khi sử dụng kiểu double để tính toán:
+      * double value1 = 0.1, value2 = 0.4; value1 + value2 => result sẽ là 0.30000000000000004 thay vì 0.3
+      * không chính xác với phép nhân, chia, cộng, trừ
+      * tối ưu hoá nó bằng BigDecimal hoặc làm tròn
