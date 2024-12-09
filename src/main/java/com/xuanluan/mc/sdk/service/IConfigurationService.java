@@ -1,8 +1,8 @@
 package com.xuanluan.mc.sdk.service;
 
 import com.xuanluan.mc.sdk.model.entity.Configuration;
-import com.xuanluan.mc.sdk.model.request.CreateConfiguration;
-import com.xuanluan.mc.sdk.model.request.UpdateConfiguration;
+import com.xuanluan.mc.sdk.model.request.configuration.CreateConfiguration;
+import com.xuanluan.mc.sdk.model.request.configuration.UpdateConfiguration;
 
 import java.util.List;
 
