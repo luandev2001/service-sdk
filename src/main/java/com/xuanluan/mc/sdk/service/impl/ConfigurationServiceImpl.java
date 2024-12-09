@@ -2,8 +2,9 @@ package com.xuanluan.mc.sdk.service.impl;
 
 import com.xuanluan.mc.sdk.model.entity.Configuration;
 import com.xuanluan.mc.sdk.model.enums.DataType;
-import com.xuanluan.mc.sdk.model.request.CreateConfiguration;
-import com.xuanluan.mc.sdk.model.request.UpdateConfiguration;
+import com.xuanluan.mc.sdk.model.request.configuration.ConfigurationRequest;
+import com.xuanluan.mc.sdk.model.request.configuration.CreateConfiguration;
+import com.xuanluan.mc.sdk.model.request.configuration.UpdateConfiguration;
 import com.xuanluan.mc.sdk.repository.config.ConfigurationRepository;
 import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
@@ -18,10 +19,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -49,7 +47,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
                 .map(dto -> {
                     final String nameConvert = StringUtils.replaceSpecial(dto.getName(), "_");
                     dto.setName(nameConvert);
-                    validateDataType(dto.getDataType(), dto.getValue());
+                    validateDataType(dto.getDataType(), dto);
 
                     Configuration configuration = null;
                     if (!configurationRepository.existsByNameAndType(nameConvert, dto.getType())) {
@@ -86,6 +84,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         return value;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Configuration update(UpdateConfiguration dto) {
         messageAssert.notNull(dto, "request");
@@ -96,17 +95,19 @@ public class ConfigurationServiceImpl implements IConfigurationService {
         Configuration configuration = configurationRepository.findByNameAndType(nameConvert, dto.getType());
         messageAssert.notFound(configuration, "configuration", "name: " + dto.getName());
         messageAssert.isTrue(configuration.isEdit(), "error.not_modify", "configuration");
-        validateDataType(configuration.getDataType(), dto.getValue());
+        validateDataType(configuration.getDataType(), dto);
 
         configuration.setValue(dto.getValue());
         configuration = configurationRepository.save(configuration);
-        //update cache
-        getCache().put(getKeyCache(configuration.getName(), configuration.getType()), configuration);
+        //clear cache
+        getCache().evict(getKeyCache(configuration.getName(), configuration.getType()));
         return configuration;
     }
 
-    private void validateDataType(DataType dataType, Object value) {
+    private void validateDataType(DataType dataType, ConfigurationRequest request) {
         messageAssert.notNull(dataType, "data_type");
+
+        Object value = request.getValue();
         if (value != null) {
             switch (dataType) {
                 case STRING:
@@ -122,7 +123,9 @@ public class ConfigurationServiceImpl implements IConfigurationService {
                     messageAssert.isTrue(value instanceof List, "error.data_type", dataType);
                     break;
                 case NUMBER:
-                    messageAssert.isTrue(NumberUtils.isNumeric(String.valueOf(value)), "error.data_type", dataType);
+                    Optional<Double> toDouble = NumberUtils.convertToDouble(String.valueOf(value));
+                    messageAssert.isTrue(toDouble.isPresent(), "error.data_type", dataType);
+                    request.setValue(toDouble.orElse(0.0));
                     break;
             }
         }

@@ -11,7 +11,7 @@ public class NumberUtils extends org.springframework.util.NumberUtils {
         return convertToDouble(value).orElse(0.0);
     }
 
-    private static Optional<Double> convertToDouble(Object value) {
+    public static Optional<Double> convertToDouble(Object value) {
         try {
             return Optional.of(Double.valueOf(value.toString()));
         } catch (NumberFormatException e) {
