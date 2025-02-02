@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.service.impl;
+package com.xuanluan.mc.sdk.service.imp;
 
 import com.xuanluan.mc.sdk.model.entity.Configuration;
 import com.xuanluan.mc.sdk.model.enums.DataType;
@@ -14,6 +14,7 @@ import com.xuanluan.mc.sdk.utils.NumberUtils;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,8 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class ConfigurationServiceImpl implements IConfigurationService {
+@ConditionalOnProperty(name = "sdk.configuration.enabled", havingValue = "true")
+public class ConfigurationServiceImp implements IConfigurationService {
     private final ConfigurationRepository configurationRepository;
     private final ModelMapper modelMapper;
     private final CacheManager cacheManager;

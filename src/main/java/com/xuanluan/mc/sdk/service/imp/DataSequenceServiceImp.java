@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.service.impl;
+package com.xuanluan.mc.sdk.service.imp;
 
 import com.xuanluan.mc.sdk.model.entity.DataSequence;
 import com.xuanluan.mc.sdk.model.enums.SequenceType;
@@ -9,6 +9,7 @@ import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,8 @@ import java.util.function.Function;
  */
 @RequiredArgsConstructor
 @Service
-public class DataSequenceServiceImpl implements IDataSequenceService {
+@ConditionalOnProperty(name = "sdk.data_sequence.enabled", havingValue = "true")
+public class DataSequenceServiceImp implements IDataSequenceService {
     private final DataSequenceRepository sequenceRepository;
 
     @Value("${sequence.alphabet_dot_no.suffix.max:999999999}")

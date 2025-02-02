@@ -1,4 +1,4 @@
-package com.xuanluan.mc.sdk.service.impl;
+package com.xuanluan.mc.sdk.service.imp;
 
 import com.xuanluan.mc.sdk.service.ITenantService;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class PostgresTenantServiceImpl implements ITenantService {
+public class PostgresTenantServiceImp implements ITenantService {
     private final EntityManager entityManager;
     private final List<String> excludeNames;
 
