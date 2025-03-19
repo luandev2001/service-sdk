@@ -3,9 +3,7 @@ package com.xuanluan.mc.sdk.model.request.page;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -13,8 +11,8 @@ public abstract class BasePageParameter {
     private int size;
     private int page;
     private String keyword;
-    private Map<String, String> sorts = new HashMap<>();
-    private Map<String, Object> filters = new HashMap<>();
+    private List<SortParameter> sorts;
+    private List<FilterParameter> filters;
 
     public abstract Set<String> keywordParams();
 }

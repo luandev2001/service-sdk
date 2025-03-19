@@ -1,9 +1,7 @@
 package com.xuanluan.mc.sdk.repository;
 
-import com.xuanluan.mc.sdk.model.request.page.BasePageParameter;
 import com.xuanluan.mc.sdk.utils.CollectionUtils;
 import com.xuanluan.mc.sdk.utils.LambdaUtils;
-import com.xuanluan.mc.sdk.utils.RepositoryUtils;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.query.QueryUtils;
@@ -13,8 +11,6 @@ import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EntityType;
 import java.util.*;
 import java.util.function.Function;
 
@@ -58,26 +54,6 @@ public class BaseRepository<T> {
                 pageable,
                 () -> totalRecord
         );
-    }
-
-    protected Page<T> getPage(List<Predicate> predicates, BasePageParameter filter) {
-        Set<String> columns = new HashSet<>(filter.getFilters().keySet());
-        columns.addAll(filter.getSorts().keySet());
-
-        EntityType<T> model = root.getModel();
-        List<Sort.Order> orders = new LinkedList<>();
-        columns.forEach(column -> {
-            try {
-                Object value = filter.getFilters().get(column);
-                String direction = filter.getSorts().get(column);
-                if (model.getAttribute(column).getPersistentAttributeType() == Attribute.PersistentAttributeType.BASIC) {
-                    appendFilter(value, predicates).apply(root.get(column).in(value));
-                    LambdaUtils.append(() -> StringUtils.hasText(direction), orders).apply(new Sort.Order(RepositoryUtils.convertDirection(direction), column));
-                }
-            } catch (Exception ignored) {
-            }
-        });
-        return getPage(predicates, PageRequest.of(filter.getPage(), filter.getSize(), Sort.by(orders)));
     }
 
     private long getCount(List<Predicate> filters) {
