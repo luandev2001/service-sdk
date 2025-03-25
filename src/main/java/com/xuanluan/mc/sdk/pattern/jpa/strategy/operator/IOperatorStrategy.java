@@ -4,7 +4,7 @@ import com.xuanluan.mc.sdk.model.enums.AttributeAction;
 
 import javax.persistence.criteria.Predicate;
 
-public interface OperatorStrategy {
+public interface IOperatorStrategy {
     void validate(String key, Object value);
 
     Predicate toPredicate(String key, Object value);

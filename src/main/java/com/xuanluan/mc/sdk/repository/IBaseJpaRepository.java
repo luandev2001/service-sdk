@@ -9,11 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface IBaseJpaRepository<T> extends JpaSpecificationExecutor<T> {
     default <P extends BasePageParameter> Page<T> getPage(P request) {
-        Specification<T> dynamicFilter = DynamicSpecification.<T>builder()
-                .filters(request.getFilters())
-                .sorts(request.getSorts())
-                .build();
-
+        Specification<T> dynamicFilter = new DynamicSpecification<>(request);
         return findAll(dynamicFilter, PageRequest.of(request.getPage(), request.getSize()));
     }
 }

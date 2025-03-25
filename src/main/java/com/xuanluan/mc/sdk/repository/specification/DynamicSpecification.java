@@ -1,22 +1,27 @@
 package com.xuanluan.mc.sdk.repository.specification;
 
-import com.xuanluan.mc.sdk.model.request.page.FilterParameter;
-import com.xuanluan.mc.sdk.model.request.page.SortParameter;
+import com.xuanluan.mc.sdk.model.request.page.BasePageParameter;
 import com.xuanluan.mc.sdk.utils.RepositoryUtils;
-import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
 import java.util.List;
 
-@Builder
+@RequiredArgsConstructor
 public class DynamicSpecification<T> implements Specification<T> {
-    private final List<FilterParameter> filters;
-    private final List<SortParameter> sorts;
+    private final BasePageParameter parameter;
+
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-        query.orderBy(RepositoryUtils.getOrders(root, criteriaBuilder).apply(sorts));
-        return RepositoryUtils.getPredicate(root, criteriaBuilder).apply(filters);
+        query.orderBy(RepositoryUtils.toOrders(root, criteriaBuilder).apply(parameter.getSorts()));
+        return criteriaBuilder.and(
+                List.of(
+                                RepositoryUtils.toPredicate(root, criteriaBuilder).apply(parameter.getFilters()),
+                                RepositoryUtils.toSearchPredicate(root, criteriaBuilder).apply(parameter.getKeyword(), parameter.getKeywordParams())
+                        )
+                        .toArray(Predicate[]::new)
+        );
     }
 }

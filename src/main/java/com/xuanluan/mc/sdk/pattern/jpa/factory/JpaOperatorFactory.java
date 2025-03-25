@@ -9,7 +9,7 @@ import javax.persistence.criteria.From;
 import java.util.function.BiFunction;
 
 public class JpaOperatorFactory {
-    public static BiFunction<From<?, ?>, CriteriaBuilder, OperatorStrategy> getInstance(AttributeAction.Operator operator) {
+    public static BiFunction<From<?, ?>, CriteriaBuilder, IOperatorStrategy> getInstance(AttributeAction.Operator operator) {
         return ((from, builder) -> {
             switch (operator) {
                 case eq:

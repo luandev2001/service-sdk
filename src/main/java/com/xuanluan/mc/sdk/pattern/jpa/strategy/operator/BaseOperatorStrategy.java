@@ -9,7 +9,7 @@ import javax.persistence.criteria.Path;
 import java.util.List;
 
 @RequiredArgsConstructor
-public abstract class BaseOperatorStrategy implements OperatorStrategy {
+public abstract class BaseOperatorStrategy implements IOperatorStrategy {
     protected final From<?, ?> from;
     protected final CriteriaBuilder builder;
 
@@ -18,8 +18,8 @@ public abstract class BaseOperatorStrategy implements OperatorStrategy {
     @Override
     public void validate(String key, Object value) {
         Assert.notNull(key, "key must not be null");
-        Assert.isTrue(getValidTypes().stream().anyMatch(
-                        type -> type.isInstance(value)),
+        Assert.isTrue(
+                getValidTypes().stream().anyMatch(type -> type.isInstance(value)),
                 String.format("Invalid instance of %s operator", getOperator().getSymbol())
         );
     }

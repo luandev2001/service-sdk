@@ -14,7 +14,8 @@ public class AttributeAction {
         gt(">"),
         gte(">="),
         in("IN"),
-        not_in("NOT IN");
+        not_in("NOT IN"),
+        like("LIKE");
 
         private final String symbol;
     }

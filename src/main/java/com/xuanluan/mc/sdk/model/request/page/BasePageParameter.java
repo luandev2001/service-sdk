@@ -16,7 +16,7 @@ public class BasePageParameter {
     private List<SortParameter> sorts;
     private List<FilterParameter> filters;
 
-    public Set<String> getKeywordParams() {
+    public KeywordParameter getKeywordParams() {
         return null;
     }
 }
