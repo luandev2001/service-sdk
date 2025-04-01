@@ -3,7 +3,7 @@ package com.xuanluan.mc.sdk.service.imp;
 import com.xuanluan.mc.sdk.model.entity.DataSequence;
 import com.xuanluan.mc.sdk.model.enums.SequenceType;
 import com.xuanluan.mc.sdk.exception.UnsupportedException;
-import com.xuanluan.mc.sdk.repository.sequence.DataSequenceRepository;
+import com.xuanluan.mc.sdk.repository.sequence.IDataSequenceRepository;
 import com.xuanluan.mc.sdk.service.IDataSequenceService;
 import com.xuanluan.mc.sdk.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import java.util.function.Function;
 @Service
 @ConditionalOnProperty(name = "sdk.data_sequence.enabled", havingValue = "true")
 public class DataSequenceServiceImp implements IDataSequenceService {
-    private final DataSequenceRepository sequenceRepository;
+    private final IDataSequenceRepository sequenceRepository;
 
     @Value("${sequence.alphabet_dot_no.suffix.max:999999999}")
     private int maxSuffix;

@@ -16,10 +16,6 @@ public class StringUtils extends org.springframework.util.StringUtils {
         return name.trim().replaceAll("[^a-zA-Z0-9-]", replaceText).toLowerCase();
     }
 
-    public static String generateId() {
-        return UUID.randomUUID().toString();
-    }
-
     /**
      * prefix= "string" is char from a to z (aaa -> aaz)
      * suffix= "number" from 1 to maxSuffix

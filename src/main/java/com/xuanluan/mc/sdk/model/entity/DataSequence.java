@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import java.util.UUID;
 
 /**
  * @author Xuan Luan
@@ -15,7 +16,7 @@ import javax.persistence.Enumerated;
 @Getter
 @Setter
 @Entity
-public class DataSequence extends BaseEntity {
+public class DataSequence extends BaseEntity<UUID> {
     @Column(nullable = false, updatable = false)
     private String objectType;
     @Column(nullable = false)

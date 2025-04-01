@@ -5,7 +5,7 @@ import com.xuanluan.mc.sdk.model.enums.DataType;
 import com.xuanluan.mc.sdk.model.request.configuration.ConfigurationRequest;
 import com.xuanluan.mc.sdk.model.request.configuration.CreateConfiguration;
 import com.xuanluan.mc.sdk.model.request.configuration.UpdateConfiguration;
-import com.xuanluan.mc.sdk.repository.config.ConfigurationRepository;
+import com.xuanluan.mc.sdk.repository.config.IConfigurationRepository;
 import com.xuanluan.mc.sdk.service.constant.BaseConstant;
 import com.xuanluan.mc.sdk.service.i18n.MessageAssert;
 import com.xuanluan.mc.sdk.service.tenant.TenantIdentifierResolver;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @ConditionalOnProperty(name = "sdk.configuration.enabled", havingValue = "true")
 public class ConfigurationServiceImp implements IConfigurationService {
-    private final ConfigurationRepository configurationRepository;
+    private final IConfigurationRepository configurationRepository;
     private final ModelMapper modelMapper;
     private final CacheManager cacheManager;
     private final TenantIdentifierResolver tenantIdentifierResolver;

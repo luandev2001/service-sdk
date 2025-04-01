@@ -6,11 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-public class Configuration extends BaseEntity {
+public class Configuration extends BaseEntity<UUID> {
     @Convert(converter = ObjectJpaConverter.class)
     private Object value;
     @Column(nullable = false)

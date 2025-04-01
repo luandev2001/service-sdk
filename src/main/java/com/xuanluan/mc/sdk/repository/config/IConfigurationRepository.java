@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @ConditionalOnProperty(name = "sdk.configuration.enabled", havingValue = "true")
-public interface ConfigurationRepository extends JpaMultipleRepository<Configuration, String> {
+public interface IConfigurationRepository extends JpaMultipleRepository<Configuration, String> {
     Configuration findByNameAndType(String name, String type);
 
     boolean existsByNameAndType(String name, String type);

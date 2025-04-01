@@ -1,15 +1,17 @@
 package com.xuanluan.mc.sdk.repository;
 
-import com.xuanluan.mc.sdk.model.request.page.BasePageParameter;
-import com.xuanluan.mc.sdk.repository.specification.DynamicSpecification;
+import com.xuanluan.mc.sdk.model.request.jpa.QueryOptionRequest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface IBaseJpaRepository<T> extends JpaSpecificationExecutor<T> {
-    default <P extends BasePageParameter> Page<T> getPage(P request) {
-        Specification<T> dynamicFilter = new DynamicSpecification<>(request);
-        return findAll(dynamicFilter, PageRequest.of(request.getPage(), request.getSize()));
-    }
+import java.util.List;
+import java.util.Optional;
+
+public interface IBaseJpaRepository<T> {
+    List<T> findAll(Specification<T> spec, QueryOptionRequest request);
+
+    Optional<T> findOne(Specification<T> spec, QueryOptionRequest request);
+
+    Page<T> findAll(Specification<T> spec, Pageable pageable, QueryOptionRequest request);
 }

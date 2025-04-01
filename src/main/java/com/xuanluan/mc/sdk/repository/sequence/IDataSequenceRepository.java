@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @ConditionalOnProperty(name = "sdk.data_sequence.enabled", havingValue = "true")
-public interface DataSequenceRepository extends JpaMultipleRepository<DataSequence, String> {
+public interface IDataSequenceRepository extends JpaMultipleRepository<DataSequence, String> {
 }

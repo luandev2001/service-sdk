@@ -14,10 +14,7 @@ public class LikeOperatorStrategy extends BaseOperatorStrategy {
     private final boolean isIgnoreCase;
 
     public LikeOperatorStrategy(From<?, ?> from, CriteriaBuilder builder) {
-        super(from, builder);
-        this.prefix = "";
-        this.suffix = "";
-        this.isIgnoreCase = true;
+        this(from, builder, false, false, true);
     }
 
     public LikeOperatorStrategy(From<?, ?> from, CriteriaBuilder builder, boolean isPrefix, boolean isSuffix, boolean isIgnoreCase) {
